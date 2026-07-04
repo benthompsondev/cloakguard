@@ -8,10 +8,12 @@ import {
   type CoreMode,
   type ProfileConfig,
 } from '../../lib/profiles';
-import { isCloakList, type CustomPack } from '../../lib/customPacks';
+import { MAX_CUSTOM_PACKS, isCloakList, type CustomPack } from '../../lib/customPacks';
 import { validateTemplate } from '../../lib/redaction';
 import { RuleBrowser } from './RulesSection';
 import { FormatPicker } from './FormatsSection';
+import { CloakListEditor } from './CloakListEditor';
+import { CustomPackEditor } from './CustomPackEditor';
 
 /** Matches the preference sanitizer's cap in src/lib/preferences.ts. */
 const MAX_DESCRIPTION_LENGTH = 200;
@@ -21,6 +23,7 @@ interface ProfileEditorProps {
   profile: ProfileConfig;
   customPacks: readonly CustomPack[];
   remember: boolean;
+  onSavePack: (pack: CustomPack) => void;
   onSave: (profile: ProfileConfig) => void;
   onCancel: () => void;
 }
@@ -52,19 +55,21 @@ export function ProfileEditor({
   profile,
   customPacks,
   remember,
+  onSavePack,
   onSave,
   onCancel,
 }: ProfileEditorProps) {
   const [draft, setDraft] = useState<ProfileConfig>(() => JSON.parse(JSON.stringify(profile)));
   const [query, setQuery] = useState('');
+  const [creating, setCreating] = useState<'cloak-list' | 'custom-pack' | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   // The heading receives focus so keyboard and screen-reader users land on
   // the editor context, wherever the packs page was scrolled to.
   useEffect(() => {
     window.scrollTo(0, 0);
-    headingRef.current?.focus();
-  }, []);
+    if (creating === null) headingRef.current?.focus();
+  }, [creating]);
 
   const nameError = draft.name.length > 0 ? validateName(draft.name) : null;
   const formatError =
@@ -104,6 +109,37 @@ export function ProfileEditor({
       description: description.length > 0 ? description : undefined,
     });
   };
+
+  const saveCreatedPack = (pack: CustomPack) => {
+    onSavePack(pack);
+    setDraft((d) => ({
+      ...d,
+      customPackIds: [...new Set([...d.customPackIds, pack.id])],
+    }));
+    setCreating(null);
+  };
+
+  if (creating === 'cloak-list') {
+    return (
+      <CloakListEditor
+        list={null}
+        remember={remember}
+        onSave={saveCreatedPack}
+        onCancel={() => setCreating(null)}
+      />
+    );
+  }
+
+  if (creating === 'custom-pack') {
+    return (
+      <CustomPackEditor
+        pack={null}
+        remember={remember}
+        onSave={saveCreatedPack}
+        onCancel={() => setCreating(null)}
+      />
+    );
+  }
 
   return (
     <section className="panel settings-panel" aria-label="Profile editor">
@@ -194,11 +230,37 @@ export function ProfileEditor({
           ))}
         </div>
 
-        <h3>Custom Packs & Cloak Lists</h3>
+        <div className="settings-subhead">
+          <div>
+            <h3>Custom Packs & Cloak Lists</h3>
+            <p className="muted">
+              Create one here and it will be added to this profile draft automatically.
+            </p>
+          </div>
+          <div className="panel-actions">
+            <button
+              type="button"
+              className="btn btn-mini"
+              disabled={customPacks.length >= MAX_CUSTOM_PACKS}
+              onClick={() => setCreating('cloak-list')}
+              aria-label="Create Cloak List for this profile"
+            >
+              Create Cloak List
+            </button>
+            <button
+              type="button"
+              className="btn btn-mini"
+              disabled={customPacks.length >= MAX_CUSTOM_PACKS}
+              onClick={() => setCreating('custom-pack')}
+              aria-label="Create Custom Pack for this profile"
+            >
+              Create Custom Pack
+            </button>
+          </div>
+        </div>
         {customPacks.length === 0 ? (
           <p className="muted">
-            None yet — create Custom Packs and Cloak Lists in Profiles & Packs, then include them
-            here.
+            None yet. Create a reusable list of exact terms or an advanced pack of detection rules.
           </p>
         ) : (
           <div className="pack-rule-picker">

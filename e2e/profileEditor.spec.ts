@@ -119,6 +119,47 @@ test('saved base mode, Cloak List, and format changes drive real scan output', a
   await expect(preview).not.toContainText('[EMAIL_1]'); // uniform format everywhere
 });
 
+test('creates a Cloak List and Custom Pack without losing the profile draft', async ({ page }) => {
+  await createProfile(page, 'Sharing profile');
+  await openEditor(page, 'Sharing profile');
+  await page.getByLabel('Profile description').fill('Synthetic external-sharing profile');
+
+  await page.getByRole('button', { name: 'Create Cloak List for this profile' }).click();
+  await page.getByLabel('Cloak List name').fill('Project terms');
+  await page.getByLabel('Cloak List terms').fill('Project Nightjar');
+  await page.getByRole('button', { name: 'Save Cloak List' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Edit profile: Sharing profile' })).toBeVisible();
+  await expect(page.getByLabel('Profile description')).toHaveValue(
+    'Synthetic external-sharing profile',
+  );
+  await expect(
+    page.getByRole('checkbox', { name: 'Include Cloak List Project terms in this profile' }),
+  ).toBeChecked();
+
+  await page.getByRole('button', { name: 'Create Custom Pack for this profile' }).click();
+  await page.getByLabel('Pack name').fill('Support fields');
+  await page.getByRole('checkbox', { name: 'Email address' }).check();
+  await page.getByRole('button', { name: 'Save pack' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Edit profile: Sharing profile' })).toBeVisible();
+  await expect(page.getByLabel('Profile description')).toHaveValue(
+    'Synthetic external-sharing profile',
+  );
+  await expect(
+    page.getByRole('checkbox', { name: 'Include pack Support fields in this profile' }),
+  ).toBeChecked();
+
+  await page.getByRole('button', { name: 'Save profile' }).click();
+  await openEditor(page, 'Sharing profile');
+  await expect(
+    page.getByRole('checkbox', { name: 'Include Cloak List Project terms in this profile' }),
+  ).toBeChecked();
+  await expect(
+    page.getByRole('checkbox', { name: 'Include pack Support fields in this profile' }),
+  ).toBeChecked();
+});
+
 test('saving an ACTIVE profile invalidates results only when scanning behavior changed', async ({
   page,
 }) => {

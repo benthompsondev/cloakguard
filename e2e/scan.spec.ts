@@ -7,6 +7,19 @@ async function loadDemoAndScan(page: Page) {
   await page.getByRole('button', { name: 'Scan locally' }).click();
 }
 
+test('scan screen gives an actionable reminder about detector limits', async ({ page }) => {
+  await page.goto('/');
+
+  const reminder = page.getByRole('note', { name: 'Detection reminder' });
+  await expect(reminder).toContainText('Built-in rules can miss');
+  await expect(reminder).toContainText('Review the cleaned text before sharing');
+
+  const cloakListsLink = reminder.getByRole('link', { name: 'Open Cloak Lists' });
+  await expect(cloakListsLink).toHaveAttribute('href', '#/settings/profiles');
+  await cloakListsLink.click();
+  await expect(page.getByRole('heading', { name: 'Cloak Lists' })).toBeVisible();
+});
+
 test('loads the demo and scans it locally', async ({ page }) => {
   await loadDemoAndScan(page);
 

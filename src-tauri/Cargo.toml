@@ -1,6 +1,6 @@
 [package]
 name = "cloakguard"
-version = "0.7.1"
+version = "0.7.2"
 description = "CloakGuard - local-first text sanitizer, desktop shell"
 authors = ["Ben Thompson"]
 homepage = "https://github.com/benthompsondev/cloakguard"

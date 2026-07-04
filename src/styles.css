@@ -245,6 +245,43 @@ body {
   flex: 1;
 }
 
+.scan-guidance {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 1px solid rgba(245, 181, 72, 0.28);
+  border-radius: 9px;
+  background: rgba(245, 181, 72, 0.06);
+  color: var(--text-muted);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.scan-guidance strong {
+  color: var(--text);
+}
+
+.scan-guidance a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.scan-guidance-icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  border: 1px solid rgba(245, 181, 72, 0.6);
+  border-radius: 50%;
+  color: #f5b548;
+  font-size: 11px;
+  font-weight: 700;
+}
+
 /* ---------- dialog ---------- */
 
 .dialog-backdrop {
@@ -1057,6 +1094,22 @@ body {
 .settings-body h3 {
   margin: 10px 0 2px;
   font-size: 14px;
+}
+
+.settings-subhead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.settings-subhead h3 {
+  margin-top: 0;
+}
+
+.settings-subhead .panel-actions {
+  flex: 0 0 auto;
 }
 
 .settings-body h4 {

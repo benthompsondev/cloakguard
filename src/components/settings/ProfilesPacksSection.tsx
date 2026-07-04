@@ -34,6 +34,7 @@ export function ProfilesPacksSection(props: SettingsProps) {
         profile={editingProfile}
         customPacks={workspace.customPacks}
         remember={workspace.remember}
+        onSavePack={props.onSavePack}
         onSave={(profile) => {
           props.onSaveProfile(profile);
           setEditingProfileId(null);

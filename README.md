@@ -4,15 +4,15 @@
 [![Latest release](https://img.shields.io/github/v/release/benthompsondev/cloakguard)](https://github.com/benthompsondev/cloakguard/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-CloakGuard is a local-first app for cleaning code, logs, prompts, support tickets, and draft posts before sharing them with AI tools, GitHub issues, or anyone outside your network. Everything runs on your device. There is no backend, account, telemetry, or upload.
+CloakGuard is a local-first Windows app for cleaning code, logs, prompts, support tickets, and draft posts before sharing them. Everything runs on your device. There is no account, backend, telemetry, or upload.
 
-I built it because I was tired of manually checking every log and script for hostnames, usernames, paths, and other details before sharing them. The useful part is simple: paste text, review what it finds, and copy a cleaned version.
+I built it because manually checking every script and log for hostnames, usernames, paths, tokens, and organization-specific details is slow and easy to get wrong. The workflow is deliberately simple: paste text, scan it locally, review every replacement, and copy the cleaned version.
 
 ![CloakGuard scan screen](docs/screenshots/scan-desktop-1440x900.png)
 
 ## Download for Windows
 
-Download the latest setup executable from [GitHub Releases](https://github.com/benthompsondev/cloakguard/releases/latest). It installs for the current Windows user and does not require Node, Rust, administrator rights, or an internet connection.
+Download the latest setup executable from [GitHub Releases](https://github.com/benthompsondev/cloakguard/releases/latest). The setup EXE is the only file most people need. It installs for the current Windows user and does not require Node, Rust, administrator rights, or an internet connection.
 
 The installer is currently unsigned, so Windows SmartScreen may show a warning. Verify the SHA-256 value published with the release before running it.
 
@@ -34,7 +34,7 @@ Both scripts check that a supported Node.js is installed: **Node 20.19+ or 22.12
 
 **To stop the app:** press `Ctrl+C` in the terminal window where it is running.
 
-**Windows desktop app** - CloakGuard ships as one setup executable: `CloakGuard-Setup-0.6.7-x64.exe`. It bundles the WebView2 runtime installer so installation works offline. The setup EXE is the only artifact most users need. Developers can build it with `npm run desktop:build`; details are in [docs/desktop.md](docs/desktop.md).
+Developers can build the Windows desktop installer with `npm run desktop:build`; details are in [docs/desktop.md](docs/desktop.md).
 
 **Developer setup** (`npm run dev` is the development path, with hot reload and no CSP):
 
@@ -59,7 +59,7 @@ npm run verify    # audit + lint + unit tests + build + e2e, all in one
 The **Settings** view (in-app navigation, no page reloads) controls detection without touching any code:
 
 - **General** - Choose Balanced or Strict detection and control the opt-in preference storage.
-- **Profiles & Packs** - Build reusable profiles from country packs, Cloak Lists, custom labeled-field rules, and a redaction format. Each saved profile has an **Edit profile** action that opens a single editor for everything the profile does: name, optional description, Balanced/Strict base mode, country packs, Custom Packs and Cloak Lists, every detection rule (with search, filters, and live enabled/override counts), and the redaction format with a synthetic preview. Edits work on a draft — nothing applies until Save, Cancel discards everything, and the built-in Balanced and Strict presets stay read-only.
+- **Profiles & Packs** - Build reusable profiles from country packs, Cloak Lists, custom rules, and a redaction format. The Profile Editor keeps changes in a draft until you save. You can also create a new Cloak List or Custom Pack without leaving that draft.
 - **Detection Rules** - Search the detector registry, review false-positive guidance, and enable or disable individual rules.
 - **Redaction Formats** - Use indexed labels (`[EMAIL_1]`), unnumbered labels (`[EMAIL]`), a uniform `[REDACTED]` value, or a safe template using `{TYPE}` and `{INDEX}`.
 - **Privacy** - Review storage status and clear saved preferences.
@@ -68,11 +68,7 @@ The **Settings** view (in-app navigation, no page reloads) controls detection wi
 
 **Why no scan history:** sanitized output can still contain a value the detectors missed, so automatically saving results would weaken the privacy model. Scans are deliberately never persisted.
 
-Detector findings are review leads, not verdicts. CloakGuard protects common
-PowerShell regex pattern strings, leaves generated password expressions
-untouched, and deliberately avoids guessing that arbitrary AD arguments are
-usernames. See [Detector behavior and safety](docs/detectors.md) for the exact
-replacement rules and remaining boundaries.
+Detector findings are review leads, not verdicts. CloakGuard protects common PowerShell regex pattern strings, leaves generated password expressions untouched, and avoids guessing that arbitrary AD arguments are usernames. See [Detector behavior and safety](docs/detectors.md) for the exact replacement rules and remaining boundaries.
 
 ## Verify it works
 
@@ -88,15 +84,15 @@ Run `npm run check`. Lint, unit tests, typecheck, and build should all pass. `np
 
 ## Project status
 
-v0.7.1 is a big detection pass for names and organizations, plus a proper Profile Editor. It started with real pastes that slipped through: names in CSV exports, "as per …" and "Contact …" notes in tickets, and a copyright line naming an organization. What changed since v0.6.7:
+Current release: **v0.7.2**
 
-- **Names and organizations get found in far more places.** Quoted JSON keys (`"displayName"`, `"companyName"`), CSV files with recognized columns like FirstName or Department (quotes and commas preserved exactly), copyright lines, prose cues ("prepared by", "as per", "pulled from", "Contact …", "escalated to", "spoke with"), honorifics (`Dr. Alex Demo`), email signatures ("Regards," then a name), To/From/CC headers, workflow labels (AssignedTo, Requester, Attn, Technician, Patient), suffixes and particles (Jr., II, van der, al), and free-text organizations with strong suffixes (Hospital, Healthcare, Ltd, Inc, University, Clinic).
-- **Both name rules are now low confidence, and honest about it.** Detection is contextual — there is no built-in name dictionary, because one would miss uncommon and international names while falsely redacting ordinary words like Mark, Bill, May, or Rose. The rule detail panel now says this in the app and links straight to Cloak Lists for anything CloakGuard misses.
-- **Command syntax stays safe.** `Get-Process -Name "WindowsTerminal"`, `Name = Get-Random`, and parameter lines never become findings; JSON keys and CSV structure come back byte-for-byte.
-- **Profile Editor.** Each saved profile now opens in one editor covering name, description, base mode, packs, Cloak Lists, all 34 detection rules, and the redaction format. Everything edits a draft — nothing applies until Save, Cancel discards it all, and built-in presets stay read-only.
-- There is now a proper test matrix behind the name rules — 60+ positive person cases, 40+ positive organization cases, and 60+ cases that must never match — plus a fifth public stress file covering PowerShell, JSON, CSV, logs, and prose.
+- The Scan screen now gives a visible reminder that built-in rules can miss context-specific details and links directly to Cloak Lists.
+- The Profile Editor can create a Cloak List or Custom Pack without throwing away the profile draft.
+- Name and organization detection covers structured fields, CSV columns, headers, signatures, common prose cues, copyright lines, and strong organization suffixes.
+- Name and organization findings stay low-confidence by design. A universal name dictionary would still miss people while falsely matching ordinary words, so Cloak Lists handle exact names and company terms that matter to the user.
+- Command syntax, JSON structure, CSV formatting, and common PowerShell regex patterns have regression coverage so broader detection does not casually break code.
 
-This is still a detection helper, not a guarantee or compliance product. Scan history, arbitrary user regex, automatic updates, and code signing are deliberately not included yet.
+CloakGuard is still a detection helper, not a guarantee or compliance product. Always review the cleaned text before sharing it.
 
 ## Contributing
 

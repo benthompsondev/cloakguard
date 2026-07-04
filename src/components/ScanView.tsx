@@ -120,6 +120,21 @@ export function ScanView({
         </button>
       </div>
 
+      <aside className="scan-guidance" role="note" aria-label="Detection reminder">
+        <span className="scan-guidance-icon" aria-hidden="true">
+          !
+        </span>
+        <span>
+          <strong>Built-in rules can miss names, organizations, and details unique to your work.</strong>{' '}
+          Review the cleaned text before sharing. Use <strong>Hide custom terms</strong> for this
+          session, or{' '}
+          <a href="#/settings/profiles">
+            Open Cloak Lists
+          </a>{' '}
+          for repeatable exact matches.
+        </span>
+      </aside>
+
       <div className="columns">
         <SourcePanel
           value={session.sourceText}
