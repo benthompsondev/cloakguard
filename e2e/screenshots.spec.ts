@@ -31,6 +31,11 @@ for (const shot of SHOTS) {
       await page
         .getByRole('switch', { name: 'Enable pack Canada Pack in the active profile' })
         .check();
+      await page.getByLabel('New profile name').fill('Sharing profile');
+      await page.getByRole('button', { name: 'Create profile from current configuration' }).click();
+      await expect(page.getByText('Profile "Sharing profile" created.')).toBeHidden({
+        timeout: 5_000,
+      });
       await page.getByRole('button', { name: 'Details' }).first().click();
     }
     mkdirSync('docs/screenshots', { recursive: true });

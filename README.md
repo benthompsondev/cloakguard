@@ -34,7 +34,7 @@ Both scripts check that a supported Node.js is installed: **Node 20.19+ or 22.12
 
 **To stop the app:** press `Ctrl+C` in the terminal window where it is running.
 
-**Windows desktop app** - CloakGuard ships as one setup executable: `CloakGuard-Setup-0.6.5-x64.exe`. It bundles the WebView2 runtime installer so installation works offline. The setup EXE is the only artifact most users need. Developers can build it with `npm run desktop:build`; details are in [docs/desktop.md](docs/desktop.md).
+**Windows desktop app** - CloakGuard ships as one setup executable: `CloakGuard-Setup-0.6.7-x64.exe`. It bundles the WebView2 runtime installer so installation works offline. The setup EXE is the only artifact most users need. Developers can build it with `npm run desktop:build`; details are in [docs/desktop.md](docs/desktop.md).
 
 **Developer setup** (`npm run dev` is the development path, with hot reload and no CSP):
 
@@ -59,7 +59,7 @@ npm run verify    # audit + lint + unit tests + build + e2e, all in one
 The **Settings** view (in-app navigation, no page reloads) controls detection without touching any code:
 
 - **General** - Choose Balanced or Strict detection and control the opt-in preference storage.
-- **Profiles & Packs** - Combine country packs, rule overrides, Cloak Lists, custom labeled-field rules, and a redaction format in reusable profiles.
+- **Profiles & Packs** - Build reusable profiles from country packs, Cloak Lists, custom labeled-field rules, and a redaction format. Each saved profile has an **Edit rules** action, so its detector choices can be changed without rebuilding it.
 - **Detection Rules** - Search the detector registry, review false-positive guidance, and enable or disable individual rules.
 - **Redaction Formats** - Use indexed labels (`[EMAIL_1]`), unnumbered labels (`[EMAIL]`), a uniform `[REDACTED]` value, or a safe template using `{TYPE}` and `{INDEX}`.
 - **Privacy** - Review storage status and clear saved preferences.
@@ -88,13 +88,15 @@ Run `npm run check`. Lint, unit tests, typecheck, and build should all pass. `np
 
 ## Project status
 
-v0.6.5 is the first public Windows release. It includes the offline installer, 34 detection rules, country packs, named profiles, reusable Cloak Lists, custom labeled-field rules, configurable redaction formats, and opt-in preference storage.
+v0.6.7 keeps the detection hardening from v0.6.6 and makes saved profiles easier to change. Each named profile now opens directly in Detection Rules, clearly shows which profile is being edited, and keeps its rule choices separate from the built-in presets.
 
 This is still a detection helper, not a guarantee or compliance product. Scan history, arbitrary user regex, automatic updates, and code signing are deliberately not included yet.
 
 ## Contributing
 
 Issues and pull requests are welcome. Use synthetic examples only and read [CONTRIBUTING.md](CONTRIBUTING.md) before sharing a detector sample.
+
+Four synthetic files under [examples/stress-tests](examples/stress-tests) are available for longer manual checks covering PowerShell, support logs, mixed configuration, and custom organization terms.
 
 ## License
 

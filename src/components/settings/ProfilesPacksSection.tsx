@@ -120,6 +120,14 @@ export function ProfilesPacksSection(props: SettingsProps) {
                   </span>
                 ) : named ? (
                   <span className="profile-row-actions">
+                    <a
+                      className="btn btn-mini"
+                      href="#/settings/rules"
+                      aria-label={`Edit detection rules for ${p.name}`}
+                      onClick={() => props.onSelectProfile(p.id)}
+                    >
+                      Edit rules
+                    </a>
                     <button
                       type="button"
                       className="btn btn-mini"
@@ -183,8 +191,9 @@ export function ProfilesPacksSection(props: SettingsProps) {
         </div>
         <p className="muted">
           A profile combines a Core mode (Balanced or Strict), selected packs, rule overrides, and
-          a redaction format. Built-in presets are read-only — changing anything while one is
-          active creates an unsaved configuration.{' '}
+          a redaction format. Use <strong>Edit rules</strong> on a named profile to choose exactly
+          what it detects. Built-in presets are read-only — changing anything while one is active
+          creates an unsaved configuration.{' '}
           {Object.keys(activeConfig.overrides).length > 0 && (
             <button type="button" className="btn btn-mini" onClick={props.onResetOverrides}>
               Reset {Object.keys(activeConfig.overrides).length} rule override

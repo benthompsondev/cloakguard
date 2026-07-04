@@ -28,7 +28,12 @@ for (const d of detectors) {
   CONFIDENCE_SHORT[d.id] = RULE_INFO[d.id]?.confidence.split(' ')[0].replace(/[^A-Za-z]/g, '') ?? '';
 }
 
-export function RulesSection({ resolvedStates, activeConfig, onToggleRule }: SettingsProps) {
+export function RulesSection({
+  workspace,
+  resolvedStates,
+  activeConfig,
+  onToggleRule,
+}: SettingsProps) {
   const [filter, setFilter] = useState<'all' | Category>('all');
   const [query, setQuery] = useState('');
   const [enabledOnly, setEnabledOnly] = useState(false);
@@ -45,6 +50,7 @@ export function RulesSection({ resolvedStates, activeConfig, onToggleRule }: Set
   );
   const selected = detectors.find((d) => d.id === selectedId) ?? null;
   const countFor = (category: Category) => detectors.filter((d) => d.category === category).length;
+  const isNamedProfile = !activeConfig.builtIn && activeConfig.id !== 'unsaved';
 
   return (
     <section className="panel settings-panel" aria-label="Detection rules">
@@ -65,6 +71,29 @@ export function RulesSection({ resolvedStates, activeConfig, onToggleRule }: Set
           onChange={(e) => setQuery(e.target.value)}
           spellCheck={false}
         />
+      </div>
+      <div className={`profile-edit-context ${isNamedProfile ? 'is-named' : ''}`}>
+        <div>
+          <strong>
+            {isNamedProfile
+              ? `Editing profile: ${activeConfig.name}`
+              : activeConfig.builtIn
+                ? `Built-in profile: ${activeConfig.name}`
+                : 'Editing unsaved configuration'}
+          </strong>
+          <span className="muted">
+            {isNamedProfile
+              ? workspace.remember
+                ? 'Rule changes are saved to this profile on this device automatically.'
+                : 'Rule changes stay with this profile for this session. Turn on Remember preferences to keep them after closing.'
+              : activeConfig.builtIn
+                ? 'Changing a rule creates an unsaved configuration so this preset stays unchanged.'
+                : 'Create a named profile in Profiles & Packs if you want to keep this configuration.'}
+          </span>
+        </div>
+        <a className="btn btn-mini" href="#/settings/profiles">
+          {isNamedProfile ? 'Done editing' : 'Profiles & Packs'}
+        </a>
       </div>
       <div className="filters" role="group" aria-label="Filter rules">
         {CATEGORY_FILTERS.map((c) => (
