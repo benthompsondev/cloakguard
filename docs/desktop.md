@@ -1,15 +1,17 @@
 # CloakGuard for Windows (desktop)
 
 CloakGuard ships to Windows users as **one setup executable**:
-`release/windows/CloakGuard-Setup-0.7.3-x64.exe`. Download it, run it, and
+`release/windows/CloakGuard-Setup-0.9.0-x64.exe`. Download it, run it, and
 launch CloakGuard from the Start Menu. No Node, npm, Rust, source folders,
 manual dependencies, or internet access are needed — the installer even
 bundles the WebView2 runtime installer, so installation itself works offline
 ("offline" meaning exactly that the installer downloads nothing).
 
-It is the same fully client-side app as the web build, loaded from files
-bundled inside the executable — no localhost server, no external browser
-window, no remote assets, and no remote application requests.
+It is the same client-side scanner as the web build, loaded from files
+bundled inside the executable. There is no localhost server, external
+browser window, remote asset, backend, upload, or telemetry. The only
+application network feature is the user-triggered update check described
+below.
 
 ## For users
 
@@ -55,20 +57,19 @@ cargo-audit is not installed on this machine.
 
 ## What the desktop shell is (and is not)
 
-- The Rust side is near-empty on purpose. Exactly **one** app command
+- The Rust side is small on purpose. Exactly **one app-specific command**
   exists: `export_clean_text`, which opens a native save dialog and writes
   the sanitized text to the path the user picked. It exists because WebView2
   silently ignores the browser blob-download the web build uses. The app
   cannot read any file and cannot write anywhere the user did not explicitly
   choose in that dialog.
-- The IPC surface is locked twice: the build-time command ACL
+- The app-command surface is locked twice: the build-time command ACL
   (`build.rs`) rejects every command except `export_clean_text`, and the
-  window capability grants only `allow-export-clean-text` — no core
-  defaults and no dialog, filesystem, shell, HTTP, clipboard, menu, tray,
-  event, image, window, or devtools permissions. `withGlobalTauri` is off;
-  the frontend talks to the shell only through `@tauri-apps/api/core`'s
-  `invoke`. A unit test (`src/lib/desktopConfig.test.ts`) fails if any of
-  this loosens.
+  window capability grants `allow-export-clean-text`, the updater's signed
+  check/download/install commands, and process restart. There are still no
+  core defaults or dialog, filesystem, shell, HTTP, clipboard, menu, tray,
+  event, image, window, or devtools permissions. `withGlobalTauri` is off.
+  A unit test (`src/lib/desktopConfig.test.ts`) fails if this surface widens.
 - Production loads the bundled Vite `dist` assets directly from the binary
   via `http://tauri.localhost` — nothing listens on a TCP port and no
   external browser window is opened.
@@ -76,9 +77,15 @@ cargo-audit is not installed on this machine.
   unchanged inside the bundled `index.html`; Tauri is configured not to
   replace it.
 - Release builds have devtools disabled (the `devtools` cargo feature is not
-  enabled) and contain no updater, telemetry, analytics, HTTP, or WebSocket
-  code.
-- **CloakGuard vs. WebView2:** CloakGuard itself makes no remote requests.
+  enabled) and contain no telemetry, analytics, general HTTP, or WebSocket
+  permission.
+- **Updates:** the About page offers a manual **Check for updates** action.
+  Nothing runs at launch or in the background. The Tauri updater plugin
+  contacts the latest GitHub release, verifies the downloaded package with
+  the bundled public key, and installs it only after another user click. The
+  webview CSP remains `connect-src 'none'`.
+- **CloakGuard vs. WebView2:** outside that click-only update flow, CloakGuard
+  makes no remote application requests.
   The embedded WebView2 runtime is Microsoft's platform component: it keeps
   its own engine cache/profile under
   `%LOCALAPPDATA%\dev.benthompson.cloakguard\EBWebView` and may
@@ -87,7 +94,8 @@ cargo-audit is not installed on this machine.
   --disable-domain-reliability --no-pings` on top of the SmartScreen-off
   defaults, and never hands it content to send — but no claim is made that
   the entire process tree can never produce any network traffic. The app is
-  fully functional with networking unavailable.
+  fully functional with networking unavailable except, naturally, checking
+  for an update.
 
 ## Installer configuration (NSIS)
 

@@ -2,6 +2,26 @@
 
 This file tracks the public CloakGuard releases. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.9.0] - 2026-07-05
+
+### Added
+
+- Added a user-triggered update check to the Windows app. It checks GitHub only after the user clicks the button.
+- Added signed update packages so CloakGuard can reject an installer with the wrong updater signature.
+- Added a new shield icon, matching app icons and favicon, and a two-tone CloakGuard wordmark.
+- Added a fuller About page with clear privacy notes, project links, and desktop update status.
+
+### Changed
+
+- Kept the scanner webview at `connect-src 'none'`; update traffic runs through Tauri's Rust plugin.
+- Reworded the privacy docs to separate click-only GitHub update traffic from scanning, which remains local and upload-free.
+
+### Safety
+
+- There are no launch checks, background polling, analytics, or telemetry.
+- Version 0.9.0 must be installed manually. Automatic updates apply to releases after 0.9.0.
+- The updater package is signed for Tauri verification, but the Windows installer itself is still unsigned and may trigger SmartScreen.
+
 ## [0.8.0] - 2026-07-04
 
 ### Added
@@ -74,6 +94,7 @@ This file tracks the public CloakGuard releases. The format follows [Keep a Chan
 - Kept scanning local with no backend, account, or telemetry.
 - Documented the unsigned-installer warning and the need to review cleaned text before sharing.
 
+[0.9.0]: https://github.com/benthompsondev/cloakguard/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/benthompsondev/cloakguard/compare/v0.7.3...v0.8.0
 [0.7.3]: https://github.com/benthompsondev/cloakguard/compare/v0.7.2...v0.7.3
 [0.7.2]: https://github.com/benthompsondev/cloakguard/compare/v0.7.1...v0.7.2

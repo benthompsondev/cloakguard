@@ -36,11 +36,19 @@ Source text, filenames, findings, cleaned output, and session-only terms stay in
 
 Preference storage is off by default. If the user enables it, CloakGuard writes one narrow `localStorage` key containing allowlisted configuration. It never stores scan content, findings, or output. There is no scan history by design because cleaned text can still contain something a rule missed.
 
-The production build has a strict Content Security Policy. Outbound browser connection APIs are blocked, and the app has no analytics, telemetry, or backend.
+The production build has a strict Content Security Policy. Outbound browser connection APIs are blocked, and the app has no analytics, telemetry, or backend. The browser demo never exposes the desktop updater.
 
 ## Desktop boundary
 
-The Windows app uses a Tauri 2 shell around the same client-side interface. Its only Rust command is `export_clean_text`, which writes a user-approved export through a build-time access rule. Scanning and redaction still happen in the React app.
+The Windows app uses a Tauri 2 shell around the same client-side interface. Its only app-specific Rust command is `export_clean_text`, which writes a user-approved export through a build-time access rule. Scanning and redaction still happen in the React app.
+
+## Updates
+
+The Windows app can check GitHub for a newer release, but only after the user clicks **Check for updates**. There is no launch check, timer, background polling, or telemetry.
+
+The updater runs through Tauri's Rust plugin. The webview asks the plugin to check, download, and install a signed package; it does not make the network request itself. The production CSP stays unchanged at `connect-src 'none'`, and browser builds do not show update controls.
+
+Each update artifact is signed with CloakGuard's updater key. The public key ships with the app so Tauri can reject a package with the wrong signature. This verifies the update package, but it is separate from Windows code signing: the installer is still unsigned and may show a SmartScreen warning.
 
 ## Why there is no universal name or company dictionary
 

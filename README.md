@@ -6,7 +6,7 @@
 [![Latest release](https://img.shields.io/github/v/release/benthompsondev/cloakguard)](https://github.com/benthompsondev/cloakguard/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-CloakGuard is a local-first Windows app for cleaning code, logs, prompts, support tickets, and draft posts before sharing them. Everything runs on your device. There is no account, backend, telemetry, or upload.
+CloakGuard is a local-first Windows app for cleaning code, logs, prompts, support tickets, and draft posts before sharing them. Scanning runs on your device. There is no account, backend, telemetry, or upload.
 
 I built it because manually checking every script and log for hostnames, usernames, paths, tokens, and organization-specific details is slow and easy to get wrong. The workflow is deliberately simple: paste text, scan it locally, review every replacement, and copy the cleaned version.
 
@@ -85,7 +85,7 @@ Run `npm run check`. Lint, unit tests, typecheck, and build should all pass. `np
 
 ## Privacy model
 
-- All scanning happens locally. CloakGuard makes no remote application requests, telemetry, or analytics calls. The production launcher binds to `127.0.0.1`.
+- All scanning happens locally. Content is never uploaded, and CloakGuard has no telemetry or analytics. The desktop app contacts GitHub only when you click **Check for updates**. Browser and Pages builds do not show that control. The production launcher binds to `127.0.0.1`.
 - Content is never persisted. Refresh or **Clear session** wipes source text, findings, output, and session-only custom terms. The only optional storage is the narrow preference configuration described above.
 - Imported files are read with the browser File API and never uploaded. Downloads are generated in memory.
 - Detected values are masked in the UI and never logged. The production build also has a strict Content Security Policy that blocks outbound browser connection APIs.
@@ -93,12 +93,12 @@ Run `npm run check`. Lint, unit tests, typecheck, and build should all pass. `np
 
 ## Project status
 
-Current release: **v0.8.0**
+Current release: **v0.9.0**
 
-- The live browser demo runs the scanner without sending text to a server.
-- The Scan screen suggests possible names and terms that need a manual look. Suggestions never redact anything on their own.
-- One click can hide a suggestion for the current session, while Cloak Lists handle exact terms needed again later.
-- Name and organization checks remain contextual and low-confidence. There is no universal name dictionary.
+- The Windows app can check GitHub for signed updates when the user asks it to. It never checks in the background.
+- The live browser demo still runs with no outbound application requests.
+- The About page now puts the privacy boundary, project links, version, and update controls in one place.
+- The new shield, app icon, and two-tone wordmark use the same small brand kit.
 
 CloakGuard is still a detection helper, not a guarantee or compliance product. Always review the cleaned text before sharing it.
 

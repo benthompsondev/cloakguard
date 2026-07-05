@@ -33,9 +33,10 @@ One scan screen: paste or import text â†’ optionally add custom terms to hide â†
 ## Scope Boundaries
 
 - In scope: the desktop scan screen, Settings (profiles & packs with a draft-based Profile Editor, Cloak Lists, rule controls, redaction formats, privacy), Privacy/About page, hash navigation, file import/download, session-only custom terms to hide, 34 registered detectors (23 Balanced + 7 Strict-only + 4 pack-only regional), built-in country packs, custom packs with labeled-field rules, opt-in preference storage, production launchers, unit/e2e tests, CI, and docs.
-- In scope since v0.6.1: a Windows-only Tauri 2 desktop shell (`src-tauri/`, see `docs/desktop.md`) that bundles the same static frontend with one save-dialog command and one matching capability, nothing else.
+- In scope since v0.6.1: a Windows-only Tauri 2 desktop shell (`src-tauri/`, see `docs/desktop.md`) that bundles the same static frontend with one save-dialog command.
 - In scope for v0.6.5: public source repository, Windows setup release, checksum, and the `CloakGuard Project` installer publisher label.
-- Out of scope (be ruthless): scan history (privacy decision; see SECURITY.md), user-editable regex rules, rule import/export, mobile-specific UI, dark/light toggle, PWA packaging, macOS/Linux desktop builds, code signing, auto-update, backend anything, browser extension, i18n.
+- In scope for v0.9.0: a user-triggered signed updater that contacts GitHub through Tauri's Rust plugin while the scanning webview keeps `connect-src 'none'`.
+- Out of scope (be ruthless): scan history (privacy decision; see SECURITY.md), user-editable regex rules, rule import/export, mobile-specific UI, dark/light toggle, PWA packaging, macOS/Linux desktop builds, Windows code signing, background update checks, backend anything, browser extension, i18n.
 - Ask Ben first before: publishing to GitHub, adding dependencies, persisting anything beyond the allowlisted preferences key.
 
 ## Verification Plan
@@ -103,3 +104,4 @@ One scan screen: paste or import text â†’ optionally add custom terms to hide â†
 | 2026-07-04 | v0.7.2: put the detector-limit reminder on the Scan screen and allow Cloak List/Custom Pack creation inside the Profile Editor while preserving its draft | The warning belongs where users scan, and profile setup should not require abandoning unsaved edits |
 | 2026-07-04 | v0.7.3: shorten the Scan reminder and make it dismissible for the current session only | Keep the warning visible for first use without permanently taking space from the scan workflow |
 | 2026-07-04 | v0.8.0: suggest likely names and terms after a scan, but never turn suggestions into findings or replacements until the user chooses one | Context-free names and company terms need human review; suggestions make misses easier to notice without adding a risky dictionary or automatic redaction |
+| 2026-07-05 | v0.9.0: add a signed, click-only desktop updater through Tauri while keeping the webview CSP at `connect-src 'none'` | Make updates easier without turning scanning into a connected service or adding background traffic |
