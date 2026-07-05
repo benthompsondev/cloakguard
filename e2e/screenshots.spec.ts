@@ -69,7 +69,10 @@ test('capture custom terms dialog', async ({ page }) => {
     .fill('Contoso General\ncontoso.org\nSRV-APP01\ncontoso.org');
   await expect(page.getByText('3 valid terms')).toBeVisible();
   mkdirSync('docs/screenshots', { recursive: true });
-  await page.screenshot({ path: 'docs/screenshots/quick-cloak-1440x900.png', fullPage: true });
+  await page.screenshot({
+    path: 'docs/screenshots/hide-custom-terms-1440x900.png',
+    fullPage: true,
+  });
 });
 
 test('capture cloak list editor', async ({ page }) => {

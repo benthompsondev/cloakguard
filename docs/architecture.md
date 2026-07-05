@@ -21,12 +21,12 @@ flowchart LR
 
 Settings are applied in a predictable order:
 
-1. Core mode: Balanced or Strict
+1. Built-in profile: Balanced, Strict, Maximum, or Code & secrets
 2. Country packs
 3. Custom packs
 4. Per-rule overrides
 5. Custom labeled-field rules
-6. Cloak Lists and session-only terms from **Hide custom terms**
+6. Cloak Lists and session-only terms from **Hide custom terms**, including their optional term-only format
 
 Later layers add or override the earlier configuration. They do not replace the scan engine.
 

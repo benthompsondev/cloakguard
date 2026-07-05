@@ -1,0 +1,58 @@
+name: Bug report
+description: Tell me what went wrong and how to reproduce it.
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting this. Use synthetic data only. Do not paste real secrets, work logs, names, domains, paths, or other private information.
+  - type: dropdown
+    id: build
+    attributes:
+      label: Where did this happen?
+      options:
+        - Windows app
+        - Live browser demo
+        - Local source build
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: CloakGuard version
+      placeholder: "For example: 1.0.0"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Use a small synthetic example that shows the problem.
+      placeholder: |
+        1. Select the Strict profile
+        2. Paste: Owner: Alex Demo
+        3. Click Scan locally
+        4. Expected [NAME_1], but...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I used synthetic data only and removed private or workplace information.
+          required: true

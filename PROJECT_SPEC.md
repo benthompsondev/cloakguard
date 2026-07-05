@@ -26,13 +26,13 @@ One scan screen: paste or import text â†’ optionally add custom terms to hide â†
 - [x] Import UTF-8/UTF-16 text and PowerShell files; download cleaned output
 - [x] Session-only custom terms to hide are cleared on refresh or Clear session
 - [x] Repeated identical values share one placeholder; overlaps resolve to the more specific finding
-- [x] Thirty-four registered detectors cover common secrets, identity, path, network, directory, PowerShell, and (pack-only) regional PII shapes
+- [x] Forty registered detectors cover common secrets, identity, path, network, directory, PowerShell, and (pack-only) regional PII shapes
 - [x] README explains what/why/run/verify
 - [x] `npm run verify` (audit + lint + unit tests + build + desktop e2e) passes
 
 ## Scope Boundaries
 
-- In scope: the desktop scan screen, Settings (profiles & packs with a draft-based Profile Editor, Cloak Lists, rule controls, redaction formats, privacy), Privacy/About page, hash navigation, file import/download, session-only custom terms to hide, 34 registered detectors (23 Balanced + 7 Strict-only + 4 pack-only regional), built-in country packs, custom packs with labeled-field rules, opt-in preference storage, production launchers, unit/e2e tests, CI, and docs.
+- In scope: the desktop scan screen, Settings (profiles & packs with a draft-based Profile Editor, Cloak Lists, rule controls, redaction formats, privacy), Privacy/About page, hash navigation, file import/download, session-only custom terms to hide, 40 registered detectors, four built-in profiles, built-in country packs, custom packs with labeled-field rules, opt-in preference storage, production launchers, unit/e2e tests, CI, and docs.
 - In scope since v0.6.1: a Windows-only Tauri 2 desktop shell (`src-tauri/`, see `docs/desktop.md`) that bundles the same static frontend with one save-dialog command.
 - In scope for v0.6.5: public source repository, Windows setup release, checksum, and the `CloakGuard Project` installer publisher label.
 - In scope for v0.9.0: a user-triggered signed updater that contacts GitHub through Tauri's Rust plugin while the scanning webview keeps `connect-src 'none'`.
@@ -105,3 +105,4 @@ One scan screen: paste or import text â†’ optionally add custom terms to hide â†
 | 2026-07-04 | v0.7.3: shorten the Scan reminder and make it dismissible for the current session only | Keep the warning visible for first use without permanently taking space from the scan workflow |
 | 2026-07-04 | v0.8.0: suggest likely names and terms after a scan, but never turn suggestions into findings or replacements until the user chooses one | Context-free names and company terms need human review; suggestions make misses easier to notice without adding a risky dictionary or automatic redaction |
 | 2026-07-05 | v0.9.0: add a signed, click-only desktop updater through Tauri while keeping the webview CSP at `connect-src 'none'` | Make updates easier without turning scanning into a connected service or adding background traffic |
+| 2026-07-05 | v1.0.0: 40 focused rules, four built-in profiles, detector-specific Cloak List formats, public contribution templates, and refreshed visuals | Ship a practical first public release without widening the app's storage, network, or desktop trust boundary |

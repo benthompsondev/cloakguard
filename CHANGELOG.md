@@ -2,6 +2,29 @@
 
 This file tracks the public CloakGuard releases. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.0] - 2026-07-05
+
+### Added
+
+- Added Maximum and Code & secrets built-in profiles.
+- Added fixed-prefix checks for common provider tokens, Slack webhooks, Azure account keys, and Basic authorization headers.
+- Added MAC address detection plus checksummed or explicitly labeled ABA, ITIN, EIN, DEA, and passport fields.
+- Added per-session and per-Cloak-List placeholder labels and formats. The default stays `[CUSTOM_TERM_n]`.
+- Added GitHub issue and pull request templates with synthetic-data reminders, plus a project code of conduct.
+
+### Changed
+
+- Stopped treating four-part software versions, longer dotted runs, loopback, unspecified, and broadcast IPv4 values as sensitive addresses.
+- Added email-local-part evidence and a few clear byline cues to Strict person-name detection without adding a name dictionary.
+- Refreshed the screenshots and public documentation for the first public release.
+
+### Safety
+
+- New personal-data rules require a checksum, an explicit label, or both.
+- Preference storage remains v2. New Cloak List format fields are optional, capped, sanitized, and backward-compatible.
+- Scanning, storage, CSP, desktop permissions, and click-only updater behavior are unchanged.
+- The updater package is signed for Tauri verification. The Windows installer itself is still unsigned and may trigger SmartScreen.
+
 ## [0.9.0] - 2026-07-05
 
 ### Added
@@ -94,6 +117,7 @@ This file tracks the public CloakGuard releases. The format follows [Keep a Chan
 - Kept scanning local with no backend, account, or telemetry.
 - Documented the unsigned-installer warning and the need to review cleaned text before sharing.
 
+[1.0.0]: https://github.com/benthompsondev/cloakguard/compare/v0.9.0...v1.0.0
 [0.9.0]: https://github.com/benthompsondev/cloakguard/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/benthompsondev/cloakguard/compare/v0.7.3...v0.8.0
 [0.7.3]: https://github.com/benthompsondev/cloakguard/compare/v0.7.2...v0.7.3

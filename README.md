@@ -10,7 +10,7 @@ CloakGuard is a local-first Windows app for cleaning code, logs, prompts, suppor
 
 I built it because manually checking every script and log for hostnames, usernames, paths, tokens, and organization-specific details is slow and easy to get wrong. The workflow is deliberately simple: paste text, scan it locally, review every replacement, and copy the cleaned version.
 
-![CloakGuard demo showing a local scan and review](docs/media/cloakguard-demo.gif)
+![CloakGuard showing a local scan and review](docs/screenshots/scan-desktop-1440x900.png)
 
 ## Download for Windows
 
@@ -51,8 +51,8 @@ npm run verify    # audit + lint + unit tests + build + e2e, all in one
 ## What it does
 
 1. Paste text, import a text/log/code/config file (read in memory, max 2 MB; UTF-8 and UTF-16 PowerShell files both decode correctly), or load a built-in synthetic sample: **Load sample** for an IT/admin log or **PII sample** for personal data.
-2. Click **Scan locally**. CloakGuard has 34 focused detectors covering common secrets, credentials, network details, file paths, cloud identifiers, personal data, and regional formats. Balanced handles the common cases. Strict adds labeled personal information. Country packs add validated Canadian, US, and EU formats. See [Detector behavior and safety](docs/detectors.md) for the full list and known limits.
-3. Use **Hide custom terms** for exact names, domains, hostnames, project names, or other values the built-in rules cannot know. These terms last for the current session only. For reusable terms, create a **Cloak List** under Settings > Profiles & Packs.
+2. Click **Scan locally**. CloakGuard has 40 focused detectors covering common secrets, credentials, network details, file paths, cloud identifiers, personal data, and regional formats. Balanced handles everyday scans. Strict adds contextual personal information. Maximum adds every country pack. Code & secrets leaves prose PII off. See [Detector behavior and safety](docs/detectors.md) for the full list and known limits.
+3. Use **Hide custom terms** for exact names, domains, hostnames, project names, or other values the built-in rules cannot know. These terms last for the current session only. You can give them their own placeholder label and format. For reusable terms, create a **Cloak List** under Settings > Profiles & Packs.
 4. Review **Possible names & terms to review**. These are guesses only. Nothing is hidden until you choose **Hide this session** or add the term to a reusable Cloak List.
 5. Review the findings. Each one shows its category, severity, a masked preview, and the replacement placeholder. Toggle off anything you want to keep.
 6. Copy the cleaned output or download it as a `.txt` file. Formatting is preserved, and repeated values reuse the same placeholder.
@@ -93,12 +93,12 @@ Run `npm run check`. Lint, unit tests, typecheck, and build should all pass. `np
 
 ## Project status
 
-Current release: **v0.9.0**
+Current release: **v1.0.0**
 
-- The Windows app can check GitHub for signed updates when the user asks it to. It never checks in the background.
-- The live browser demo still runs with no outbound application requests.
-- The About page now puts the privacy boundary, project links, version, and update controls in one place.
-- The new shield, app icon, and two-tone wordmark use the same small brand kit.
+- The Windows app is ready for public use and can check GitHub for signed updates when the user asks it to. It never checks in the background.
+- Forty focused rules now cover more fixed-prefix secrets, structured identifiers, and network details.
+- Balanced, Strict, Maximum, and Code & secrets give people useful starting points without hiding individual rule controls.
+- Session terms and Cloak Lists can use their own safe placeholder label and format.
 
 CloakGuard is still a detection helper, not a guarantee or compliance product. Always review the cleaned text before sharing it.
 
@@ -106,7 +106,7 @@ CloakGuard is still a detection helper, not a guarantee or compliance product. A
 
 Issues and pull requests are welcome. Use synthetic examples only and read [CONTRIBUTING.md](CONTRIBUTING.md) before sharing a detector sample.
 
-Five synthetic files under [examples/stress-tests](examples/stress-tests) are available for longer manual checks covering PowerShell, support logs, mixed configuration, custom organization terms, and name/organization detection.
+Six synthetic files under [examples/stress-tests](examples/stress-tests) are available for longer manual checks covering PowerShell, support logs, mixed configuration, custom organization terms, name/organization detection, and provider token shapes.
 
 ## License
 
