@@ -53,8 +53,15 @@ npm run verify    # audit + lint + unit tests + build + e2e, all in one
 1. Paste text, import a text/log/code/config file (read in memory, max 2 MB; UTF-8 and UTF-16 PowerShell files both decode correctly), or load a built-in synthetic sample: **Load sample** for an IT/admin log or **PII sample** for personal data.
 2. Click **Scan locally**. CloakGuard has 34 focused detectors covering common secrets, credentials, network details, file paths, cloud identifiers, personal data, and regional formats. Balanced handles the common cases. Strict adds labeled personal information. Country packs add validated Canadian, US, and EU formats. See [Detector behavior and safety](docs/detectors.md) for the full list and known limits.
 3. Use **Hide custom terms** for exact names, domains, hostnames, project names, or other values the built-in rules cannot know. These terms last for the current session only. For reusable terms, create a **Cloak List** under Settings > Profiles & Packs.
-4. Review the findings. Each one shows its category, severity, a masked preview, and the replacement placeholder. Toggle off anything you want to keep.
-5. Copy the cleaned output or download it as a `.txt` file. Formatting is preserved, and repeated values reuse the same placeholder.
+4. Review **Possible names & terms to review**. These are guesses only. Nothing is hidden until you choose **Hide this session** or add the term to a reusable Cloak List.
+5. Review the findings. Each one shows its category, severity, a masked preview, and the replacement placeholder. Toggle off anything you want to keep.
+6. Copy the cleaned output or download it as a `.txt` file. Formatting is preserved, and repeated values reuse the same placeholder.
+
+## How it works
+
+CloakGuard protects code-shaped input, runs the rules you enabled, resolves overlapping findings predictably, and builds the cleaned result without reformatting the surrounding text. See [the architecture and privacy notes](docs/architecture.md) for the scan flow, configuration order, storage boundary, and desktop shell.
+
+Release notes are kept in the [changelog](CHANGELOG.md).
 
 ## Settings
 
@@ -86,13 +93,12 @@ Run `npm run check`. Lint, unit tests, typecheck, and build should all pass. `np
 
 ## Project status
 
-Current release: **v0.7.3**
+Current release: **v0.8.0**
 
-- The Scan screen now gives a visible reminder that built-in rules can miss context-specific details and links directly to Cloak Lists.
-- The Profile Editor can create a Cloak List or Custom Pack without throwing away the profile draft.
-- Name and organization detection covers structured fields, CSV columns, headers, signatures, common prose cues, copyright lines, and strong organization suffixes.
-- Name and organization findings stay low-confidence by design. A universal name dictionary would still miss people while falsely matching ordinary words, so Cloak Lists handle exact names and company terms that matter to the user.
-- Command syntax, JSON structure, CSV formatting, and common PowerShell regex patterns have regression coverage so broader detection does not casually break code.
+- The live browser demo runs the scanner without sending text to a server.
+- The Scan screen suggests possible names and terms that need a manual look. Suggestions never redact anything on their own.
+- One click can hide a suggestion for the current session, while Cloak Lists handle exact terms needed again later.
+- Name and organization checks remain contextual and low-confidence. There is no universal name dictionary.
 
 CloakGuard is still a detection helper, not a guarantee or compliance product. Always review the cleaned text before sharing it.
 
