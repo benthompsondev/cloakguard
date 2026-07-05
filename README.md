@@ -1,5 +1,7 @@
 # CloakGuard
 
+[▶ Try the live demo](https://benthompsondev.github.io/cloakguard/) — runs entirely in your browser, nothing is uploaded. Or [download the Windows app](https://github.com/benthompsondev/cloakguard/releases/latest) for offline use.
+
 [![CI](https://github.com/benthompsondev/cloakguard/actions/workflows/ci.yml/badge.svg)](https://github.com/benthompsondev/cloakguard/actions/workflows/ci.yml)
 [![Latest release](https://img.shields.io/github/v/release/benthompsondev/cloakguard)](https://github.com/benthompsondev/cloakguard/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -8,7 +10,7 @@ CloakGuard is a local-first Windows app for cleaning code, logs, prompts, suppor
 
 I built it because manually checking every script and log for hostnames, usernames, paths, tokens, and organization-specific details is slow and easy to get wrong. The workflow is deliberately simple: paste text, scan it locally, review every replacement, and copy the cleaned version.
 
-![CloakGuard scan screen](docs/screenshots/scan-desktop-1440x900.png)
+![CloakGuard demo showing a local scan and review](docs/media/cloakguard-demo.gif)
 
 ## Download for Windows
 

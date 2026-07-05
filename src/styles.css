@@ -63,6 +63,23 @@ body {
   flex-direction: column;
 }
 
+/* ---------- hosted demo notice ---------- */
+
+.demo-banner {
+  padding: 7px 20px;
+  border-bottom: 1px solid #2f5a48;
+  background: #10271f;
+  color: #cce9dc;
+  font-size: 13px;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.demo-banner a {
+  color: var(--accent);
+  font-weight: 700;
+}
+
 /* ---------- header ---------- */
 
 .header {

@@ -1,0 +1,49 @@
+# How CloakGuard works
+
+CloakGuard is intentionally small. Text goes in, enabled rules inspect it in memory, and cleaned text comes out for review. There is no server in the middle.
+
+## Scan pipeline
+
+The scanner first protects PowerShell regex and code-shaped secret expressions that should stay as code. It then runs only the detectors enabled by the active configuration. When findings overlap, the winner is chosen by priority, confidence, match length, and source position, in that order.
+
+Repeated values receive stable placeholders, so the same email becomes `[EMAIL_1]` everywhere it appears. The final pass copies the original text byte-for-byte between replacements. That keeps indentation, line endings, CSV columns, and surrounding code intact.
+
+```mermaid
+flowchart LR
+    A["Source text"] --> B["Protect PowerShell regex and secret literals"]
+    B --> C["Run enabled detectors"]
+    C --> D["Resolve overlaps<br/>priority → confidence → length → position"]
+    D --> E["Assign stable placeholders"]
+    E --> F["Build cleaned text<br/>preserve everything else byte-for-byte"]
+```
+
+## Configuration order
+
+Settings are applied in a predictable order:
+
+1. Core mode: Balanced or Strict
+2. Country packs
+3. Custom packs
+4. Per-rule overrides
+5. Custom labeled-field rules
+6. Cloak Lists and session-only terms from **Hide custom terms**
+
+Later layers add or override the earlier configuration. They do not replace the scan engine.
+
+## Privacy model
+
+Source text, filenames, findings, cleaned output, and session-only terms stay in memory. Closing or refreshing the app clears them.
+
+Preference storage is off by default. If the user enables it, CloakGuard writes one narrow `localStorage` key containing allowlisted configuration. It never stores scan content, findings, or output. There is no scan history by design because cleaned text can still contain something a rule missed.
+
+The production build has a strict Content Security Policy. Outbound browser connection APIs are blocked, and the app has no analytics, telemetry, or backend.
+
+## Desktop boundary
+
+The Windows app uses a Tauri 2 shell around the same client-side interface. Its only Rust command is `export_clean_text`, which writes a user-approved export through a build-time access rule. Scanning and redaction still happen in the React app.
+
+## Why there is no universal name or company dictionary
+
+Names and organizations are detected from context such as labeled fields, CSV headers, signatures, copyright lines, and common prose cues. A universal dictionary would still miss real names while falsely redacting ordinary words.
+
+For known people, departments, domains, hostnames, or organization terms, use a **Cloak List**. Exact terms are more predictable when the user already knows what must be removed.

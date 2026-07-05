@@ -25,6 +25,7 @@
     "lint": "eslint src",
     "test": "vitest run",
     "build": "tsc -b && vite build",
+    "build:pages": "tsc -b && node scripts/build-pages.mjs",
     "check": "npm run lint && npm run test && npm run build",
     "tauri": "tauri",
     "desktop:dev": "tauri dev",

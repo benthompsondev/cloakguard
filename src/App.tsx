@@ -29,6 +29,7 @@ import {
 import { templateFor, type RedactionChoice } from './lib/redaction';
 import { useHashRoute } from './hooks/useHashRoute';
 import { Header } from './components/Header';
+import { DemoBanner } from './components/DemoBanner';
 import { ScanView } from './components/ScanView';
 import { SettingsView } from './components/settings/SettingsView';
 import { AboutView } from './components/AboutView';
@@ -389,6 +390,7 @@ export default function App() {
 
   return (
     <div className="app">
+      <DemoBanner flag={import.meta.env.VITE_DEMO_BANNER} />
       <Header route={route} />
       <main className="workspace">
         {route.view === 'scan' && (
