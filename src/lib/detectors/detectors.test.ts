@@ -66,9 +66,35 @@ describe('ipv4 detector', () => {
     expect(isValidIpv4('192.168.1.1')).toBe(true);
   });
 
-  it('marks loopback as low confidence', () => {
-    const [m] = ipv4Detector.detect('listening on 127.0.0.1');
-    expect(m.confidence).toBe('low');
+  it('does not mistake four-part versions or longer dotted runs for addresses', () => {
+    const text = [
+      'app v1.2.3.4',
+      'version 2.3.4.5',
+      'ver=3.4.5.6',
+      'rev: 4.5.6.7',
+      'build 5.6.7.8',
+      'release 6.7.8.9',
+      'assembly 7.8.9.10',
+      'FileVersion: 8.9.10.11',
+      'AssemblyVersion = 9.10.11.12',
+      'app_version=10.11.12.13',
+      'long run 1.2.3.4.5',
+    ].join('\n');
+    expect(values(ipv4Detector, text)).toEqual([]);
+  });
+
+  it('ignores non-sensitive special-purpose IPv4 values', () => {
+    expect(
+      values(ipv4Detector, 'loopback 127.0.0.1 127.42.3.9 bind 0.0.0.0 broadcast 255.255.255.255'),
+    ).toEqual([]);
+  });
+
+  it('still flags private and public addresses', () => {
+    expect(values(ipv4Detector, 'hosts 10.20.30.40 192.168.1.1 8.8.8.8')).toEqual([
+      '10.20.30.40',
+      '192.168.1.1',
+      '8.8.8.8',
+    ]);
   });
 });
 
@@ -80,6 +106,29 @@ describe('secret detectors', () => {
     expect(values(apiKeyDetector, 'aws AKIAIOSFODNN7EXAMPLE done')).toEqual([
       'AKIAIOSFODNN7EXAMPLE',
     ]);
+  });
+
+  it('finds fixed-prefix provider tokens and authorization credentials', () => {
+    // Assemble Twilio shapes at runtime so GitHub push protection does not
+    // mistake deliberately fake detector fixtures for live credentials.
+    const twilioAccount = `AC${'0123456789abcdef'.repeat(2)}`;
+    const twilioKey = `SK${'0123456789abcdef'.repeat(2)}`;
+    const secrets = [
+      'sk-ant-api03-THIS_IS_A_FAKE_ANTHROPIC_KEY_123456',
+      'glpat-FAKEGITLABTOKEN_1234567890',
+      'github_pat_FAKE_FINE_GRAINED_TOKEN_1234567890',
+      'rk_live_FAKESTRIPE1234567890',
+      'pk_test_FAKESTRIPE1234567890',
+      twilioAccount,
+      twilioKey,
+      `SG.FAKE_SENDGRID_TOKEN_12.${'A'.repeat(43)}`,
+      'npm_0123456789abcdefghijklmnopqrstuvwxyz',
+      'ya29.FAKE_GOOGLE_OAUTH_TOKEN_1234567890',
+      `AccountKey=${'A'.repeat(86)}==`,
+      'https://hooks.slack.com/services/T01234567/B01234567/FAKEWEBHOOKTOKEN123456789012',
+      'Authorization: Basic ZGVtby11c2VyOmZha2UtcGFzc3dvcmQ=',
+    ];
+    expect(values(apiKeyDetector, secrets.join('\n'))).toEqual(secrets);
   });
 
   it('finds bearer tokens including the scheme word', () => {

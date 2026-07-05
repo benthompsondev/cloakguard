@@ -65,6 +65,29 @@ text before sharing it.
   detected. Case is normalized only for the MOD-97 checksum and country-length
   validation; the finding preserves the exact characters from the source.
 
+## v1.0 coverage
+
+- **Provider credentials:** fixed-prefix checks cover Anthropic, GitLab,
+  GitHub fine-grained tokens, Stripe restricted/publishable keys, Twilio,
+  SendGrid, npm, Google OAuth, Azure Storage account keys, Slack incoming
+  webhooks, and Basic authorization headers. These are shape checks, not
+  guesses about arbitrary long strings.
+- **IPv4 context:** four-part versions after `version`, `build`, `release`,
+  `FileVersion`, and similar cues stay untouched. Longer dotted runs,
+  loopback, `0.0.0.0`, and `255.255.255.255` are ignored. Private and public
+  host addresses still match.
+- **MAC addresses:** six hexadecimal octets with one consistent separator are
+  enabled in Balanced. All-zero and broadcast placeholders are ignored.
+- **US Pack:** labeled ABA routing numbers and DEA registration numbers must
+  pass their checksums. ITIN values require an ITIN label and issued middle
+  range. EIN values require an EIN/Federal Tax ID label.
+- **Passport fields:** Strict can cloak compact alphanumeric values in an
+  explicit passport-number field. It does not scan free text for passport-like
+  strings.
+- **Custom term output:** Hide custom terms and Cloak Lists keep
+  `[CUSTOM_TERM_n]` by default. A user can choose a separate safe format and
+  placeholder label for those terms without changing the rest of the profile.
+
 ## Known boundaries
 
 - Regex protection is a careful heuristic, not a complete PowerShell parser.
@@ -79,7 +102,7 @@ text before sharing it.
 - Strict detects names and organizations in explicit fields (INI, YAML,
   PowerShell assignments and hashtables, and quoted JSON keys such as
   `"displayName"` or `"companyName"`), recognized CSV columns under a plausible
-  header, clear author/contact bylines, prose cues such as "prepared by …",
+  header, clear author/contact bylines, matching email local-parts, prose cues such as "prepared by …",
   "as per …", "pulled from …", and "Contact …", and copyright lines
   (`Copyright (c) 2024 <organization>`). Values in scripts without letter
   casing (CJK, Arabic, …) are accepted only in labeled or structured contexts.

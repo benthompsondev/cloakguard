@@ -10,6 +10,7 @@ These files contain synthetic data only. They are meant for manual testing and d
 4. Switch to **Strict** and scan again.
 5. Confirm labeled names, organizations, phone numbers, addresses, birth dates, and health identifiers are also replaced.
 6. Review the output for partial leftovers, especially text after a path containing spaces and domains that were assembled from a variable plus `@example.org`.
+7. Import `secrets-and-tokens.txt` with **Code & secrets** and confirm every fake provider credential is cloaked while version strings and special-purpose IP values stay visible.
 
 For `sharing-draft-and-custom-terms.md`, also add this temporary Cloak List or use **Hide custom terms**:
 

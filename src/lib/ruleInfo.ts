@@ -115,9 +115,15 @@ export const RULE_INFO: Record<string, RuleInfo> = {
   },
   ipv4: {
     detects: 'Valid dotted-quad IPv4 addresses.',
-    falsePositives: 'Version strings that look like addresses are rejected; loopback is low confidence.',
-    confidence: 'High — octets are range-checked.',
+    falsePositives: 'Version/build contexts and longer dotted runs are rejected. Loopback, unspecified, and broadcast values are ignored.',
+    confidence: 'High — octets are range-checked and version context is excluded.',
     sample: 'Host IP: 10.42.16.28',
+  },
+  'mac-address': {
+    detects: 'Six-octet MAC addresses using consistent colon or hyphen separators.',
+    falsePositives: 'Hardware addresses in public documentation may not need redaction. All-zero and broadcast placeholders are ignored.',
+    confidence: 'High — exact six-octet hexadecimal shape.',
+    sample: 'Adapter MAC: 00-11-22-33-44-55',
   },
   'internal-hostname': {
     detects: 'Hostnames with internal suffixes (.local, .internal, .corp, .lan...) and onmicrosoft.com tenant domains.',
@@ -221,6 +227,36 @@ export const RULE_INFO: Record<string, RuleInfo> = {
     falsePositives: 'Five-digit quantities on an address-labeled line. Arbitrary five-digit numbers elsewhere are never flagged.',
     confidence: 'Medium — the shape is common; the context does the work.',
     sample: 'Address: 123 Demo Street, Exampletown NY ZIP: 12345-6789',
+  },
+  'us-aba-routing': {
+    detects: 'Nine-digit ABA routing numbers in an explicit routing field, with the ABA checksum.',
+    falsePositives: 'A test routing number in a labeled field still matches.',
+    confidence: 'High — explicit label plus checksum.',
+    sample: 'Routing number: 021000021',
+  },
+  'us-itin': {
+    detects: 'US ITINs in an explicit ITIN field, limited to issued middle ranges.',
+    falsePositives: 'Synthetic ITIN-shaped values in a labeled field still match.',
+    confidence: 'High — explicit label plus issued-range checks.',
+    sample: 'ITIN: 912-70-1234',
+  },
+  'us-ein': {
+    detects: 'Employer Identification Numbers in an explicit EIN or Federal Tax ID field.',
+    falsePositives: 'A test EIN in a labeled field still matches.',
+    confidence: 'High — explicit label and canonical grouping.',
+    sample: 'EIN: 12-3456789',
+  },
+  'us-dea-number': {
+    detects: 'DEA registration numbers in an explicit DEA field, with the published checksum.',
+    falsePositives: 'A test DEA number in a labeled field still matches.',
+    confidence: 'High — explicit label plus checksum.',
+    sample: 'DEA number: AB1234563',
+  },
+  'passport-number': {
+    detects: 'Compact alphanumeric identifiers in an explicit Passport Number field. Strict profile only.',
+    falsePositives: 'Synthetic or expired passport values in that field still match.',
+    confidence: 'High — explicit label and constrained value shape.',
+    sample: 'Passport Number: X1234567',
   },
   iban: {
     detects: 'International Bank Account Numbers with a known country prefix, that country\'s exact length, and a passing ISO 13616 MOD-97 checksum. Spaced or compact. EU Common Pack.',

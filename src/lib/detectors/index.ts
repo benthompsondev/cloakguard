@@ -28,6 +28,14 @@ import {
   healthIdDetector,
 } from './pii';
 import { caPostalCodeDetector, usSsnDetector, usZipDetector, ibanDetector } from './regional';
+import { macAddressDetector } from './hardware';
+import {
+  abaRoutingDetector,
+  deaNumberDetector,
+  einDetector,
+  itinDetector,
+} from './usIdentifiers';
+import { passportDetector } from './passport';
 
 /**
  * The full detection registry, including strict-only rules. Which rules
@@ -54,6 +62,7 @@ export const detectors: Detector[] = [
   psIdentityParamDetector,
   psServerParamDetector,
   ipv6Detector,
+  macAddressDetector,
   ipv4Detector,
   internalHostnameDetector,
   ticketIdDetector,
@@ -65,8 +74,13 @@ export const detectors: Detector[] = [
   phoneDetector,
   dobDetector,
   addressDetector,
+  passportDetector,
   ibanDetector,
   usSsnDetector,
+  abaRoutingDetector,
+  itinDetector,
+  einDetector,
+  deaNumberDetector,
   caPostalCodeDetector,
   usZipDetector,
 ];

@@ -12,6 +12,17 @@ const API_KEY_PATTERNS: RegExp[] = [
   /\bgh[pousr]_[A-Za-z0-9]{20,}\b/g, // GitHub tokens
   /\bxox[baprs]-[A-Za-z0-9-]{10,}\b/g, // Slack tokens
   /\bAIza[0-9A-Za-z_-]{30,}\b/g, // Google API key
+  /\bsk-ant-(?:api03-)?[A-Za-z0-9_-]{20,}\b/g, // Anthropic API key
+  /\bglpat-[A-Za-z0-9_-]{20,}\b/g, // GitLab personal/project access token
+  /\bgithub_pat_[A-Za-z0-9_]{22,}\b/g, // GitHub fine-grained token
+  /\b[rp]k_(?:live|test)_[A-Za-z0-9]{10,}\b/g, // Stripe restricted/publishable key
+  /\b(?:AC|SK)[0-9a-fA-F]{32}\b/g, // Twilio account/API key SID
+  /\bSG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}\b/g, // SendGrid API key
+  /\bnpm_[A-Za-z0-9]{36}\b/g, // npm access token
+  /\bya29\.[A-Za-z0-9_-]{20,}\b/g, // Google OAuth access token
+  /\bAccountKey=[A-Za-z0-9+/]{86,}==/g, // Azure Storage account key assignment
+  /https:\/\/hooks\.slack\.com\/services\/T[A-Za-z0-9]{8,}\/B[A-Za-z0-9]{8,}\/[A-Za-z0-9_-]{20,}/g, // Slack incoming webhook
+  /\bAuthorization:[ \t]*Basic[ \t]+[A-Za-z0-9+/]{12,}={0,2}/gi, // HTTP Basic authorization header
 ];
 
 export const apiKeyDetector: Detector = {

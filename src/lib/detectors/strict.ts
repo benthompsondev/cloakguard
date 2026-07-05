@@ -154,7 +154,7 @@ function bylineMatches(text: string): RawMatch[] {
  * punctuation is never captured.
  */
 const PROSE_CUE_RE =
-  /\b(?:contact(?:ed)?|as[ \t]+per|c\/o|(?:prepared|written|created|authored|reviewed|approved|submitted|requested|signed|provided|sent|pulled|lifted|copied|received|forwarded)[ \t]+(?:by|from)|(?:prepared|created|written|reviewed|approved|submitted|signed)[ \t]+for[ \t][^\r\n]{0,80}?[ \t]by|(?:escalated|assigned|handed[ \t]+off|transferred|routed)[ \t]+to|(?:spoke|met|meeting|call|conversation)[ \t]+with|on[ \t]+behalf[ \t]+of|(?:kind[ \t]+|warm[ \t]+|best[ \t]+|many[ \t]+)?(?:regards|thanks|thank[ \t]+you|sincerely|cheers)[ \t]*,)[ \t]+/giu;
+  /\b(?:contact(?:ed)?|as[ \t]+per|c\/o|(?:prepared|written|created|authored|reviewed|approved|submitted|requested|signed|provided|sent|pulled|lifted|copied|received|forwarded|maintained|reported|owned)[ \t]+(?:by|from)|reviewed[ \t]+with|(?:prepared|created|written|reviewed|approved|submitted|signed)[ \t]+for[ \t][^\r\n]{0,80}?[ \t]by|(?:escalated|assigned|handed[ \t]+off|transferred|routed)[ \t]+to|(?:spoke|met|meeting|call|conversation)[ \t]+with|on[ \t]+behalf[ \t]+of|(?:kind[ \t]+|warm[ \t]+|best[ \t]+|many[ \t]+)?(?:regards|thanks|thank[ \t]+you|sincerely|cheers)[ \t]*,)[ \t]+/giu;
 
 // Grammatical stop words (articles, pronouns, common verbs/adverbs). A name
 // token matching one of these ends the candidate.
@@ -464,6 +464,88 @@ function contextualQuotedNameMatches(text: string): RawMatch[] {
   return matches;
 }
 
+const EMAIL_LOCAL_RE =
+  /\b([A-Za-z][A-Za-z0-9._'-]{2,63})@[A-Za-z0-9](?:[A-Za-z0-9.-]{0,61}[A-Za-z0-9])?\.[A-Za-z]{2,}\b/gu;
+const TITLE_CASE_PAIR_RE =
+  /\b(\p{Lu}[\p{Ll}\p{M}'’.-]+)[ \t]+(\p{Lu}[\p{Ll}\p{M}'’.-]+)\b/gu;
+const EMAIL_NAME_TECHNICAL_WORDS = new Set([
+  'admin',
+  'build',
+  'contact',
+  'desk',
+  'help',
+  'info',
+  'release',
+  'service',
+  'support',
+  'system',
+  'team',
+  'test',
+  'version',
+]);
+
+interface EmailNameEvidence {
+  first?: string;
+  initial?: string;
+  last: string;
+}
+
+/**
+ * An address can corroborate a name without a name dictionary. A separated
+ * first.last local-part must contain two 2+ letter parts. An initial+surname
+ * local-part is accepted only when an exact Title-Case pair elsewhere has
+ * the same initial and surname.
+ */
+function emailCorroboratedNameMatches(text: string): RawMatch[] {
+  const evidence: EmailNameEvidence[] = [];
+  const emailRanges: { start: number; end: number }[] = [];
+  const emailRe = new RegExp(EMAIL_LOCAL_RE.source, EMAIL_LOCAL_RE.flags);
+  let email: RegExpExecArray | null;
+  while ((email = emailRe.exec(text)) !== null) {
+    emailRanges.push({ start: email.index, end: email.index + email[0].length });
+    const local = email[1].toLocaleLowerCase();
+    const separated = /^([a-z]{2,})[._-]([a-z]{2,})$/u.exec(local);
+    if (separated) {
+      evidence.push({ first: separated[1], last: separated[2] });
+      continue;
+    }
+    const initialSurname = /^([a-z])([a-z]{2,})$/u.exec(local);
+    if (initialSurname) {
+      evidence.push({ initial: initialSurname[1], last: initialSurname[2] });
+    }
+  }
+  if (evidence.length === 0) return [];
+
+  const matches: RawMatch[] = [];
+  const pairRe = new RegExp(TITLE_CASE_PAIR_RE.source, TITLE_CASE_PAIR_RE.flags);
+  let pair: RegExpExecArray | null;
+  while ((pair = pairRe.exec(text)) !== null) {
+    const first = pair[1];
+    const last = pair[2];
+    const start = pair.index;
+    const end = start + pair[0].length;
+    if (emailRanges.some((range) => start < range.end && range.start < end)) continue;
+    if (!looksLikeName(pair[0], false)) continue;
+    if (
+      EMAIL_NAME_TECHNICAL_WORDS.has(first.toLocaleLowerCase()) ||
+      EMAIL_NAME_TECHNICAL_WORDS.has(last.toLocaleLowerCase())
+    ) {
+      continue;
+    }
+    const firstKey = first.toLocaleLowerCase();
+    const lastKey = last.toLocaleLowerCase();
+    const corroborated = evidence.some(
+      (item) =>
+        item.last === lastKey &&
+        (item.first === firstKey || item.initial === firstKey[0]),
+    );
+    if (corroborated) {
+      matches.push({ start, end, value: pair[0], confidence: 'medium' });
+    }
+  }
+  return matches;
+}
+
 const isPersonShaped = (value: string) => looksLikeName(value, true) || isCaselessScriptValue(value);
 
 export const personNameDetector: Detector = {
@@ -487,6 +569,7 @@ export const personNameDetector: Detector = {
       ...honorificNameMatches(text),
       ...signatureNameMatches(text),
       ...contextualQuotedNameMatches(text),
+      ...emailCorroboratedNameMatches(text),
       ...csvColumnMatches(text, isPersonShaped, () => false).person,
     ]),
 };

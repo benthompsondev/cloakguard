@@ -145,6 +145,32 @@ describe('person-name positive corpus', () => {
     const findings = scanText(text, { enabledDetectorIds: strictIds });
     expect(new Set(findings.map((f) => f.placeholder)).size).toBe(1);
   });
+
+  it('uses a matching email local-part as evidence for a Title-Case name elsewhere', () => {
+    const text = [
+      'alex.demo@example.org completed the export.',
+      'Alex Demo will review it tomorrow.',
+      'bdemo@example.org owns the follow-up.',
+      'Bea Demo has the notes.',
+    ].join('\n');
+    expect(personValues(text)).toEqual(['Alex Demo', 'Bea Demo']);
+  });
+
+  it('does not infer a person when the email and nearby Title-Case words disagree', () => {
+    const text = [
+      'alex.demo@example.org completed the export.',
+      'Alex Rivera will review it tomorrow.',
+      'build.release@example.org tracks the package.',
+      'Build Release completed successfully.',
+    ].join('\n');
+    expect(personValues(text)).toEqual([]);
+  });
+
+  it('recognizes a few additional evidence-backed byline cues', () => {
+    expect(personValues('Module maintained by Alex Demo')).toContain('Alex Demo');
+    expect(personValues('Issue reported by Bea Example')).toContain('Bea Example');
+    expect(personValues('Change reviewed with Casey Rivera')).toContain('Casey Rivera');
+  });
 });
 
 // ------------------------------------------------------------ organizations ---

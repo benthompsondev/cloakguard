@@ -56,9 +56,13 @@ export const BUILT_IN_PACKS: readonly PackDefinition[] = [
     region: 'United States',
     version: 1,
     description:
-      'US personal-data coverage: Social Security Numbers (issued ranges), ZIP and ZIP+4, plus labeled phone, address, birth date, health identifiers, names, payment cards, and email.',
+      'US personal-data coverage: SSNs, ABA routing numbers, ITINs, EINs, DEA numbers, ZIP/ZIP+4, plus labeled phone, address, birth date, health identifiers, names, payment cards, and email.',
     detectorIds: [
       'us-ssn',
+      'us-aba-routing',
+      'us-itin',
+      'us-ein',
+      'us-dea-number',
       'us-zip',
       'phone-number',
       'physical-address',
@@ -70,9 +74,11 @@ export const BUILT_IN_PACKS: readonly PackDefinition[] = [
       'org-name',
     ],
     limitations:
-      'SSNs are matched only when labeled or in the canonical dashed grouping and always checked against issued ranges — bare nine-digit numbers are never flagged. ZIP codes require address-style context.',
+      'US identifiers require a checksum, issued-range check, explicit field label, or a combination of those controls. Bare nine-digit numbers are never flagged. ZIP codes require address-style context.',
     references: [
       'SSA SSN randomization ranges (area/group/serial restrictions)',
+      'ABA routing transit number checksum',
+      'IRS ITIN issued middle ranges',
       'USPS ZIP and ZIP+4 format',
     ],
     builtIn: true,
