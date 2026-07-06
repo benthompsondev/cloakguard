@@ -33,7 +33,7 @@ CloakGuard from your application menu or with `cloakguard`.
   out, download the new `.deb` and install it the same way — it replaces the
   old version. The in-app **Check for updates** can still tell you a newer
   version exists.
-- **Uninstalling:** `sudo apt remove cloakguard`. Saved preferences (if you
+- **Uninstalling:** `sudo apt remove cloak-guard`. Saved preferences (if you
   opted in) live under `~/.local/share/dev.benthompson.cloakguard/` and the
   WebKitGTK engine profile under `~/.cache/`; remove those folders yourself
   if you want them gone, or use *Clear preferences* inside the app first.
