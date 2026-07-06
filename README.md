@@ -12,11 +12,44 @@ I built it because manually checking every script and log for hostnames, usernam
 
 ![CloakGuard showing a local scan and review](docs/screenshots/scan-desktop-1440x900.png)
 
-## Download
+## Choose how to run it
 
-**Windows:** download the latest setup executable from [GitHub Releases](https://github.com/benthompsondev/cloakguard/releases/latest). The setup EXE is the only file most people need. It installs for the current Windows user and does not require Node, Rust, administrator rights, or an internet connection. The installer is currently unsigned, so Windows SmartScreen may show a warning. Verify the SHA-256 value published with the release before running it.
+### Web demo
 
-**Linux (x86_64):** grab the `.deb` (Debian 12 / Ubuntu 22.04 or newer) or the portable AppImage from the same releases page — available starting with the first release after v1.0.1. Install steps, update behavior, and troubleshooting are in [docs/linux.md](docs/linux.md).
+[Open the live demo](https://benthompsondev.github.io/cloakguard/) to try CloakGuard without installing anything. Scanning runs inside your browser and nothing is uploaded. The desktop apps are the better choice when you want fully offline use.
+
+### Windows
+
+Download `CloakGuard-Setup-1.0.1-x64.exe` from [GitHub Releases](https://github.com/benthompsondev/cloakguard/releases/latest), open it, and follow the installer. It installs for the current Windows user and does not require Node, Rust, administrator rights, or an internet connection.
+
+The installer is currently unsigned, so Windows SmartScreen may show a warning. Verify the published SHA-256 checksum before running it.
+
+### Linux (x86_64)
+
+Download either the `.deb` package or AppImage from [GitHub Releases](https://github.com/benthompsondev/cloakguard/releases/latest).
+
+For Debian 12, Ubuntu 22.04, or newer, install the `.deb`:
+
+```bash
+cd ~/Downloads
+sudo apt install ./CloakGuard_1.0.1_amd64.deb
+```
+
+Launch it from your applications menu or run:
+
+```bash
+cloakguard
+```
+
+The AppImage is portable and does not install anything:
+
+```bash
+cd ~/Downloads
+chmod +x CloakGuard_1.0.1_amd64.AppImage
+./CloakGuard_1.0.1_amd64.AppImage
+```
+
+See [the Linux guide](docs/linux.md) for updates, uninstall steps, and troubleshooting.
 
 ## Run from source
 
