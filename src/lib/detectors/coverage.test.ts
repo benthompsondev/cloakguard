@@ -28,7 +28,7 @@ describe('private key detector', () => {
     `-----BEGIN ${kind}${tail}-----\nMIIDEMOxNOTxREALxxx\nabc123==\n-----END ${kind}${tail}-----`;
 
   it('finds PEM, RSA, EC, OpenSSH, and PGP blocks in full', () => {
-    for (const kind of ['', 'RSA ', 'EC ', 'OPENSSH ', 'ENCRYPTED ']) {
+    for (const kind of ['', 'RSA ', 'EC ', 'DSA ', 'OPENSSH ', 'ENCRYPTED ']) {
       const block = pem(kind);
       expect(values(privateKeyDetector, `before\n${block}\nafter`)).toEqual([block]);
     }

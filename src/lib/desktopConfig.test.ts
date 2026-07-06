@@ -51,7 +51,10 @@ const sharedConf = shared as any;
 const windowsOnly = windowsOverlay as any;
 const linuxOnly = linuxOverlay as any;
 /* eslint-enable @typescript-eslint/no-explicit-any */
-const capability = readJson('src-tauri', 'capabilities', 'main.json');
+const capability = readJson('src-tauri', 'capabilities', 'main.json') as {
+  permissions: unknown[];
+  windows: string[];
+};
 const pkg = readJson('package.json');
 const linuxMetainfo = readFileSync(
   join(root, 'src-tauri', 'linux', 'dev.benthompson.cloakguard.metainfo.xml'),
@@ -149,10 +152,12 @@ describe('platform overlays', () => {
   });
 
   it('Linux installs AppStream metadata for desktop software managers', () => {
-    expect(linuxConf.bundle.linux.deb.files).toEqual({
+    const expectedFiles = {
       '/usr/share/metainfo/dev.benthompson.cloakguard.metainfo.xml':
         'linux/dev.benthompson.cloakguard.metainfo.xml',
-    });
+    };
+    expect(linuxConf.bundle.linux.deb.files).toEqual(expectedFiles);
+    expect(linuxConf.bundle.linux.appimage.files).toEqual(expectedFiles);
     expect(linuxMetainfo).toContain('<id>dev.benthompson.cloakguard</id>');
     expect(linuxMetainfo).toContain('<launchable type="desktop-id">CloakGuard.desktop</launchable>');
     expect(linuxMetainfo).toContain('<project_license>MIT</project_license>');
@@ -182,13 +187,38 @@ describe('platform overlays', () => {
 });
 
 describe('capability grants', () => {
-  it('grants only file export and the user-triggered update flow', () => {
+  it('grants only file export, scoped links, and the user-triggered update flow', () => {
     expect(capability.permissions).toEqual([
       'allow-export-clean-text',
       'allow-can-self-update',
       'updater:default',
       'process:allow-restart',
+      {
+        identifier: 'opener:allow-open-url',
+        allow: [
+          { url: 'https://github.com/benthompsondev/cloakguard/*' },
+          { url: 'https://benthompsondev.github.io/cloakguard/*' },
+        ],
+      },
     ]);
+  });
+
+  it('keeps desktop link opening inside the two project URL scopes', () => {
+    const opener = capability.permissions.find(
+      (permission: unknown) =>
+        typeof permission === 'object' &&
+        permission !== null &&
+        (permission as { identifier?: string }).identifier === 'opener:allow-open-url',
+    ) as { allow: { url: string }[] } | undefined;
+    expect(opener).toBeDefined();
+
+    const allowed = (url: string) =>
+      opener!.allow.some(({ url: pattern }) => url.startsWith(pattern.slice(0, -1)));
+
+    expect(allowed('https://github.com/benthompsondev/cloakguard/releases/latest')).toBe(true);
+    expect(allowed('https://benthompsondev.github.io/cloakguard/')).toBe(true);
+    expect(allowed('https://github.com/benthompsondev/another-repo')).toBe(false);
+    expect(allowed('https://example.com/cloakguard/')).toBe(false);
   });
 
   it('does not grant core defaults or unrelated plugin surfaces', () => {
@@ -208,6 +238,9 @@ describe('capability grants', () => {
       'webview',
       'devtools',
       'process:allow-exit',
+      'opener:default',
+      'opener:allow-open-path',
+      'opener:allow-reveal-item-in-dir',
     ]) {
       expect(all, `permission list must not contain "${banned}"`).not.toContain(banned);
     }

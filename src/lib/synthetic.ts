@@ -5,6 +5,7 @@
 export const SYNTHETIC_STRIPE_SHAPED_KEY = ['sk', 'live', 'DEMO00000000000000000000'].join('_');
 
 export const SYNTHETIC_AWS_ACCESS_KEY_ID = ['AKIA', 'IOSFODNN7EXAMPLE'].join('');
+export const SYNTHETIC_AWS_TEMPORARY_ACCESS_KEY_ID = ['ASIA', 'IOSFODNN7EXAMPLE'].join('');
 
 export const SYNTHETIC_GITHUB_TOKEN = [
   'ghp',

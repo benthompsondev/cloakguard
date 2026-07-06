@@ -24,7 +24,7 @@ export const RULE_INFO: Record<string, RuleInfo> = {
     sample: 'Authorization: Bearer demo_token_not_real_4f8a72',
   },
   'api-key': {
-    detects: 'Known API key shapes: Stripe/OpenAI-style sk_ keys, AWS AKIA ids, GitHub ghp_ tokens, Slack xox tokens, Google AIza keys.',
+    detects: 'Known API key shapes: Stripe/OpenAI-style sk_ keys, AWS long-term and temporary access-key IDs, GitHub ghp_ tokens, Slack xox tokens, Google AIza keys.',
     falsePositives: 'Rare. Revoked or sample keys in docs still match by format.',
     confidence: 'High — provider prefixes are distinctive.',
     sample: `api_key=${SYNTHETIC_STRIPE_SHAPED_KEY}`,

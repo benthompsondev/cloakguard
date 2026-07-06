@@ -1,3 +1,5 @@
+import { ExternalLink } from './ExternalLink';
+
 interface DemoBannerProps {
   flag: string | undefined;
 }
@@ -12,10 +14,13 @@ export function DemoBanner({ flag }: DemoBannerProps) {
   return (
     <aside className="demo-banner" aria-label="Online demo notice">
       <span>Online demo — everything runs in your browser and nothing is uploaded.</span>{' '}
-      <a href="https://github.com/benthompsondev/cloakguard/releases/latest">
-        Download the Windows app
-      </a>{' '}
-      <span>for fully offline use.</span>
+      <ExternalLink href="https://github.com/benthompsondev/cloakguard/releases/latest">
+        Download for Windows or Linux
+      </ExternalLink>{' '}
+      <span>for fully offline use.</span>{' '}
+      <ExternalLink href="https://github.com/benthompsondev/cloakguard/">
+        ⭐ Star on GitHub
+      </ExternalLink>
     </aside>
   );
 }

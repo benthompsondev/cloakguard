@@ -4,13 +4,24 @@
 
 [![CI](https://github.com/benthompsondev/cloakguard/actions/workflows/ci.yml/badge.svg)](https://github.com/benthompsondev/cloakguard/actions/workflows/ci.yml)
 [![Latest release](https://img.shields.io/github/v/release/benthompsondev/cloakguard)](https://github.com/benthompsondev/cloakguard/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/benthompsondev/cloakguard/total?label=downloads)](https://github.com/benthompsondev/cloakguard/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 CloakGuard is a local-first desktop app (Windows and Linux) for cleaning code, logs, prompts, support tickets, and draft posts before sharing them. Scanning runs on your device. There is no account, backend, telemetry, or upload.
 
 I built it because manually checking every script and log for hostnames, usernames, paths, tokens, and organization-specific details is slow and easy to get wrong. The workflow is deliberately simple: paste text, scan it locally, review every replacement, and copy the cleaned version.
 
+![CloakGuard demo: load a synthetic sample, scan locally, and review the cleaned text](docs/media/cloakguard-demo.gif)
+
 ![CloakGuard showing a local scan and review](docs/screenshots/scan-desktop-1440x900.png)
+
+## Why CloakGuard
+
+Pasting sensitive text into an unknown redaction website defeats the point. CloakGuard keeps the scan on your device and shows every replacement before you copy the result.
+
+It is smaller and more focused than a full DLP platform or repository secret scanner. It does not monitor files, enforce company policy, or promise to catch everything. It is meant for the awkward last step before sharing a log, script, prompt, ticket, or post. Built-in rules handle common formats, and Cloak Lists cover the names and work-specific terms only you know.
+
+⭐ Star it if it is useful. That makes the project easier for other people to find.
 
 ## Choose how to run it
 
@@ -20,7 +31,7 @@ I built it because manually checking every script and log for hostnames, usernam
 
 ### Windows
 
-Download `CloakGuard-Setup-1.1.1-x64.exe` from [GitHub Releases](https://github.com/benthompsondev/cloakguard/releases/latest), open it, and follow the installer. It installs for the current Windows user and does not require Node, Rust, administrator rights, or an internet connection.
+Download `CloakGuard-Setup-1.1.2-x64.exe` from [GitHub Releases](https://github.com/benthompsondev/cloakguard/releases/latest), open it, and follow the installer. It installs for the current Windows user and does not require Node, Rust, administrator rights, or an internet connection.
 
 The installer is currently unsigned, so Windows SmartScreen may show a warning. Verify the published SHA-256 checksum before running it.
 
@@ -32,7 +43,7 @@ For Debian 12, Ubuntu 22.04, or newer, install the `.deb`:
 
 ```bash
 cd ~/Downloads
-sudo apt install ./CloakGuard_1.1.1_amd64.deb
+sudo apt install ./CloakGuard_1.1.2_amd64.deb
 ```
 
 Launch it from your applications menu or run:
@@ -45,8 +56,8 @@ The AppImage is portable and does not install anything:
 
 ```bash
 cd ~/Downloads
-chmod +x CloakGuard_1.1.1_amd64.AppImage
-./CloakGuard_1.1.1_amd64.AppImage
+chmod +x CloakGuard_1.1.2_amd64.AppImage
+./CloakGuard_1.1.2_amd64.AppImage
 ```
 
 See [the Linux guide](docs/linux.md) for updates, uninstall steps, and troubleshooting.
@@ -84,7 +95,7 @@ npm run verify    # audit + lint + unit tests + build + e2e, all in one
 ## What it does
 
 1. Paste text, import a text/log/code/config file (read in memory, max 2 MB; UTF-8 and UTF-16 PowerShell files both decode correctly), or use **Load sample** for one synthetic incident that covers secrets, infrastructure, and labeled personal data.
-2. Click **Scan locally**. CloakGuard has 40 focused detectors covering common secrets, credentials, network details, file paths, cloud identifiers, personal data, and regional formats. Its API-key detector now recognizes 33 distinctive provider, webhook, and signed-URL patterns without guessing from entropy. Balanced handles everyday scans. Strict adds contextual personal information. Maximum adds every country pack. Code & secrets leaves prose PII off. See [Detector behavior and safety](docs/detectors.md) for the full list and known limits.
+2. Click **Scan locally**. CloakGuard has 40 focused detectors covering common secrets, credentials, network details, file paths, cloud identifiers, personal data, and regional formats. Its API-key detector recognizes 33 distinctive provider, webhook, and signed-URL patterns without guessing from entropy, including AWS long-term and temporary access-key IDs. Balanced handles everyday scans. Strict adds contextual personal information. Maximum adds every country pack. Code & secrets leaves prose PII off. See [Detector behavior and safety](docs/detectors.md) for the full list and known limits.
 3. Use **Hide custom terms** for exact names, domains, hostnames, project names, or other values the built-in rules cannot know. These terms last for the current session only. You can give them their own placeholder label and format. For reusable terms, create a **Cloak List** under Settings > Profiles & Packs.
 4. Review **Possible names & terms to review**. These are guesses only. Nothing is hidden until you choose **Hide this session** or add the term to a reusable Cloak List.
 5. Review the findings. Each one shows its category, severity, a masked preview, and the replacement placeholder. Toggle off anything you want to keep.
@@ -126,11 +137,14 @@ Run `npm run check`. Lint, unit tests, typecheck, and build should all pass. `np
 
 ## Project status
 
-Current release: **v1.1.1**
+Current release: **v1.1.2**
 
 - Windows and Linux x86_64 packages now ship together from the same release.
 - Windows and AppImage builds can apply signed updates when the user asks. The `.deb` package checks for new versions but updates manually.
 - Debian packages now include a complete description and richer AppStream details for software managers that read them.
+- Desktop project links now open in the system browser through a two-origin allowlist.
+- AWS temporary access-key IDs are covered alongside long-term IDs.
+- Both Linux formats now carry the AppStream metainfo.
 - Forty focused rules include 33 distinctive provider, webhook, and signed-URL patterns.
 - The name-and-term review panel filters common PowerShell noise, puts likely multi-word terms first, and lets you dismiss a suggestion for the current session.
 - Balanced, Strict, Maximum, and Code & secrets give people useful starting points without hiding individual rule controls.

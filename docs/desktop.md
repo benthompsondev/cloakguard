@@ -3,7 +3,7 @@
 > Looking for Linux? The `.deb` / AppImage guide is [docs/linux.md](linux.md).
 
 CloakGuard ships to Windows users as **one setup executable**:
-`release/windows/CloakGuard-Setup-1.1.1-x64.exe`. Download it, run it, and
+`release/windows/CloakGuard-Setup-1.1.2-x64.exe`. Download it, run it, and
 launch CloakGuard from the Start Menu. No Node, npm, Rust, source folders,
 manual dependencies, or internet access are needed — the installer even
 bundles the WebView2 runtime installer, so installation itself works offline
@@ -67,15 +67,18 @@ cargo-audit is not installed on this machine.
   cannot write anywhere the user did not explicitly choose.
 - The app-command surface is locked twice: the build-time command ACL
   (`build.rs`) rejects every command except `export_clean_text` and
-  `can_self_update`, and the window capability grants those two commands,
-  the updater's signed check/download/install commands, and process restart.
-  There are still no
-  core defaults or dialog, filesystem, shell, HTTP, clipboard, menu, tray,
-  event, image, window, or devtools permissions. `withGlobalTauri` is off.
+  `can_self_update`. The window capability grants those two commands,
+  the updater's signed check/download/install commands, process restart,
+  and URL opening limited to CloakGuard's GitHub repository and live demo.
+  It cannot open arbitrary URLs or local files. There are still no core
+  defaults or general dialog, filesystem, shell, HTTP, clipboard, menu,
+  tray, event, image, window, or devtools permissions. `withGlobalTauri`
+  is off.
   A unit test (`src/lib/desktopConfig.test.ts`) fails if this surface widens.
 - Production loads the bundled Vite `dist` assets directly from the binary
-  via `http://tauri.localhost` — nothing listens on a TCP port and no
-  external browser window is opened.
+  via `http://tauri.localhost`, so nothing listens on a TCP port. Project
+  links open in the system browser through the narrowly scoped opener
+  permission; the scanner webview does not navigate to remote pages.
 - The strict CSP from the web build (including `connect-src 'none'`) ships
   unchanged inside the bundled `index.html`; Tauri is configured not to
   replace it.

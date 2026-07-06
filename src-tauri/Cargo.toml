@@ -1,6 +1,6 @@
 [package]
 name = "cloakguard"
-version = "1.1.1"
+version = "1.1.2"
 description = "CloakGuard - local-first text sanitizer, desktop shell"
 authors = ["Ben Thompson"]
 homepage = "https://github.com/benthompsondev/cloakguard"
@@ -14,8 +14,8 @@ publish = false
 # export_clean_text opens a native save dialog and writes only to the chosen
 # path; can_self_update returns a Boolean so Linux packages can distinguish
 # AppImage self-updates from manual .deb updates. The frontend has no general
-# dialog, filesystem, environment, or process permissions.
-# The official updater and process plugins are limited by capabilities/main.json.
+# dialog, filesystem, environment, URL, or process permissions. The updater,
+# process, and opener plugins are limited by capabilities/main.json.
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
@@ -24,6 +24,7 @@ tauri-build = { version = "2", features = [] }
 serde_json = "1"
 tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
+tauri-plugin-opener = "2"
 tauri-plugin-process = "2.3.1"
 tauri-plugin-updater = "2.10.1"
 

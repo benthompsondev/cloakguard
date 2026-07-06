@@ -1,7 +1,8 @@
 // CloakGuard desktop shell. Loads the bundled static frontend. The only
 // app-specific IPC command is export_clean_text below, and the build-time
-// ACL (build.rs) rejects every other app command. Tauri's updater and process
-// plugins expose only the permissions listed in capabilities/main.json.
+// ACL (build.rs) rejects every other app command. Tauri's updater, process,
+// and project-scoped opener plugins expose only the permissions listed in
+// capabilities/main.json.
 // Windows release builds hide the console window; devtools stay disabled
 // in every release build on every platform.
 #![cfg_attr(all(windows, not(debug_assertions)), windows_subsystem = "windows")]
@@ -66,6 +67,7 @@ fn export_clean_text(app: tauri::AppHandle, contents: String) -> Result<bool, St
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_process::init())
         .setup(|app| {
             app.handle()
