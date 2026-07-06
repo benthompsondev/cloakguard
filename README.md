@@ -20,7 +20,7 @@ I built it because manually checking every script and log for hostnames, usernam
 
 ### Windows
 
-Download `CloakGuard-Setup-1.0.1-x64.exe` from [GitHub Releases](https://github.com/benthompsondev/cloakguard/releases/latest), open it, and follow the installer. It installs for the current Windows user and does not require Node, Rust, administrator rights, or an internet connection.
+Download `CloakGuard-Setup-1.1.0-x64.exe` from [GitHub Releases](https://github.com/benthompsondev/cloakguard/releases/latest), open it, and follow the installer. It installs for the current Windows user and does not require Node, Rust, administrator rights, or an internet connection.
 
 The installer is currently unsigned, so Windows SmartScreen may show a warning. Verify the published SHA-256 checksum before running it.
 
@@ -32,7 +32,7 @@ For Debian 12, Ubuntu 22.04, or newer, install the `.deb`:
 
 ```bash
 cd ~/Downloads
-sudo apt install ./CloakGuard_1.0.1_amd64.deb
+sudo apt install ./CloakGuard_1.1.0_amd64.deb
 ```
 
 Launch it from your applications menu or run:
@@ -45,8 +45,8 @@ The AppImage is portable and does not install anything:
 
 ```bash
 cd ~/Downloads
-chmod +x CloakGuard_1.0.1_amd64.AppImage
-./CloakGuard_1.0.1_amd64.AppImage
+chmod +x CloakGuard_1.1.0_amd64.AppImage
+./CloakGuard_1.1.0_amd64.AppImage
 ```
 
 See [the Linux guide](docs/linux.md) for updates, uninstall steps, and troubleshooting.
@@ -84,7 +84,7 @@ npm run verify    # audit + lint + unit tests + build + e2e, all in one
 ## What it does
 
 1. Paste text, import a text/log/code/config file (read in memory, max 2 MB; UTF-8 and UTF-16 PowerShell files both decode correctly), or use **Load sample** for one synthetic incident that covers secrets, infrastructure, and labeled personal data.
-2. Click **Scan locally**. CloakGuard has 40 focused detectors covering common secrets, credentials, network details, file paths, cloud identifiers, personal data, and regional formats. Balanced handles everyday scans. Strict adds contextual personal information. Maximum adds every country pack. Code & secrets leaves prose PII off. See [Detector behavior and safety](docs/detectors.md) for the full list and known limits.
+2. Click **Scan locally**. CloakGuard has 40 focused detectors covering common secrets, credentials, network details, file paths, cloud identifiers, personal data, and regional formats. Its API-key detector now recognizes 33 distinctive provider, webhook, and signed-URL patterns without guessing from entropy. Balanced handles everyday scans. Strict adds contextual personal information. Maximum adds every country pack. Code & secrets leaves prose PII off. See [Detector behavior and safety](docs/detectors.md) for the full list and known limits.
 3. Use **Hide custom terms** for exact names, domains, hostnames, project names, or other values the built-in rules cannot know. These terms last for the current session only. You can give them their own placeholder label and format. For reusable terms, create a **Cloak List** under Settings > Profiles & Packs.
 4. Review **Possible names & terms to review**. These are guesses only. Nothing is hidden until you choose **Hide this session** or add the term to a reusable Cloak List.
 5. Review the findings. Each one shows its category, severity, a masked preview, and the replacement placeholder. Toggle off anything you want to keep.
@@ -126,10 +126,12 @@ Run `npm run check`. Lint, unit tests, typecheck, and build should all pass. `np
 
 ## Project status
 
-Current release: **v1.0.1**
+Current release: **v1.1.0**
 
-- The Windows app is ready for public use and can check GitHub for signed updates when the user asks it to. It never checks in the background.
-- Forty focused rules now cover more fixed-prefix secrets, structured identifiers, and network details.
+- Windows and Linux x86_64 packages now ship together from the same release.
+- Windows and AppImage builds can apply signed updates when the user asks. The `.deb` package checks for new versions but updates manually.
+- Forty focused rules include 33 distinctive provider, webhook, and signed-URL patterns.
+- The name-and-term review panel filters common PowerShell noise and puts likely multi-word names and project terms first.
 - Balanced, Strict, Maximum, and Code & secrets give people useful starting points without hiding individual rule controls.
 - Session terms and Cloak Lists can use their own safe placeholder label and format.
 - The built-in sample now gives one clear comparison between Balanced and Strict.

@@ -2,6 +2,31 @@
 
 This file tracks the public CloakGuard releases. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.0] - 2026-07-06
+
+### Added
+
+- Added Linux x86_64 `.deb` and AppImage packages to the public release.
+- Added 16 distinctive provider, webhook, and signed-URL patterns, bringing the API-key detector to 33 patterns.
+- Added AppStream metadata so compatible Linux software managers can identify the installed `.deb`.
+
+### Changed
+
+- Filtered common PowerShell colors, keywords, log words, date tokens, and technical acronyms from possible-name suggestions.
+- Ranked likely multi-word names and project terms before single words and acronyms while keeping unknown acronyms available for review.
+- Made Linux update behavior package-aware: AppImages can self-update, while `.deb` installs link to the release page for a manual package update.
+
+### Fixed
+
+- Added clear Linux updater messages for missing-platform manifests and release-manifest network failures.
+
+### Safety
+
+- New secret checks require a distinctive prefix, webhook shape, or gated URL parameter. CloakGuard still does not guess secrets from entropy.
+- The Linux package check exposes one Boolean to the UI and never exposes environment values.
+- Content storage, preference schema, scanner CSP, telemetry, and background-network behavior are unchanged.
+- Updater packages are signed for Tauri verification. The Windows installer itself is unsigned, so verify its published SHA-256 checksum.
+
 ## [1.0.1] - 2026-07-05
 
 ### Changed
@@ -135,6 +160,7 @@ This file tracks the public CloakGuard releases. The format follows [Keep a Chan
 - Kept scanning local with no backend, account, or telemetry.
 - Documented the unsigned-installer warning and the need to review cleaned text before sharing.
 
+[1.1.0]: https://github.com/benthompsondev/cloakguard/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/benthompsondev/cloakguard/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/benthompsondev/cloakguard/compare/v0.9.0...v1.0.0
 [0.9.0]: https://github.com/benthompsondev/cloakguard/compare/v0.8.0...v0.9.0

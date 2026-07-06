@@ -1,6 +1,6 @@
 [package]
 name = "cloakguard"
-version = "1.0.1"
+version = "1.1.0"
 description = "CloakGuard - local-first text sanitizer, desktop shell"
 authors = ["Ben Thompson"]
 homepage = "https://github.com/benthompsondev/cloakguard"
@@ -10,10 +10,11 @@ license = "MIT"
 publish = false
 
 # The desktop shell is deliberately small. Scanning logic lives in the
-# bundled web frontend. The one app-specific IPC command is export_clean_text:
-# embedded webviews do not reliably honor blob-anchor downloads, so saving
-# the cleaned output needs a native save dialog + a write to exactly that
-# user-chosen path. The frontend has no dialog or filesystem permissions.
+# bundled web frontend. Two narrow app-specific IPC commands exist:
+# export_clean_text opens a native save dialog and writes only to the chosen
+# path; can_self_update returns a Boolean so Linux packages can distinguish
+# AppImage self-updates from manual .deb updates. The frontend has no general
+# dialog, filesystem, environment, or process permissions.
 # The official updater and process plugins are limited by capabilities/main.json.
 
 [build-dependencies]

@@ -3,7 +3,7 @@
 > Looking for Linux? The `.deb` / AppImage guide is [docs/linux.md](linux.md).
 
 CloakGuard ships to Windows users as **one setup executable**:
-`release/windows/CloakGuard-Setup-1.0.1-x64.exe`. Download it, run it, and
+`release/windows/CloakGuard-Setup-1.1.0-x64.exe`. Download it, run it, and
 launch CloakGuard from the Start Menu. No Node, npm, Rust, source folders,
 manual dependencies, or internet access are needed — the installer even
 bundles the WebView2 runtime installer, so installation itself works offline
@@ -59,16 +59,17 @@ cargo-audit is not installed on this machine.
 
 ## What the desktop shell is (and is not)
 
-- The Rust side is small on purpose. Exactly **one app-specific command**
-  exists: `export_clean_text`, which opens a native save dialog and writes
-  the sanitized text to the path the user picked. It exists because WebView2
-  silently ignores the browser blob-download the web build uses. The app
-  cannot read any file and cannot write anywhere the user did not explicitly
-  choose in that dialog.
+- The Rust side is small on purpose. Exactly **two app-specific commands**
+  exist. `export_clean_text` opens a native save dialog and writes the
+  sanitized text only to the path the user picked. `can_self_update` returns
+  one Boolean so the Linux UI can distinguish an AppImage from a `.deb`; it
+  never exposes environment values. The app cannot read arbitrary files and
+  cannot write anywhere the user did not explicitly choose.
 - The app-command surface is locked twice: the build-time command ACL
-  (`build.rs`) rejects every command except `export_clean_text`, and the
-  window capability grants `allow-export-clean-text`, the updater's signed
-  check/download/install commands, and process restart. There are still no
+  (`build.rs`) rejects every command except `export_clean_text` and
+  `can_self_update`, and the window capability grants those two commands,
+  the updater's signed check/download/install commands, and process restart.
+  There are still no
   core defaults or dialog, filesystem, shell, HTTP, clipboard, menu, tray,
   event, image, window, or devtools permissions. `withGlobalTauri` is off.
   A unit test (`src/lib/desktopConfig.test.ts`) fails if this surface widens.

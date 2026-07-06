@@ -1,0 +1,57 @@
+name: Windows packaging
+
+# Manually triggered release build. The updater package is signed with the
+# same GitHub-held key as Linux. The NSIS installer itself remains unsigned.
+on:
+  workflow_dispatch:
+
+jobs:
+  package-windows-x86_64:
+    runs-on: windows-latest
+    env:
+      TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+      TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Select the stable Windows Rust toolchain
+        run: rustup default stable-msvc
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the installer and signed updater artifact
+        run: npm run desktop:build
+
+      - name: Stage the installer, signature, and checksum
+        shell: pwsh
+        run: |
+          $version = node -p "require('./package.json').version"
+          $installer = Get-ChildItem 'src-tauri/target/release/bundle/nsis' -Filter '*.exe' |
+            Select-Object -First 1
+          if (-not $installer) {
+            throw 'Windows installer was not produced.'
+          }
+
+          $signature = "$($installer.FullName).sig"
+          if (-not (Test-Path -LiteralPath $signature)) {
+            throw "Updater signature was not produced for $($installer.Name)."
+          }
+
+          New-Item -ItemType Directory -Path out -Force | Out-Null
+          $releaseName = "CloakGuard-Setup-$version-x64.exe"
+          Copy-Item -LiteralPath $installer.FullName -Destination "out/$releaseName"
+          Copy-Item -LiteralPath $signature -Destination "out/$releaseName.sig"
+          $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath "out/$releaseName").Hash.ToLowerInvariant()
+          "$hash  $releaseName" | Set-Content -NoNewline 'out/SHA256SUMS-windows.txt'
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: cloakguard-windows-x86_64
+          path: out/
+          if-no-files-found: error
