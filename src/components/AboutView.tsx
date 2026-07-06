@@ -5,6 +5,7 @@ import { ShieldLogo } from './ShieldLogo';
 import { LocalIcon, OpenSourceIcon, PrivacyIcon } from './StatusIcons';
 import { UpdatePanel } from './UpdatePanel';
 import { Wordmark } from './Wordmark';
+import { ExternalLink } from './ExternalLink';
 
 interface AboutViewProps {
   remember: boolean;
@@ -13,7 +14,7 @@ interface AboutViewProps {
 }
 
 const PROJECT_LINKS = [
-  ['GitHub', 'https://github.com/benthompsondev/cloakguard'],
+  ['GitHub', 'https://github.com/benthompsondev/cloakguard/'],
   ['Live demo', 'https://benthompsondev.github.io/cloakguard/'],
   ['Changelog', 'https://github.com/benthompsondev/cloakguard/blob/main/CHANGELOG.md'],
   ['Report an issue', 'https://github.com/benthompsondev/cloakguard/issues'],
@@ -123,9 +124,9 @@ export function AboutView({ remember, isDesktop, onClearPreferences }: AboutView
 
       <nav className="about-links" aria-label="Project links">
         {PROJECT_LINKS.map(([label, href]) => (
-          <a key={label} href={href} target="_blank" rel="noreferrer">
+          <ExternalLink key={label} href={href}>
             {label}
-          </a>
+          </ExternalLink>
         ))}
       </nav>
     </div>

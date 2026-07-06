@@ -12,6 +12,8 @@ import { internalUrlDetector, internalHostnameDetector, looksInternalHost } from
 import { ticketIdDetector } from './tickets';
 import { usernameDetector } from './usernames';
 import {
+  SYNTHETIC_AWS_ACCESS_KEY_ID,
+  SYNTHETIC_AWS_TEMPORARY_ACCESS_KEY_ID,
   SYNTHETIC_PROVIDER_TOKENS,
   SYNTHETIC_STRIPE_SHAPED_KEY,
 } from '../synthetic';
@@ -126,8 +128,11 @@ describe('secret detectors', () => {
     expect(values(apiKeyDetector, `key=${SYNTHETIC_STRIPE_SHAPED_KEY}`)).toEqual([
       SYNTHETIC_STRIPE_SHAPED_KEY,
     ]);
-    expect(values(apiKeyDetector, 'aws AKIAIOSFODNN7EXAMPLE done')).toEqual([
-      'AKIAIOSFODNN7EXAMPLE',
+    expect(values(apiKeyDetector, `aws ${SYNTHETIC_AWS_ACCESS_KEY_ID} done`)).toEqual([
+      SYNTHETIC_AWS_ACCESS_KEY_ID,
+    ]);
+    expect(values(apiKeyDetector, `sts ${SYNTHETIC_AWS_TEMPORARY_ACCESS_KEY_ID} done`)).toEqual([
+      SYNTHETIC_AWS_TEMPORARY_ACCESS_KEY_ID,
     ]);
   });
 

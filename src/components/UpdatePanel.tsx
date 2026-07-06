@@ -8,6 +8,7 @@ import {
   installUpdate,
   updateErrorMessage,
 } from '../lib/updater';
+import { ExternalLink } from './ExternalLink';
 
 type UpdateState =
   | { kind: 'idle' }
@@ -129,14 +130,12 @@ export function UpdatePanel() {
                   This package is updated manually. Download the newer <code>.deb</code> from
                   GitHub and install it over this version.
                 </p>
-                <a
+                <ExternalLink
                   className="btn btn-primary"
                   href="https://github.com/benthompsondev/cloakguard/releases/latest"
-                  target="_blank"
-                  rel="noreferrer"
                 >
                   Open GitHub Releases
-                </a>
+                </ExternalLink>
               </>
             )}
           </>

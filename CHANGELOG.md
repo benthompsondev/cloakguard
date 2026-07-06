@@ -2,6 +2,25 @@
 
 This file tracks the public CloakGuard releases. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.2] - 2026-07-06
+
+### Added
+
+- Added a narrowly scoped desktop link opener for the CloakGuard GitHub repository and live demo.
+- Added AWS `ASIA` temporary access-key IDs to the existing AWS credential check.
+- Added a short app demo, branded social card, and a reusable press kit.
+- Added AppStream metadata to the AppImage as well as the Debian package.
+
+### Fixed
+
+- Fixed project, release, issue, documentation, and demo links that did nothing inside the Windows and Linux webviews.
+
+### Safety
+
+- The opener cannot launch arbitrary websites or local files. Its capability contains only the CloakGuard GitHub and GitHub Pages URL prefixes.
+- AWS credential detection still requires a distinctive provider prefix and exact access-key length.
+- The webview CSP remains unchanged at `connect-src 'none'`.
+
 ## [1.1.1] - 2026-07-06
 
 ### Added
@@ -179,6 +198,7 @@ This file tracks the public CloakGuard releases. The format follows [Keep a Chan
 - Kept scanning local with no backend, account, or telemetry.
 - Documented the unsigned-installer warning and the need to review cleaned text before sharing.
 
+[1.1.2]: https://github.com/benthompsondev/cloakguard/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/benthompsondev/cloakguard/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/benthompsondev/cloakguard/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/benthompsondev/cloakguard/compare/v1.0.0...v1.0.1

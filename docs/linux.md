@@ -122,5 +122,6 @@ lives in `src-tauri/tauri.linux.conf.json`; everything security-relevant
 `src-tauri/tauri.conf.json` and is covered by unit tests.
 
 The `Linux packaging` GitHub Actions workflow (manual trigger) builds both
-packages on Ubuntu 22.04, inspects the `.deb`, smoke-launches the AppImage
-under Xvfb, and uploads everything with checksums as workflow artifacts.
+packages on Ubuntu 22.04, inspects the `.deb`, extracts the AppImage to
+confirm its AppStream metainfo, launches it under Xvfb, and uploads
+everything with checksums as workflow artifacts.

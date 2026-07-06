@@ -40,7 +40,9 @@ The production build has a strict Content Security Policy. Outbound browser conn
 
 ## Desktop boundary
 
-The desktop app uses a Tauri 2 shell around the same client-side interface, on Windows (WebView2) and Linux x86_64 (WebKitGTK). Its only app-specific Rust command is `export_clean_text`, which writes a user-approved export through a build-time access rule. Scanning and redaction still happen in the React app.
+The desktop app uses a Tauri 2 shell around the same client-side interface, on Windows (WebView2) and Linux x86_64 (WebKitGTK). Its only app-specific Rust commands export cleaned text to a user-approved path and report whether the current package can update itself. Scanning and redaction still happen in the React app.
+
+Project links use Tauri's opener plugin because ordinary external anchors do not reliably leave an embedded webview. The capability permits only CloakGuard's GitHub repository and GitHub Pages demo. It cannot open arbitrary sites or local files.
 
 The Tauri configuration is split into a shared platform-neutral file (`tauri.conf.json`) plus per-platform overlays (`tauri.windows.conf.json`, `tauri.linux.conf.json`) that hold only packaging and webview details. Security, capabilities, the updater key, and the endpoint live in the shared file, and a unit test fails if an overlay tries to change them.
 

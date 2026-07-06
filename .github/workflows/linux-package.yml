@@ -64,6 +64,18 @@ jobs:
           APPIMAGE=$(ls src-tauri/target/release/bundle/appimage/*.AppImage)
           file "$APPIMAGE"
           file "$APPIMAGE" | grep -q 'x86-64'
+          chmod +x "$APPIMAGE"
+
+          EXTRACTED=$(mktemp -d)
+          (
+            cd "$EXTRACTED"
+            "$GITHUB_WORKSPACE/$APPIMAGE" --appimage-extract >/dev/null
+          )
+          METAINFO="$EXTRACTED/squashfs-root/usr/share/metainfo/dev.benthompson.cloakguard.metainfo.xml"
+          test -f "$METAINFO" || { echo "AppImage is missing AppStream metainfo"; exit 1; }
+          appstreamcli validate --no-net "$METAINFO"
+          echo "AppImage contains AppStream metainfo."
+
           SIG="$APPIMAGE.sig"
           test -s "$SIG" || { echo "Missing or empty updater signature: $SIG"; exit 1; }
 

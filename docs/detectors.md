@@ -94,7 +94,8 @@ text before sharing it.
   distinctive provider, webhook, and signed-URL patterns. New coverage
   includes OpenAI project keys, DigitalOcean, PyPI, Docker, Hugging Face,
   HashiCorp Vault, Databricks, Shopify, GitLab runner, Netlify, Brevo,
-  age secret keys, Discord webhooks, and Telegram bot tokens.
+  age secret keys, Discord webhooks, Telegram bot tokens, and both AWS
+  `AKIA` long-term and `ASIA` temporary access-key IDs.
 - **Signed URL values:** Azure SAS `sig` and Amazon S3
   `X-Amz-Signature` values are detected only when they appear as URL query
   parameters. CloakGuard replaces the value while preserving the parameter

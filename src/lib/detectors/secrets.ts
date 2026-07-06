@@ -9,7 +9,7 @@ const API_KEY_PATTERNS: RegExp[] = [
   /\bsk[-_](?:live|test)[-_][A-Za-z0-9]{8,}\b/g, // Stripe-style
   /\bsk-proj-[A-Za-z0-9_-]{20,}\b/g, // OpenAI project key
   /\bsk-[A-Za-z0-9]{20,}\b/g, // OpenAI-style
-  /\bAKIA[0-9A-Z]{16}\b/g, // AWS access key ID
+  /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/g, // AWS long-term or temporary access key ID
   /\bgh[pousr]_[A-Za-z0-9]{20,}\b/g, // GitHub tokens
   /\bxox[baprs]-[A-Za-z0-9-]{10,}\b/g, // Slack tokens
   /\bAIza[0-9A-Za-z_-]{30,}\b/g, // Google API key
