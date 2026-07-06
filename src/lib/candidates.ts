@@ -33,6 +33,108 @@ const CONNECTORS = new Set(['of', 'and', '&', 'de', 'van', 'der', 'da', 'the']);
 const ALL_CAPS_RE = /\b[A-Z]{2,6}\b/gu;
 const MAX_CANDIDATES = 15;
 
+const POWERSHELL_COLORS = new Set(
+  [
+    'Black',
+    'DarkBlue',
+    'DarkGreen',
+    'DarkCyan',
+    'DarkRed',
+    'DarkMagenta',
+    'DarkYellow',
+    'Gray',
+    'DarkGray',
+    'Blue',
+    'Green',
+    'Cyan',
+    'Red',
+    'Magenta',
+    'Yellow',
+    'White',
+  ].map((value) => value.toLocaleLowerCase()),
+);
+
+const LANGUAGE_KEYWORDS = new Set(
+  [
+    'Function',
+    'Param',
+    'Begin',
+    'Process',
+    'End',
+    'Try',
+    'Catch',
+    'Finally',
+    'Foreach',
+    'While',
+    'Switch',
+    'Return',
+    'Break',
+    'Continue',
+    'If',
+    'Else',
+    'Do',
+    'Until',
+    'Throw',
+    'True',
+    'False',
+    'Null',
+  ].map((value) => value.toLocaleLowerCase()),
+);
+
+const GENERIC_TITLE_WORDS = new Set(
+  [
+    'Added',
+    'Removed',
+    'Updated',
+    'Created',
+    'Deleted',
+    'Failed',
+    'Error',
+    'Warning',
+    'Success',
+    'Completed',
+    'Starting',
+    'Started',
+    'Stopped',
+    'Running',
+    'Done',
+    'Loading',
+    'Processing',
+    'Access',
+    'Value',
+    'Type',
+    'Status',
+    'Result',
+    'Count',
+    'Total',
+    'Output',
+    'Input',
+    'Date',
+  ].map((value) => value.toLocaleLowerCase()),
+);
+
+const TECH_ACRONYMS = new Set([
+  'ID', 'AD', 'OU', 'DN', 'DC', 'CN', 'IP', 'DNS', 'URL', 'URI', 'API', 'CLI', 'GUI', 'OS',
+  'VM', 'DB', 'SQL', 'CSV', 'TSV', 'XML', 'JSON', 'YAML', 'HTML', 'HTTP', 'HTTPS', 'FTP',
+  'SSH', 'TCP', 'UDP', 'EXE', 'DLL', 'MSI', 'PDF', 'ZIP', 'LOG', 'TXT', 'RAM', 'CPU', 'GPU',
+  'USB', 'LAN', 'WAN', 'VPN', 'UTC', 'GMT', 'ISO', 'UI', 'UX', 'QA', 'CI', 'CD', 'PS', 'WMI',
+  'GPO', 'SID', 'UPN', 'ACL', 'NTFS', 'SMTP', 'TLS', 'SSL', 'JWT', 'MFA', 'SSO', 'REST', 'KB',
+  'MB', 'GB', 'TB', 'AM', 'PM', 'OK', 'ERR', 'WARN', 'INFO', 'DEBUG', 'NIS', 'BT',
+]);
+
+const DATE_FORMAT_TOKENS = new Set(['YYYY', 'YY', 'MM', 'MMM', 'MMMM', 'DD', 'HH', 'SS', 'MS']);
+
+function isTitleStopWord(value: string): boolean {
+  const lower = value.toLocaleLowerCase();
+  return (
+    POWERSHELL_COLORS.has(lower) ||
+    LANGUAGE_KEYWORDS.has(lower) ||
+    GENERIC_TITLE_WORDS.has(lower) ||
+    isNameStopWord(value) ||
+    isCalendarWord(value)
+  );
+}
+
 function overlaps(a: { start: number; end: number }, b: { start: number; end: number }): boolean {
   return a.start < b.end && b.start < a.end;
 }
@@ -92,6 +194,7 @@ function titleCaseOccurrences(text: string): CandidateOccurrence[] {
 
       const run: LineToken[] = [];
       let titleTokenCount = 0;
+      let novelTitleTokenCount = 0;
       let cursor = index;
       let rejected = false;
 
@@ -102,9 +205,6 @@ function titleCaseOccurrences(text: string): CandidateOccurrence[] {
         const isConnector = CONNECTORS.has(lower) && titleTokenCount > 0;
 
         if (!isTitle && !isConnector) break;
-        if (isTitle && (isNameStopWord(token.core) || isCalendarWord(token.core))) {
-          rejected = true;
-        }
         if (isPowerShellCmdletShape(token.core)) {
           rejected = true;
         }
@@ -116,7 +216,10 @@ function titleCaseOccurrences(text: string): CandidateOccurrence[] {
         }
 
         run.push(token);
-        if (isTitle) titleTokenCount += 1;
+        if (isTitle) {
+          titleTokenCount += 1;
+          if (!isTitleStopWord(token.core)) novelTitleTokenCount += 1;
+        }
         cursor += 1;
 
         if (token.trailing.length > 0) break;
@@ -127,7 +230,7 @@ function titleCaseOccurrences(text: string): CandidateOccurrence[] {
       }
 
       const last = run[run.length - 1];
-      if (!rejected && last && titleTokenCount > 0) {
+      if (!rejected && last && titleTokenCount > 0 && novelTitleTokenCount > 0) {
         const value = text.slice(first.start, last.end);
         if (value.length <= MAX_TERM_LENGTH) {
           occurrences.push({
@@ -155,7 +258,14 @@ function acronymOccurrences(text: string): CandidateOccurrence[] {
   let match: RegExpExecArray | null;
   ALL_CAPS_RE.lastIndex = 0;
   while ((match = ALL_CAPS_RE.exec(text)) !== null) {
-    if (isNameStopWord(match[0]) || isCalendarWord(match[0])) continue;
+    if (
+      TECH_ACRONYMS.has(match[0]) ||
+      DATE_FORMAT_TOKENS.has(match[0]) ||
+      isNameStopWord(match[0]) ||
+      isCalendarWord(match[0])
+    ) {
+      continue;
+    }
     occurrences.push({
       text: match[0],
       start: match.index,
@@ -188,6 +298,7 @@ export function findCloakCandidates(
       count: number;
       firstStart: number;
       qualifiesImmediately: boolean;
+      isMultiWordTitle: boolean;
     }
   >();
 
@@ -197,20 +308,28 @@ export function findCloakCandidates(
     if (existing) {
       existing.count += 1;
       existing.firstStart = Math.min(existing.firstStart, occurrence.start);
-      existing.qualifiesImmediately ||= occurrence.titleTokenCount >= 2;
+      existing.qualifiesImmediately ||=
+        occurrence.kind === 'acronym' || occurrence.titleTokenCount >= 2;
+      existing.isMultiWordTitle ||= occurrence.kind === 'title' && occurrence.titleTokenCount >= 2;
       continue;
     }
     grouped.set(key, {
       text: occurrence.text,
       count: 1,
       firstStart: occurrence.start,
-      qualifiesImmediately: occurrence.kind === 'title' && occurrence.titleTokenCount >= 2,
+      qualifiesImmediately: occurrence.kind === 'acronym' || occurrence.titleTokenCount >= 2,
+      isMultiWordTitle: occurrence.kind === 'title' && occurrence.titleTokenCount >= 2,
     });
   }
 
   return [...grouped.values()]
     .filter((candidate) => candidate.qualifiesImmediately || candidate.count >= 2)
-    .sort((a, b) => b.count - a.count || a.firstStart - b.firstStart)
+    .sort(
+      (a, b) =>
+        Number(b.isMultiWordTitle) - Number(a.isMultiWordTitle) ||
+        b.count - a.count ||
+        a.firstStart - b.firstStart,
+    )
     .slice(0, MAX_CANDIDATES)
     .map(({ text: candidateText, count, firstStart }) => ({
       text: candidateText,

@@ -107,4 +107,65 @@ describe('findCloakCandidates', () => {
     ].join('\n');
     expect(findCloakCandidates(text, [])).toHaveLength(15);
   });
+
+  it('keeps real names ahead of repeated PowerShell and logging noise', () => {
+    const noisyTerms = [
+      'Green',
+      'Cyan',
+      'Yellow',
+      'Function',
+      'Added',
+      'Removed',
+      'Updated',
+      'Created',
+      'Deleted',
+      'Failed',
+      'Error',
+      'Warning',
+      'Success',
+      'Completed',
+      'Starting',
+      'ID',
+      'AD',
+      'CSV',
+      'OU',
+      'MMM',
+    ];
+    const noise = Array.from(
+      { length: 14 },
+      () => [...noisyTerms.map((term) => `Write-Output ${term}`), 'Write-Output End Date'].join('\n'),
+    ).join('\n');
+    const text = [
+      noise,
+      'Owner: Alex Demo',
+      'Initiative: Project Nightjar',
+      'Organization: Contoso Health',
+      'Regulator: CPSO',
+    ].join('\n');
+
+    const candidates = findCloakCandidates(text, []);
+    const candidateTexts = candidates.map((candidate) => candidate.text);
+
+    expect(candidateTexts.slice(0, 3)).toEqual([
+      'Alex Demo',
+      'Project Nightjar',
+      'Contoso Health',
+    ]);
+    expect(candidateTexts).toContain('CPSO');
+    for (const junk of [
+      'Green',
+      'Cyan',
+      'Yellow',
+      'Function',
+      'Added',
+      'ID',
+      'AD',
+      'CSV',
+      'OU',
+      'MMM',
+      'End Date',
+    ]) {
+      expect(candidateTexts).not.toContain(junk);
+    }
+  });
 });

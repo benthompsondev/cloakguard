@@ -88,6 +88,26 @@ text before sharing it.
   `[CUSTOM_TERM_n]` by default. A user can choose a separate safe format and
   placeholder label for those terms without changing the rest of the profile.
 
+## v1.1 coverage
+
+- **Provider and webhook credentials:** the API-key detector now has 33
+  distinctive provider, webhook, and signed-URL patterns. New coverage
+  includes OpenAI project keys, DigitalOcean, PyPI, Docker, Hugging Face,
+  HashiCorp Vault, Databricks, Shopify, GitLab runner, Netlify, Brevo,
+  age secret keys, Discord webhooks, and Telegram bot tokens.
+- **Signed URL values:** Azure SAS `sig` and Amazon S3
+  `X-Amz-Signature` values are detected only when they appear as URL query
+  parameters. CloakGuard replaces the value while preserving the parameter
+  name and surrounding URL.
+- **No entropy guessing:** these checks require a recognizable prefix or
+  query parameter and a provider-specific shape. CloakGuard does not flag an
+  arbitrary long random-looking string as a secret.
+- **Cleaner review suggestions:** common PowerShell colors, language
+  keywords, log verbs, date-format tokens, and well-known technical acronyms
+  no longer crowd the possible-name review panel. Multi-word names and project
+  terms sort before single words and acronyms. Unknown acronyms still appear
+  for human review.
+
 ## Known boundaries
 
 - Regex protection is a careful heuristic, not a complete PowerShell parser.

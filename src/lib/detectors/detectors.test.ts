@@ -11,7 +11,10 @@ import { windowsPathDetector, unixPathDetector } from './paths';
 import { internalUrlDetector, internalHostnameDetector, looksInternalHost } from './internal';
 import { ticketIdDetector } from './tickets';
 import { usernameDetector } from './usernames';
-import { SYNTHETIC_STRIPE_SHAPED_KEY } from '../synthetic';
+import {
+  SYNTHETIC_PROVIDER_TOKENS,
+  SYNTHETIC_STRIPE_SHAPED_KEY,
+} from '../synthetic';
 
 const values = (detector: { detect(text: string): { value: string }[] }, text: string) =>
   detector.detect(text).map((m) => m.value);
@@ -149,6 +152,95 @@ describe('secret detectors', () => {
       'Authorization: Basic ZGVtby11c2VyOmZha2UtcGFzc3dvcmQ=',
     ];
     expect(values(apiKeyDetector, secrets.join('\n'))).toEqual(secrets);
+  });
+
+  it.each([
+    [
+      'OpenAI project key',
+      SYNTHETIC_PROVIDER_TOKENS.openAiProject,
+      ['sk', 'proj', 'short'].join('-'),
+    ],
+    [
+      'DigitalOcean token',
+      SYNTHETIC_PROVIDER_TOKENS.digitalOcean,
+      ['dop', 'v1', 'a'.repeat(63)].join('_'),
+    ],
+    [
+      'PyPI token',
+      SYNTHETIC_PROVIDER_TOKENS.pypi,
+      ['pypi', 'A'.repeat(49)].join('-'),
+    ],
+    [
+      'Docker token',
+      SYNTHETIC_PROVIDER_TOKENS.docker,
+      ['dckr', 'pat', 'A'.repeat(19)].join('_'),
+    ],
+    [
+      'Hugging Face token',
+      SYNTHETIC_PROVIDER_TOKENS.huggingFace,
+      ['hf', 'A'.repeat(29)].join('_'),
+    ],
+    [
+      'HashiCorp Vault token',
+      SYNTHETIC_PROVIDER_TOKENS.hashicorpVault,
+      ['hvs', 'A'.repeat(19)].join('.'),
+    ],
+    [
+      'Databricks token',
+      SYNTHETIC_PROVIDER_TOKENS.databricks,
+      `dapi${'a'.repeat(31)}`,
+    ],
+    [
+      'Shopify token',
+      SYNTHETIC_PROVIDER_TOKENS.shopify,
+      ['shpat', 'a'.repeat(31)].join('_'),
+    ],
+    [
+      'GitLab runner token',
+      SYNTHETIC_PROVIDER_TOKENS.gitlabRunner,
+      ['glrt', 'A'.repeat(19)].join('-'),
+    ],
+    [
+      'Netlify token',
+      SYNTHETIC_PROVIDER_TOKENS.netlify,
+      ['nfp', 'A'.repeat(29)].join('_'),
+    ],
+    [
+      'Brevo xkeysib token',
+      SYNTHETIC_PROVIDER_TOKENS.xKeySib,
+      ['xkeysib', 'a'.repeat(63)].join('-'),
+    ],
+    [
+      'age secret key',
+      SYNTHETIC_PROVIDER_TOKENS.ageSecret,
+      `${['AGE', 'SECRET', 'KEY'].join('-')}-1${'A'.repeat(57)}`,
+    ],
+    [
+      'Discord webhook',
+      SYNTHETIC_PROVIDER_TOKENS.discordWebhook,
+      `https://${['discord', 'com'].join('.')}/api/webhooks/not-numeric/${'A'.repeat(32)}`,
+    ],
+    [
+      'Telegram bot token',
+      SYNTHETIC_PROVIDER_TOKENS.telegramBot,
+      `${'1'.repeat(7)}:AA${'A'.repeat(32)}`,
+    ],
+  ])('finds a %s and rejects its malformed near-match', (_name, valid, invalid) => {
+    expect(values(apiKeyDetector, `before ${valid} after`)).toEqual([valid]);
+    expect(values(apiKeyDetector, `before ${invalid} after`)).toEqual([]);
+  });
+
+  it('finds only signature values behind Azure SAS and S3 query parameters', () => {
+    const azureSignature = `DEMO${'A'.repeat(40)}%3D`;
+    const s3Signature = 'a'.repeat(64);
+    const text = [
+      `https://storage.example.test/blob?sv=2025-01-01&sig=${azureSignature}&se=2030-01-01`,
+      `https://bucket.example.test/object?X-Amz-Signature=${s3Signature}&X-Amz-Expires=300`,
+    ].join('\n');
+    expect(values(apiKeyDetector, text)).toEqual([azureSignature, s3Signature]);
+
+    expect(values(apiKeyDetector, `sig=${azureSignature}`)).toEqual([]);
+    expect(values(apiKeyDetector, `X-Amz-Signature=${'a'.repeat(63)}`)).toEqual([]);
   });
 
   it('finds bearer tokens including the scheme word', () => {

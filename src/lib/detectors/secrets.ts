@@ -7,6 +7,7 @@ import { regexMatches } from './helpers';
  */
 const API_KEY_PATTERNS: RegExp[] = [
   /\bsk[-_](?:live|test)[-_][A-Za-z0-9]{8,}\b/g, // Stripe-style
+  /\bsk-proj-[A-Za-z0-9_-]{20,}\b/g, // OpenAI project key
   /\bsk-[A-Za-z0-9]{20,}\b/g, // OpenAI-style
   /\bAKIA[0-9A-Z]{16}\b/g, // AWS access key ID
   /\bgh[pousr]_[A-Za-z0-9]{20,}\b/g, // GitHub tokens
@@ -23,6 +24,21 @@ const API_KEY_PATTERNS: RegExp[] = [
   /\bAccountKey=[A-Za-z0-9+/]{86,}==/g, // Azure Storage account key assignment
   /https:\/\/hooks\.slack\.com\/services\/T[A-Za-z0-9]{8,}\/B[A-Za-z0-9]{8,}\/[A-Za-z0-9_-]{20,}/g, // Slack incoming webhook
   /\bAuthorization:[ \t]*Basic[ \t]+[A-Za-z0-9+/]{12,}={0,2}/gi, // HTTP Basic authorization header
+  /\bdop_v1_[0-9a-f]{64}\b/g, // DigitalOcean personal access token
+  /\bpypi-[A-Za-z0-9_-]{50,}\b/g, // PyPI upload token
+  /\bdckr_pat_[A-Za-z0-9_-]{20,}\b/g, // Docker access token
+  /\bhf_[A-Za-z0-9]{30,}\b/g, // Hugging Face user access token
+  /\bhvs\.[A-Za-z0-9_-]{20,}\b/g, // HashiCorp Vault service token
+  /\bdapi[0-9a-f]{32}\b/g, // Databricks personal access token
+  /\bshp(?:at|ca|pa|ss)_[0-9a-f]{32}\b/g, // Shopify access tokens
+  /\bglrt-[A-Za-z0-9_-]{20,}\b/g, // GitLab runner authentication token
+  /\bnfp_[A-Za-z0-9]{30,}\b/g, // Netlify personal access token
+  /\bxkeysib-[0-9a-f]{64}\b/g, // Brevo API key
+  /\bAGE-SECRET-KEY-1[A-Z0-9]{58}\b/g, // age identity secret key
+  /https:\/\/discord(?:app)?\.com\/api\/webhooks\/\d+\/[A-Za-z0-9_-]+/g, // Discord webhook
+  /\b\d{8,10}:AA[A-Za-z0-9_-]{32,33}\b/g, // Telegram bot token
+  /(?<=[?&]sig=)[A-Za-z0-9%+/_=-]{20,}/gi, // Azure SAS signature value
+  /(?<=[?&]X-Amz-Signature=)[0-9a-f]{64}(?=&|$)/gi, // S3 presigned URL signature value
 ];
 
 export const apiKeyDetector: Detector = {
