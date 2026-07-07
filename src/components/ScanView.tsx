@@ -27,6 +27,7 @@ interface ScanViewProps {
   onSource: (text: string) => void;
   onUpdateTerms: (patch: Partial<SessionState>) => void;
   onScan: () => void;
+  onNewScan: () => void;
   onToggleGroup: (ids: readonly string[], enabled: boolean) => void;
   onHideCandidate: (term: string) => void;
   onDismissCandidate: (term: string) => void;
@@ -48,6 +49,7 @@ export function ScanView({
   onSource,
   onUpdateTerms,
   onScan,
+  onNewScan,
   onToggleGroup,
   onHideCandidate,
   onDismissCandidate,
@@ -165,6 +167,7 @@ export function ScanView({
           hasScanned={session.hasScanned}
           onChange={onSource}
           onScan={onScan}
+          onNewScan={onNewScan}
           onNotice={onNotice}
         />
         <PreviewPanel

@@ -1,6 +1,6 @@
-# How CloakGuard works
+# How CloakScan works
 
-CloakGuard is intentionally small. Text goes in, enabled rules inspect it in memory, and cleaned text comes out for review. There is no server in the middle.
+CloakScan is intentionally small. Text goes in, enabled rules inspect it in memory, and cleaned text comes out for review. There is no server in the middle.
 
 ## Scan pipeline
 
@@ -34,7 +34,7 @@ Later layers add or override the earlier configuration. They do not replace the 
 
 Source text, filenames, findings, cleaned output, and session-only terms stay in memory. Closing or refreshing the app clears them.
 
-Preference storage is off by default. If the user enables it, CloakGuard writes one narrow `localStorage` key containing allowlisted configuration. It never stores scan content, findings, or output. There is no scan history by design because cleaned text can still contain something a rule missed.
+Preference storage is off by default. If the user enables it, CloakScan writes one narrow `localStorage` key containing allowlisted configuration. It never stores scan content, findings, or output. There is no scan history by design because cleaned text can still contain something a rule missed.
 
 The production build has a strict Content Security Policy. Outbound browser connection APIs are blocked, and the app has no analytics, telemetry, or backend. The browser demo never exposes the desktop updater.
 
@@ -42,7 +42,7 @@ The production build has a strict Content Security Policy. Outbound browser conn
 
 The desktop app uses a Tauri 2 shell around the same client-side interface, on Windows (WebView2) and Linux x86_64 (WebKitGTK). Its only app-specific Rust commands export cleaned text to a user-approved path and report whether the current package can update itself. Scanning and redaction still happen in the React app.
 
-Project links use Tauri's opener plugin because ordinary external anchors do not reliably leave an embedded webview. The capability permits only CloakGuard's GitHub repository and GitHub Pages demo. It cannot open arbitrary sites or local files.
+Project links use Tauri's opener plugin because ordinary external anchors do not reliably leave an embedded webview. The capability permits only CloakScan's GitHub repository and GitHub Pages demo. It cannot open arbitrary sites or local files.
 
 The Tauri configuration is split into a shared platform-neutral file (`tauri.conf.json`) plus per-platform overlays (`tauri.windows.conf.json`, `tauri.linux.conf.json`) that hold only packaging and webview details. Security, capabilities, the updater key, and the endpoint live in the shared file, and a unit test fails if an overlay tries to change them.
 
@@ -52,7 +52,7 @@ The desktop app can check GitHub for a newer release, but only after the user cl
 
 The updater runs through Tauri's Rust plugin. The webview asks the plugin to check, download, and install a signed package; it does not make the network request itself. The production CSP stays unchanged at `connect-src 'none'`, and browser builds do not show update controls.
 
-Each update artifact is signed with CloakGuard's updater key. The public key ships with the app so Tauri can reject a package with the wrong signature. This verifies the update package, but it is separate from OS code signing: the Windows installer is still unsigned and may show a SmartScreen warning. On Linux, the AppImage is the auto-update artifact; the `.deb` package is updated by installing the newer package yourself (see [docs/linux.md](linux.md)).
+Each update artifact is signed with CloakScan's updater key. The public key ships with the app so Tauri can reject a package with the wrong signature. This verifies the update package, but it is separate from OS code signing: the Windows installer is still unsigned and may show a SmartScreen warning. On Linux, the AppImage is the auto-update artifact; the `.deb` package is updated by installing the newer package yourself (see [docs/linux.md](linux.md)).
 
 ## Why there is no universal name or company dictionary
 

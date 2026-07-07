@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "main",
-  "description": "Minimum surface for the CloakGuard window: file export, project-scoped external links, one read-only self-update capability check, user-triggered signed update commands, and app restart after an installed update. No core defaults and no dialog, filesystem, shell, HTTP, clipboard, menu, tray, event, image, window, or devtools permissions.",
+  "description": "Minimum surface for the CloakScan window: file export, project-scoped external links, one read-only self-update capability check, user-triggered signed update commands, and app restart after an installed update. No core defaults and no dialog, filesystem, shell, HTTP, clipboard, menu, tray, event, image, window, or devtools permissions.",
   "windows": ["main"],
   "permissions": [
     "allow-export-clean-text",
@@ -12,10 +12,10 @@
       "identifier": "opener:allow-open-url",
       "allow": [
         {
-          "url": "https://github.com/benthompsondev/cloakguard/*"
+          "url": "https://github.com/benthompsondev/cloakscan/*"
         },
         {
-          "url": "https://benthompsondev.github.io/cloakguard/*"
+          "url": "https://benthompsondev.github.io/cloakscan/*"
         }
       ]
     }

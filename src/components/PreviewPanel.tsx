@@ -40,7 +40,7 @@ export function PreviewPanel({
 
   const download = async () => {
     try {
-      const result = await downloadTextFile('cloakguard-clean.txt', cleanText);
+      const result = await downloadTextFile('cloakscan-clean.txt', cleanText);
       const text = {
         downloaded: 'Download started.',
         saved: 'Cleaned text saved.',

@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 
-const PREFS_V2 = 'cloakguard.prefs.v2';
+const PREFS_V2 = 'cloakscan.prefs.v2';
 
 async function enablePack(page: Page, packName: string) {
   await page.goto('/#/settings/profiles');
@@ -11,7 +11,7 @@ test('enabling the Canada pack detects postal codes and shows a pack chip on Sca
   page,
 }) => {
   await enablePack(page, 'Canada Pack');
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await expect(page.getByLabel('Active packs')).toContainText('Canada Pack');
 
   await page.getByLabel('Source text input').fill('PostalCode: K1A 0B1 and SIN: 123 456 782');
@@ -23,7 +23,7 @@ test('enabling the Canada pack detects postal codes and shows a pack chip on Sca
 
 test('enabling the US pack detects SSN and contextual ZIP', async ({ page }) => {
   await enablePack(page, 'United States Pack');
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await page
     .getByLabel('Source text input')
     .fill('SSN: 123-45-6789\nAddress: 1 Demo St, Exampletown ZIP: 12345-6789\nport 54321 open');
@@ -36,7 +36,7 @@ test('enabling the US pack detects SSN and contextual ZIP', async ({ page }) => 
 
 test('enabling the EU Common pack detects checksummed IBANs', async ({ page }) => {
   await enablePack(page, 'EU Common Pack');
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await page
     .getByLabel('Source text input')
     .fill('refund DE89 3704 0044 0532 0130 00, bad DE89 3704 0044 0532 0130 01');
@@ -71,7 +71,7 @@ test('creating and switching a named profile', async ({ page }) => {
   await page.getByRole('button', { name: 'Create profile from current configuration' }).click();
 
   // The named profile is active and listed in the Scan toolbar selector.
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   const select = page.getByLabel('Detection profile');
   await expect(select.locator('option', { hasText: 'Ontario ops' })).toHaveCount(1);
   await expect(page.getByLabel('Active packs')).toContainText('Canada Pack');
@@ -102,7 +102,7 @@ test('custom pack with a labeled-field rule and pack terms', async ({ page }) =>
     .getByRole('switch', { name: 'Enable pack Helpdesk pack in the active profile' })
     .check();
 
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await expect(page.getByLabel('Active packs')).toContainText('Helpdesk pack');
   await page
     .getByLabel('Source text input')
@@ -149,7 +149,7 @@ test('over-limit custom rule values are skipped whole, never partially redacted'
 
   // Full engine: the over-limit line comes back byte-identical (no partial
   // placeholder, no truncated remainder); the quoted line keeps its quotes.
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await page
     .getByLabel('Source text input')
     .fill('Department: "Operations" Status: Active\nDepartment: Operations And Facilities');
@@ -213,7 +213,7 @@ test('remember off: profiles, packs, and terms vanish on reload', async ({ page 
   await enablePack(page, 'Canada Pack');
   await page.getByLabel('New profile name').fill('Ephemeral');
   await page.getByRole('button', { name: 'Create profile from current configuration' }).click();
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await page.getByRole('button', { name: /Hide custom terms/ }).click();
   await page.getByRole('textbox', { name: 'Custom terms to hide' }).fill('vanishing-term');
   await page.getByRole('button', { name: 'Done' }).click();
@@ -287,7 +287,7 @@ test('active Cloak Lists are visible on Scan and inside custom terms', async ({ 
     .getByRole('switch', { name: 'Enable Cloak List Org names in the active profile' })
     .check();
 
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await expect(page.getByLabel('Active packs')).toContainText('Org names · Cloak List');
   await page.getByRole('button', { name: /Hide custom terms/ }).click();
   await expect(page.getByTestId('active-cloak-lists')).toContainText('Org names');
@@ -298,6 +298,30 @@ test('active Cloak Lists are visible on Scan and inside custom terms', async ({ 
   await expect(page.getByRole('region', { name: /Redacted preview/i })).toContainText(
     '[CUSTOM_TERM_1]',
   );
+});
+
+test('Cloak Lists export and import as one-term-per-line text files', async ({ page }) => {
+  await page.goto('/#/settings/profiles');
+  await page.getByRole('button', { name: 'Create Cloak List' }).click();
+  await page.getByLabel('Cloak List name').fill('Round Trip');
+  await page.getByLabel('Cloak List terms').fill('Contoso General\nProject Nightjar');
+  await page.getByRole('button', { name: 'Save Cloak List' }).click();
+
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export .txt' }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe('round-trip-cloak-list.txt');
+
+  await page.getByRole('button', { name: 'Import Cloak List (.txt)' }).click();
+  await page.getByLabel('Import Cloak List from .txt').setInputFiles({
+    name: 'Imported-List.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('Contoso General\nProject Nightjar\nContoso General\n\n'),
+  });
+  await expect(page.getByRole('heading', { name: 'Create Cloak List' })).toBeVisible();
+  await expect(page.getByLabel('Cloak List name')).toHaveValue('Imported List');
+  await expect(page.getByLabel('Cloak List terms')).toHaveValue('Contoso General\nProject Nightjar');
+  await expect(page.getByText(/Imported 2 terms/)).toBeVisible();
 });
 
 test('ambiguous empty creations are blocked with inline validation', async ({ page }) => {
@@ -395,7 +419,7 @@ test('opening an editor resets the settings page scroll to the top', async ({ pa
 test('clear preferences removes both storage keys and all saved data', async ({ page }) => {
   await page.goto('/#/settings/general');
   await page.getByRole('switch', { name: 'Remember preferences on this device' }).click();
-  await page.evaluate(() => localStorage.setItem('cloakguard.prefs.v1', '{"version":1}'));
+  await page.evaluate(() => localStorage.setItem('cloakscan.prefs.v1', '{"version":1}'));
 
   await page.goto('/#/settings/privacy');
   await page.getByRole('button', { name: 'Clear preferences' }).click();

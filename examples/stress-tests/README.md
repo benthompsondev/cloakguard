@@ -1,4 +1,4 @@
-# CloakGuard stress-test files
+# CloakScan stress-test files
 
 These files contain synthetic data only. They are meant for manual testing and detector regression checks.
 

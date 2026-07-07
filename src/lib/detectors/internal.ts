@@ -1,11 +1,13 @@
-import type { Detector } from '../types';
+import type { Detector, RawMatch } from '../types';
 import { regexMatches } from './helpers';
 import { isValidIpv4 } from './network';
 
-/** TLD suffixes that conventionally mark intranet / non-public hosts. */
+/** TLD or zone labels that conventionally mark intranet / non-public hosts. */
 const INTERNAL_SUFFIXES = ['local', 'internal', 'corp', 'lan', 'intranet', 'intra'];
+const AD_ZONE_LABELS = ['ad', 'ds'];
+const ANY_POSITION_INTERNAL_LABELS = [...INTERNAL_SUFFIXES, ...AD_ZONE_LABELS];
 
-const SUFFIX_ALTERNATION = INTERNAL_SUFFIXES.join('|');
+const WINDOWS_SERVER_LABEL_RE = /^(?:[a-z]+[0-9]{1,4}|[a-z]{2,8}-[a-z0-9]*[0-9][a-z0-9-]*)$/i;
 
 /** True for RFC 1918 / link-local IPv4 addresses. */
 export function isPrivateIpv4(host: string): boolean {
@@ -21,20 +23,27 @@ export function isPrivateIpv4(host: string): boolean {
 
 /** Extract the hostname from a matched URL without using the DOM URL parser. */
 function hostOf(url: string): string {
-  const afterScheme = url.replace(/^https?:\/\//i, '');
+  const afterScheme = url.replace(/^[a-z][a-z0-9+.-]*:\/\//i, '');
   return afterScheme.split(/[/:?#]/, 1)[0].toLowerCase();
 }
 
-/** True if a hostname looks non-public: internal suffix, single label, private IP, or a tenant domain. */
+/** True if a hostname looks non-public: internal zone labels, single label, private IP, or a tenant domain. */
 export function looksInternalHost(host: string): boolean {
-  if (isPrivateIpv4(host)) return true;
-  if (!host.includes('.')) return true; // e.g. http://intranet or http://buildbox
-  if (host.endsWith('.onmicrosoft.com')) return true; // M365 tenant domain
-  const suffix = host.slice(host.lastIndexOf('.') + 1);
-  return INTERNAL_SUFFIXES.includes(suffix);
+  const normalized = host.toLocaleLowerCase();
+  if (isPrivateIpv4(normalized)) return true;
+  if (!normalized.includes('.')) return true; // e.g. http://intranet or http://buildbox
+  if (normalized.endsWith('.onmicrosoft.com')) return true; // M365 tenant domain
+  const labels = normalized.split('.').filter(Boolean);
+  const suffix = labels.at(-1) ?? '';
+  if (INTERNAL_SUFFIXES.includes(suffix)) return true;
+  const first = labels[0] ?? '';
+  const hasInternalLabel = labels.some((label) => INTERNAL_SUFFIXES.includes(label));
+  if (hasInternalLabel) return true;
+  const hasAdZoneLabel = labels.some((label, index) => index > 0 && AD_ZONE_LABELS.includes(label));
+  return hasAdZoneLabel && WINDOWS_SERVER_LABEL_RE.test(first);
 }
 
-const URL_RE = /\bhttps?:\/\/[^\s"'<>)\]]+/gi;
+const URL_RE = /\b(?:https?|ldaps?):\/\/[^\s"'<>)\]]+/gi;
 
 export const internalUrlDetector: Detector = {
   id: 'internal-url',
@@ -51,11 +60,8 @@ export const internalUrlDetector: Detector = {
     }),
 };
 
-/** Bare hostnames ending in an internal suffix, e.g. ws-144.example.internal. */
-const INTERNAL_HOSTNAME_RE = new RegExp(
-  String.raw`\b[a-z0-9](?:[a-z0-9-]{0,62})?(?:\.[a-z0-9](?:[a-z0-9-]{0,62})?)*\.(?:${SUFFIX_ALTERNATION})\b`,
-  'gi',
-);
+/** Bare multi-label hostnames; filtered through looksInternalHost to avoid public domains. */
+const HOSTNAME_RE = /\b[a-z0-9](?:[a-z0-9-]{0,62})?(?:\.[a-z0-9](?:[a-z0-9-]{0,62})?){1,}\b/gi;
 
 /** M365 tenant domains, e.g. contoso.onmicrosoft.com or contoso.mail.onmicrosoft.com. */
 const ONMICROSOFT_RE = /\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.onmicrosoft\.com\b/gi;
@@ -68,8 +74,27 @@ export const internalHostnameDetector: Detector = {
   label: 'INTERNAL_HOST',
   priority: 60,
   explanation: 'Internal machine and tenant names reveal infrastructure that should stay private.',
-  detect: (text) => [
-    ...regexMatches(text, INTERNAL_HOSTNAME_RE),
-    ...regexMatches(text, ONMICROSOFT_RE),
-  ],
+  detect: (text) => {
+    const matches = [
+      ...regexMatches(text, HOSTNAME_RE, {
+        confidenceFor: (value) => {
+          if (isValidIpv4(value)) return null;
+          if (!looksInternalHost(value)) return null;
+          return ANY_POSITION_INTERNAL_LABELS.some((label) =>
+            value.toLocaleLowerCase().split('.').includes(label),
+          )
+            ? 'high'
+            : 'medium';
+        },
+      }),
+      ...regexMatches(text, ONMICROSOFT_RE),
+    ];
+    const seen = new Set<string>();
+    return matches.filter((match: RawMatch) => {
+      const key = `${match.start}:${match.end}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  },
 };

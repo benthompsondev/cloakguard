@@ -14,11 +14,11 @@ export function DemoBanner({ flag }: DemoBannerProps) {
   return (
     <aside className="demo-banner" aria-label="Online demo notice">
       <span>Online demo — everything runs in your browser and nothing is uploaded.</span>{' '}
-      <ExternalLink href="https://github.com/benthompsondev/cloakguard/releases/latest">
+      <ExternalLink href="https://github.com/benthompsondev/cloakscan/releases/latest">
         Download for Windows or Linux
       </ExternalLink>{' '}
       <span>for fully offline use.</span>{' '}
-      <ExternalLink href="https://github.com/benthompsondev/cloakguard/">
+      <ExternalLink href="https://github.com/benthompsondev/cloakscan/">
         ⭐ Star on GitHub
       </ExternalLink>
     </aside>

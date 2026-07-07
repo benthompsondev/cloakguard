@@ -60,7 +60,7 @@ export const RULE_INFO: Record<string, RuleInfo> = {
     sample: 'password = "demo-horse-battery-not-real"',
   },
   'internal-url': {
-    detects: 'URLs whose host looks non-public: internal TLD suffixes, single-label hosts, private IPs, or onmicrosoft.com tenants.',
+    detects: 'HTTP(S) and LDAP(S) URLs whose host looks non-public: internal zone labels, server-shaped AD hosts, single-label hosts, private IPs, or onmicrosoft.com tenants.',
     falsePositives: 'Rare. Public URLs are skipped entirely.',
     confidence: 'High — the host shape is checked, not guessed.',
     sample: 'see https://admin.example.internal/api/v1/status',
@@ -118,6 +118,12 @@ export const RULE_INFO: Record<string, RuleInfo> = {
     falsePositives: 'Version/build contexts and longer dotted runs are rejected. Loopback, unspecified, and broadcast values are ignored.',
     confidence: 'High — octets are range-checked and version context is excluded.',
     sample: 'Host IP: 10.42.16.28',
+  },
+  'network-port': {
+    detects: 'Common service and admin ports when they appear beside a host/IP or in an explicit Port field.',
+    falsePositives: 'A public service example can still match. Bare numbers without infrastructure context are ignored.',
+    confidence: 'Medium — context-based and limited to common ports.',
+    sample: 'Server: mail.contoso.local Port: 587',
   },
   'mac-address': {
     detects: 'Six-octet MAC addresses using consistent colon or hyphen separators.',

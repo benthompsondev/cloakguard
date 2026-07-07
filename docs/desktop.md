@@ -1,10 +1,10 @@
-# CloakGuard for Windows (desktop)
+# CloakScan for Windows (desktop)
 
 > Looking for Linux? The `.deb` / AppImage guide is [docs/linux.md](linux.md).
 
-CloakGuard ships to Windows users as **one setup executable**:
-`release/windows/CloakGuard-Setup-1.1.2-x64.exe`. Download it, run it, and
-launch CloakGuard from the Start Menu. No Node, npm, Rust, source folders,
+CloakScan ships to Windows users as **one setup executable**:
+`release/windows/CloakScan-Setup-1.2.0-x64.exe`. Download it, run it, and
+launch CloakScan from the Start Menu. No Node, npm, Rust, source folders,
 manual dependencies, or internet access are needed — the installer even
 bundles the WebView2 runtime installer, so installation itself works offline
 ("offline" meaning exactly that the installer downloads nothing).
@@ -18,23 +18,23 @@ below.
 ## For users
 
 - **Install:** run the setup EXE. It installs per-user under
-  `%LOCALAPPDATA%\CloakGuard` and never asks for administrator rights.
-- **Publisher shown by Windows:** `CloakGuard Project`. This is package
+  `%LOCALAPPDATA%\CloakScan` and never asks for administrator rights.
+- **Publisher shown by Windows:** `CloakScan Project`. This is package
   metadata, not a code-signing claim.
 - **Shortcuts:** a Start Menu entry is always created; the finish page offers
   an optional Desktop shortcut.
-- **Uninstall:** use Windows *Settings → Apps* (CloakGuard registers a
+- **Uninstall:** use Windows *Settings → Apps* (CloakScan registers a
   normal per-user uninstall entry). The uninstaller shows a **"Delete the
   application data"** checkbox: leave it unchecked and your saved
   preferences (if you opted in) survive under
-  `%LOCALAPPDATA%\dev.benthompson.cloakguard\`; check it and the uninstaller
+  `%LOCALAPPDATA%\dev.benthompson.cloakscan\`; check it and the uninstaller
   removes that folder — saved preferences, saved pack terms, and the
   WebView2 engine profile included. *Clear preferences* inside the app works
   at any time before uninstalling.
 - **Unsigned installer:** the setup EXE is not code-signed, so Windows
   SmartScreen will warn ("Windows protected your PC" → *More info → Run
   anyway*). That is expected for this local build; verify the SHA-256
-  published on the [GitHub release](https://github.com/benthompsondev/cloakguard/releases)
+  published on the [GitHub release](https://github.com/benthompsondev/cloakscan/releases)
   instead. Do not trust copies from anywhere else.
 
 ## For developers
@@ -50,9 +50,9 @@ below.
 `desktop:build` runs the web `npm run build` first, compiles the Rust shell
 in release mode, and produces the installer under
 `src-tauri\target\release\bundle\nsis\` — copy it to
-`release/windows/CloakGuard-Setup-<version>-x64.exe` for distribution
+`release/windows/CloakScan-Setup-<version>-x64.exe` for distribution
 staging. Both locations are git-ignored; no binaries live in tracked source
-directories. The bare `src-tauri\target\release\cloakguard.exe` is a
+directories. The bare `src-tauri\target\release\cloakscan.exe` is a
 **developer artifact only** — it runs, but users should always install via
 the setup EXE. `cargo audit` is not part of `desktop:verify` because
 cargo-audit is not installed on this machine.
@@ -69,7 +69,7 @@ cargo-audit is not installed on this machine.
   (`build.rs`) rejects every command except `export_clean_text` and
   `can_self_update`. The window capability grants those two commands,
   the updater's signed check/download/install commands, process restart,
-  and URL opening limited to CloakGuard's GitHub repository and live demo.
+  and URL opening limited to CloakScan's GitHub repository and live demo.
   It cannot open arbitrary URLs or local files. There are still no core
   defaults or general dialog, filesystem, shell, HTTP, clipboard, menu,
   tray, event, image, window, or devtools permissions. `withGlobalTauri`
@@ -90,12 +90,12 @@ cargo-audit is not installed on this machine.
   contacts the latest GitHub release, verifies the downloaded package with
   the bundled public key, and installs it only after another user click. The
   webview CSP remains `connect-src 'none'`.
-- **CloakGuard vs. WebView2:** outside that click-only update flow, CloakGuard
+- **CloakScan vs. WebView2:** outside that click-only update flow, CloakScan
   makes no remote application requests.
   The embedded WebView2 runtime is Microsoft's platform component: it keeps
   its own engine cache/profile under
-  `%LOCALAPPDATA%\dev.benthompson.cloakguard\EBWebView` and may
-  independently perform platform networking of its own. CloakGuard launches
+  `%LOCALAPPDATA%\dev.benthompson.cloakscan\EBWebView` and may
+  independently perform platform networking of its own. CloakScan launches
   it with `--disable-background-networking --disable-component-update
   --disable-domain-reliability --no-pings` on top of the SmartScreen-off
   defaults, and never hands it content to send — but no claim is made that
@@ -106,7 +106,7 @@ cargo-audit is not installed on this machine.
 ## Installer configuration (NSIS)
 
 - Per-user (`installMode: currentUser`), no admin, Windows Apps/Uninstall
-  registration, bundled CloakGuard icon.
+  registration, bundled CloakScan icon.
 - `webviewInstallMode: offlineInstaller` embeds the full WebView2 offline
   installer — the reason the setup EXE is large. On machines that already
   have WebView2 (any up-to-date Windows 10/11), nothing extra is installed.

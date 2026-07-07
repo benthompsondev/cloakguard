@@ -1,9 +1,9 @@
 /**
- * Development-only harness: runs the real CloakGuard engine across a PRIVATE
+ * Development-only harness: runs the real CloakScan engine across a PRIVATE
  * local script corpus and prints AGGREGATE COUNTS ONLY.
  *
  * Hard privacy rules (do not relax):
- * - The corpus directory comes from CLOAKGUARD_PRIVATE_CORPUS; nothing is
+ * - The corpus directory comes from CLOAKSCAN_PRIVATE_CORPUS; nothing is
  *   hardcoded. When the variable is absent the suite skips cleanly.
  * - The corpus is read-only. No file is modified, copied, or written anywhere.
  * - Matched values, file contents, and file names are NEVER printed. Output is
@@ -18,7 +18,7 @@ import { detectors } from '../src/lib/detectors';
 import { decodeText } from '../src/lib/decodeText';
 import { enabledRuleIds, profileRuleStates } from '../src/lib/profiles';
 
-const corpusRoot = process.env.CLOAKGUARD_PRIVATE_CORPUS;
+const corpusRoot = process.env.CLOAKSCAN_PRIVATE_CORPUS;
 
 const SCRIPT_EXTENSIONS = new Set(['.ps1', '.psm1', '.psd1']);
 
@@ -102,7 +102,7 @@ describe.skipIf(!corpusRoot)('private corpus aggregate scan', () => {
     const s = tallies.strict;
     const categories = [...new Set([...b.byCategory.keys(), ...s.byCategory.keys()])].sort();
     const lines = [
-      '=== CloakGuard private corpus — AGGREGATE COUNTS ONLY ===',
+      '=== CloakScan private corpus — AGGREGATE COUNTS ONLY ===',
       `Files found:            ${files.length}`,
       `Files processed:        ${processed}`,
       `Traversal failures:     ${traversalFailures}`,
@@ -131,8 +131,8 @@ describe.skipIf(!corpusRoot)('private corpus aggregate scan', () => {
 });
 
 describe.skipIf(!!corpusRoot)('private corpus harness (disabled)', () => {
-  it('skips cleanly when CLOAKGUARD_PRIVATE_CORPUS is not set', () => {
-    console.log('CLOAKGUARD_PRIVATE_CORPUS is not set — private corpus scan skipped.');
+  it('skips cleanly when CLOAKSCAN_PRIVATE_CORPUS is not set', () => {
+    console.log('CLOAKSCAN_PRIVATE_CORPUS is not set — private corpus scan skipped.');
     expect(corpusRoot).toBeUndefined();
   });
 });

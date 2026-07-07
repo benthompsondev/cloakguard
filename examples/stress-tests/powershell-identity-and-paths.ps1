@@ -1,4 +1,4 @@
-# Synthetic CloakGuard stress file. No real systems or people are represented.
+# Synthetic CloakScan stress file. No real systems or people are represented.
 # Author: Alex Demo
 # Contact Bea Example if the import fails.
 # Script prepared for Northwind Regional Hospital by Chris Sample.
@@ -34,7 +34,7 @@ $EmailDomain = "example-health.org"
 $SupportEmail = "helpdesk@example-health.org"
 $ManagerEmail = "alex.demo@example.internal"
 
-$UserLog = "C:\Users\Alex Demo\AppData\Local\CloakGuard Demo\identity run.log"
+$UserLog = "C:\Users\Alex Demo\AppData\Local\CloakScan Demo\identity run.log"
 $InstallPath = "C:\Program Files\Example Agent\agent.exe"
 $ArchivePath = "D:\Operations Tools\Identity Reports\Archive"
 $LoosePath = C:\Users\Alex Demo\Documents\deploy.ps1 $TargetPath = D:\Ops\Output

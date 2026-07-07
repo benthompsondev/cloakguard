@@ -13,6 +13,7 @@ interface SourcePanelProps {
   hasScanned: boolean;
   onChange: (text: string) => void;
   onScan: () => void;
+  onNewScan: () => void;
   onNotice: (notice: Notice) => void;
 }
 
@@ -22,6 +23,7 @@ export function SourcePanel({
   hasScanned,
   onChange,
   onScan,
+  onNewScan,
   onNotice,
 }: SourcePanelProps) {
   const fileInput = useRef<HTMLInputElement>(null);
@@ -92,6 +94,11 @@ export function SourcePanel({
           <button type="button" className="btn btn-ghost" onClick={() => fileInput.current?.click()}>
             Import file
           </button>
+          {(value !== '' || hasScanned) && (
+            <button type="button" className="btn btn-ghost" onClick={onNewScan}>
+              New Scan
+            </button>
+          )}
           <input
             ref={fileInput}
             type="file"

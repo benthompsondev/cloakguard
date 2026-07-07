@@ -1,10 +1,10 @@
 [package]
-name = "cloakguard"
-version = "1.1.2"
-description = "CloakGuard - local-first text sanitizer, desktop shell"
+name = "cloakscan"
+version = "1.2.0"
+description = "CloakScan - local-first text sanitizer, desktop shell"
 authors = ["Ben Thompson"]
-homepage = "https://github.com/benthompsondev/cloakguard"
-repository = "https://github.com/benthompsondev/cloakguard"
+homepage = "https://github.com/benthompsondev/cloakscan"
+repository = "https://github.com/benthompsondev/cloakscan"
 edition = "2021"
 license = "MIT"
 publish = false

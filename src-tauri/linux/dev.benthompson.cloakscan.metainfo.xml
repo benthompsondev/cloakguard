@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>dev.benthompson.cloakguard</id>
-  <name>CloakGuard</name>
+  <id>dev.benthompson.cloakscan</id>
+  <name>CloakScan</name>
   <summary>Sanitize sensitive text before sharing it</summary>
   <metadata_license>MIT</metadata_license>
   <project_license>MIT</project_license>
   <description>
     <p>
-      CloakGuard scans text locally for secrets, personal data, infrastructure
+      CloakScan scans text locally for secrets, personal data, infrastructure
       details, and work-specific terms before the text is shared.
     </p>
     <p>
-      Scanning runs on this device. CloakGuard has no account, backend,
+      Scanning runs on this device. CloakScan has no account, backend,
       telemetry, or content upload.
     </p>
   </description>
-  <launchable type="desktop-id">CloakGuard.desktop</launchable>
-  <url type="homepage">https://github.com/benthompsondev/cloakguard</url>
-  <url type="bugtracker">https://github.com/benthompsondev/cloakguard/issues</url>
+  <launchable type="desktop-id">CloakScan.desktop</launchable>
+  <url type="homepage">https://github.com/benthompsondev/cloakscan</url>
+  <url type="bugtracker">https://github.com/benthompsondev/cloakscan/issues</url>
   <content_rating type="oars-1.1"/>
   <developer id="dev.benthompson">
     <name>Ben Thompson</name>
@@ -32,15 +32,16 @@
   </keywords>
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/benthompsondev/cloakguard/main/docs/screenshots/scan-desktop-1440x900.png</image>
+      <image>https://raw.githubusercontent.com/benthompsondev/cloakscan/main/docs/screenshots/scan-desktop-1440x900.png</image>
       <caption>Review detected values and the cleaned text before sharing.</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/benthompsondev/cloakguard/main/docs/screenshots/settings-rules-1440x900.png</image>
+      <image>https://raw.githubusercontent.com/benthompsondev/cloakscan/main/docs/screenshots/settings-rules-1440x900.png</image>
       <caption>Choose which local detection rules are enabled.</caption>
     </screenshot>
   </screenshots>
   <releases>
+    <release version="1.2.0" date="2026-07-07"/>
     <release version="1.1.2" date="2026-07-06"/>
     <release version="1.1.1" date="2026-07-06"/>
     <release version="1.1.0" date="2026-07-06"/>

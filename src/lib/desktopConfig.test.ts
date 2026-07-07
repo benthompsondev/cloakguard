@@ -57,7 +57,7 @@ const capability = readJson('src-tauri', 'capabilities', 'main.json') as {
 };
 const pkg = readJson('package.json');
 const linuxMetainfo = readFileSync(
-  join(root, 'src-tauri', 'linux', 'dev.benthompson.cloakguard.metainfo.xml'),
+  join(root, 'src-tauri', 'linux', 'dev.benthompson.cloakscan.metainfo.xml'),
   'utf8',
 );
 
@@ -76,13 +76,13 @@ describe('shared tauri.conf.json privacy surface', () => {
   });
 
   it('keeps the stable identifier and product name', () => {
-    expect(sharedConf.identifier).toBe('dev.benthompson.cloakguard');
-    expect(sharedConf.productName).toBe('CloakGuard');
+    expect(sharedConf.identifier).toBe('dev.benthompson.cloakscan');
+    expect(sharedConf.productName).toBe('CloakScan');
   });
 
   it('uses the public project identity in installer metadata', () => {
-    expect(sharedConf.bundle.publisher).toBe('CloakGuard Project');
-    expect(sharedConf.bundle.homepage).toBe('https://github.com/benthompsondev/cloakguard');
+    expect(sharedConf.bundle.publisher).toBe('CloakScan Project');
+    expect(sharedConf.bundle.homepage).toBe('https://github.com/benthompsondev/cloakscan');
     expect(sharedConf.bundle.longDescription).toContain('scans pasted text locally');
     expect(sharedConf.bundle.longDescription).toContain('not uploaded');
     expect(sharedConf.bundle.longDescription).toContain('review the cleaned text');
@@ -92,7 +92,7 @@ describe('shared tauri.conf.json privacy surface', () => {
     expect(sharedConf.bundle.createUpdaterArtifacts).toBe(true);
     expect(sharedConf.plugins.updater.pubkey).toMatch(/^[A-Za-z0-9+/]+=*$/);
     expect(sharedConf.plugins.updater.endpoints).toEqual([
-      'https://github.com/benthompsondev/cloakguard/releases/latest/download/latest.json',
+      'https://github.com/benthompsondev/cloakscan/releases/latest/download/latest.json',
     ]);
   });
 
@@ -128,7 +128,7 @@ describe('platform overlays', () => {
     // Windows window entry must be complete on its own.
     expect(windowsConf.app.windows).toHaveLength(1);
     const win = windowsConf.app.windows[0];
-    expect(win.title).toBe('CloakGuard');
+    expect(win.title).toBe('CloakScan');
     expect(win.width).toBe(1280);
     expect(win.height).toBe(860);
     expect(win.minWidth).toBe(1024);
@@ -153,18 +153,18 @@ describe('platform overlays', () => {
 
   it('Linux installs AppStream metadata for desktop software managers', () => {
     const expectedFiles = {
-      '/usr/share/metainfo/dev.benthompson.cloakguard.metainfo.xml':
-        'linux/dev.benthompson.cloakguard.metainfo.xml',
+      '/usr/share/metainfo/dev.benthompson.cloakscan.metainfo.xml':
+        'linux/dev.benthompson.cloakscan.metainfo.xml',
     };
     expect(linuxConf.bundle.linux.deb.files).toEqual(expectedFiles);
     expect(linuxConf.bundle.linux.appimage.files).toEqual(expectedFiles);
-    expect(linuxMetainfo).toContain('<id>dev.benthompson.cloakguard</id>');
-    expect(linuxMetainfo).toContain('<launchable type="desktop-id">CloakGuard.desktop</launchable>');
+    expect(linuxMetainfo).toContain('<id>dev.benthompson.cloakscan</id>');
+    expect(linuxMetainfo).toContain('<launchable type="desktop-id">CloakScan.desktop</launchable>');
     expect(linuxMetainfo).toContain('<project_license>MIT</project_license>');
     expect(linuxMetainfo).toContain('<content_rating type="oars-1.1"/>');
     expect(linuxMetainfo).toContain('<developer id="dev.benthompson">');
     expect(linuxMetainfo).toContain(
-      '<url type="bugtracker">https://github.com/benthompsondev/cloakguard/issues</url>',
+      '<url type="bugtracker">https://github.com/benthompsondev/cloakscan/issues</url>',
     );
     for (const keyword of ['redact', 'sanitize', 'secrets', 'privacy', 'PII']) {
       expect(linuxMetainfo).toContain(`<keyword>${keyword}</keyword>`);
@@ -178,9 +178,9 @@ describe('platform overlays', () => {
       expect(conf.app.withGlobalTauri).toBe(false);
       expect(conf.app.security.csp).toBeNull();
       expect(conf.bundle.createUpdaterArtifacts).toBe(true);
-      expect(conf.identifier).toBe('dev.benthompson.cloakguard');
+      expect(conf.identifier).toBe('dev.benthompson.cloakscan');
       expect(conf.plugins.updater.endpoints).toEqual([
-        'https://github.com/benthompsondev/cloakguard/releases/latest/download/latest.json',
+        'https://github.com/benthompsondev/cloakscan/releases/latest/download/latest.json',
       ]);
     }
   });
@@ -196,8 +196,8 @@ describe('capability grants', () => {
       {
         identifier: 'opener:allow-open-url',
         allow: [
-          { url: 'https://github.com/benthompsondev/cloakguard/*' },
-          { url: 'https://benthompsondev.github.io/cloakguard/*' },
+          { url: 'https://github.com/benthompsondev/cloakscan/*' },
+          { url: 'https://benthompsondev.github.io/cloakscan/*' },
         ],
       },
     ]);
@@ -215,10 +215,10 @@ describe('capability grants', () => {
     const allowed = (url: string) =>
       opener!.allow.some(({ url: pattern }) => url.startsWith(pattern.slice(0, -1)));
 
-    expect(allowed('https://github.com/benthompsondev/cloakguard/releases/latest')).toBe(true);
-    expect(allowed('https://benthompsondev.github.io/cloakguard/')).toBe(true);
+    expect(allowed('https://github.com/benthompsondev/cloakscan/releases/latest')).toBe(true);
+    expect(allowed('https://benthompsondev.github.io/cloakscan/')).toBe(true);
     expect(allowed('https://github.com/benthompsondev/another-repo')).toBe(false);
-    expect(allowed('https://example.com/cloakguard/')).toBe(false);
+    expect(allowed('https://example.com/cloakscan/')).toBe(false);
   });
 
   it('does not grant core defaults or unrelated plugin surfaces', () => {

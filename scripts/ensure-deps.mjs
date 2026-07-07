@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 
 const projectRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const lockPath = join(projectRoot, 'package-lock.json');
-const stampPath = join(projectRoot, 'node_modules', '.cloakguard-lock.sha256');
+const stampPath = join(projectRoot, 'node_modules', '.cloakscan-lock.sha256');
 
 if (!existsSync(lockPath)) {
   console.error('package-lock.json not found — is this a complete checkout?');

@@ -1,4 +1,4 @@
-// CloakGuard desktop shell. Loads the bundled static frontend. The only
+// CloakScan desktop shell. Loads the bundled static frontend. The only
 // app-specific IPC command is export_clean_text below, and the build-time
 // ACL (build.rs) rejects every other app command. Tauri's updater, process,
 // and project-scoped opener plugins expose only the permissions listed in
@@ -51,7 +51,7 @@ fn export_clean_text(app: tauri::AppHandle, contents: String) -> Result<bool, St
     let picked = app
         .dialog()
         .file()
-        .set_file_name("cloakguard-clean.txt")
+        .set_file_name("cloakscan-clean.txt")
         .add_filter("Text", &["txt"])
         .blocking_save_file();
     match picked {
@@ -76,7 +76,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![export_clean_text, can_self_update])
         .run(tauri::generate_context!())
-        .expect("error while running CloakGuard");
+        .expect("error while running CloakScan");
 }
 
 #[cfg(test)]
@@ -84,7 +84,7 @@ mod tests {
     use super::{can_self_update_for, write_export};
 
     fn temp_file(name: &str) -> std::path::PathBuf {
-        std::env::temp_dir().join(format!("cloakguard-test-{}-{name}", std::process::id()))
+        std::env::temp_dir().join(format!("cloakscan-test-{}-{name}", std::process::id()))
     }
 
     #[test]

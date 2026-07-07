@@ -55,6 +55,7 @@ export const MAX_CUSTOM_PACKS = 20;
 export const MAX_RULES_PER_PACK = 20;
 export const MAX_TERMS_PER_PACK = 100;
 export const MAX_TERM_LENGTH = 120;
+export const MAX_CLOAK_LIST_IMPORT_BYTES = 256 * 1024;
 export const MAX_LABELS_PER_RULE = 10;
 export const MAX_CAPTURE_LENGTH = 200;
 
@@ -97,6 +98,66 @@ export function emptyPackTerms(): PackTerms {
   // Exact words/phrases (matchInsideWords off) are the safe default for new
   // lists; inside-word matching is an explicit, more aggressive opt-in.
   return { values: [], caseSensitive: false, matchInsideWords: false, saveTerms: false };
+}
+
+export interface CloakListTextParseResult {
+  terms: string[];
+  added: number;
+  droppedEmpty: number;
+  droppedDuplicate: number;
+  droppedTooLong: number;
+  capped: boolean;
+}
+
+export function parseCloakListText(
+  text: string,
+  existingTerms: readonly string[] = [],
+  caseSensitive = false,
+): CloakListTextParseResult {
+  const terms = [...existingTerms];
+  const seen = new Set(
+    existingTerms.map((term) => (caseSensitive ? term : term.toLocaleLowerCase())),
+  );
+  let added = 0;
+  let droppedEmpty = 0;
+  let droppedDuplicate = 0;
+  let droppedTooLong = 0;
+  let capped = false;
+
+  for (const rawLine of text.split(/\r?\n/)) {
+    const term = rawLine.trim();
+    if (term.length === 0) {
+      droppedEmpty += 1;
+      continue;
+    }
+    if (term.length > MAX_TERM_LENGTH) {
+      droppedTooLong += 1;
+      continue;
+    }
+    const key = caseSensitive ? term : term.toLocaleLowerCase();
+    if (seen.has(key)) {
+      droppedDuplicate += 1;
+      continue;
+    }
+    if (terms.length >= MAX_TERMS_PER_PACK) {
+      capped = true;
+      break;
+    }
+    terms.push(term);
+    seen.add(key);
+    added += 1;
+  }
+
+  return { terms, added, droppedEmpty, droppedDuplicate, droppedTooLong, capped };
+}
+
+export function summarizeCloakListImport(result: CloakListTextParseResult): string {
+  const parts = [`Imported ${result.added} term${result.added === 1 ? '' : 's'}`];
+  const dropped = result.droppedDuplicate + result.droppedTooLong;
+  if (dropped > 0) parts.push(`skipped ${dropped}`);
+  if (result.capped) parts.push(`stopped at ${MAX_TERMS_PER_PACK}`);
+  parts.push('content stays in memory only');
+  return `${parts.join(' — ')}.`;
 }
 
 /** Validate one custom rule. Returns a user-facing error or null. */

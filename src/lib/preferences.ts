@@ -32,11 +32,11 @@ import {
 import type { Category, Severity } from './types';
 
 /**
- * Opt-in preference persistence, schema v2. OFF by default: CloakGuard writes
+ * Opt-in preference persistence, schema v2. OFF by default: CloakScan writes
  * nothing to browser storage unless "Remember preferences on this device" is
  * enabled.
  *
- * v2 key: cloakguard.prefs.v2
+ * v2 key: cloakscan.prefs.v2
  *   { version: 2, activeProfileId, profiles[], customPacks[] }
  *
  * The legacy v1 key (profile/ruleStates/format) is migrated to v2 on load and
@@ -53,8 +53,8 @@ import type { Category, Severity } from './types';
  * clipboard content, or scan history.
  */
 
-export const PREFERENCES_STORAGE_KEY = 'cloakguard.prefs.v1'; // legacy
-export const PREFERENCES_STORAGE_KEY_V2 = 'cloakguard.prefs.v2';
+export const PREFERENCES_STORAGE_KEY = 'cloakscan.prefs.v1'; // legacy
+export const PREFERENCES_STORAGE_KEY_V2 = 'cloakscan.prefs.v2';
 
 export interface PreferencesV2 {
   version: 2;
@@ -371,7 +371,7 @@ export function savePreferencesV2(prefs: PreferencesV2): void {
   }
 }
 
-/** Delete every CloakGuard key: v1, v2, and everything inside them. */
+/** Delete every CloakScan key: v1, v2, and everything inside them. */
 export function clearPreferences(): void {
   try {
     storage()?.removeItem(PREFERENCES_STORAGE_KEY);
@@ -381,7 +381,7 @@ export function clearPreferences(): void {
   }
 }
 
-/** Whether any CloakGuard preferences key exists on this device. */
+/** Whether any CloakScan preferences key exists on this device. */
 export function hasStoredPreferences(): boolean {
   try {
     const store = storage();

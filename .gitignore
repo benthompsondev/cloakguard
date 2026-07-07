@@ -14,7 +14,7 @@ src-tauri/target/
 src-tauri/gen/
 .cargo/
 *.key
-.cloakguard/
+.cloakscan/
 
 # Staged release binaries (never tracked)
 release/

@@ -1,7 +1,7 @@
-/** Flat in-app version of the CloakGuard shield, cloak, and secure indicator. */
+/** Flat in-app version of the CloakScan shield, cloak, and secure indicator. */
 export function ShieldLogo() {
   return (
-    <svg viewBox="0 0 64 64" className="brand-mark" role="img" aria-label="CloakGuard logo">
+    <svg viewBox="0 0 64 64" className="brand-mark" role="img" aria-label="CloakScan logo">
       <path
         d="M11.5 28.5C22 21 39.5 18 53 22.5v9C39.5 27 24 29.5 12 37Z"
         fill="#137A6B"

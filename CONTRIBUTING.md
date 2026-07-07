@@ -1,8 +1,8 @@
-# Contributing to CloakGuard
+# Contributing to CloakScan
 
 Thanks for taking a look at the project.
 
-CloakGuard handles text that may contain private information, so privacy regressions matter as much as ordinary bugs. Please use synthetic examples in issues, tests, screenshots, and pull requests. Never paste a real key, internal hostname, work log, customer record, or other sensitive value into the repository.
+CloakScan handles text that may contain private information, so privacy regressions matter as much as ordinary bugs. Please use synthetic examples in issues, tests, screenshots, and pull requests. Never paste a real key, internal hostname, work log, customer record, or other sensitive value into the repository.
 
 ## Local setup
 

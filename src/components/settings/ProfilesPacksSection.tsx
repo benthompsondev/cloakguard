@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { BUILT_IN_PACKS, PACK_DISCLAIMER, type PackDefinition } from '../../lib/packs';
 import {
   BUILT_IN_PROFILES,
@@ -6,7 +6,16 @@ import {
   resolveRuleStates,
   MAX_PROFILES,
 } from '../../lib/profiles';
-import { MAX_CUSTOM_PACKS, isCloakList, type CustomPack } from '../../lib/customPacks';
+import {
+  MAX_CLOAK_LIST_IMPORT_BYTES,
+  MAX_CUSTOM_PACKS,
+  isCloakList,
+  parseCloakListText,
+  summarizeCloakListImport,
+  type CustomPack,
+} from '../../lib/customPacks';
+import { decodeText } from '../../lib/decodeText';
+import { downloadTextFile } from '../../lib/download';
 import type { SettingsProps } from './SettingsView';
 import { CustomPackEditor } from './CustomPackEditor';
 import { CloakListEditor } from './CloakListEditor';
@@ -14,8 +23,10 @@ import { ProfileEditor } from './ProfileEditor';
 
 export function ProfilesPacksSection(props: SettingsProps) {
   const { workspace, activeConfig } = props;
+  const importListInput = useRef<HTMLInputElement>(null);
   const [editingPack, setEditingPack] = useState<CustomPack | 'new' | null>(null);
   const [editingList, setEditingList] = useState<CustomPack | 'new' | null>(null);
+  const [newListFromFile, setNewListFromFile] = useState<{ name: string; termsText: string } | null>(null);
   const [editingProfileId, setEditingProfileId] = useState<string | null>(null);
   const [detailsPackId, setDetailsPackId] = useState<string | null>(null);
   const [newProfileName, setNewProfileName] = useState('');
@@ -29,6 +40,53 @@ export function ProfilesPacksSection(props: SettingsProps) {
 
   const cloakLists = workspace.customPacks.filter(isCloakList);
   const advancedPacks = workspace.customPacks.filter((p) => !isCloakList(p));
+
+  const filenameStem = (name: string) =>
+    name
+      .trim()
+      .toLocaleLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 40) || 'cloak-list';
+
+  const exportList = async (list: CustomPack) => {
+    const result = await downloadTextFile(
+      `${filenameStem(list.name)}-cloak-list.txt`,
+      list.terms.values.join('\n'),
+    );
+    props.onNotice({
+      kind: result === 'cancelled' ? 'err' : 'ok',
+      text:
+        result === 'cancelled'
+          ? 'Cloak List export cancelled.'
+          : `Exported "${list.name}" as a .txt list.`,
+    });
+  };
+
+  const importListFile = async (file: File) => {
+    if (!file.name.toLocaleLowerCase().endsWith('.txt')) {
+      props.onNotice({ kind: 'err', text: 'Import a plain .txt file with one term per line.' });
+      return;
+    }
+    if (file.size > MAX_CLOAK_LIST_IMPORT_BYTES) {
+      props.onNotice({ kind: 'err', text: 'That list is too large. Import a .txt file under 256 KB.' });
+      return;
+    }
+    try {
+      const decoded = decodeText(new Uint8Array(await file.arrayBuffer()));
+      if (decoded === null) {
+        props.onNotice({ kind: 'err', text: 'Could not decode that .txt file.' });
+        return;
+      }
+      const parsed = parseCloakListText(decoded);
+      const name = file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim().slice(0, 40) || 'Imported list';
+      setNewListFromFile({ name, termsText: parsed.terms.join('\n') });
+      setEditingList('new');
+      props.onNotice({ kind: 'ok', text: summarizeCloakListImport(parsed) });
+    } catch {
+      props.onNotice({ kind: 'err', text: 'Could not read that .txt file.' });
+    }
+  };
 
   // Only saved named profiles can be edited — built-in presets never appear
   // in workspace.profiles, so they can never reach the editor.
@@ -54,11 +112,17 @@ export function ProfilesPacksSection(props: SettingsProps) {
       <CloakListEditor
         list={editingList === 'new' ? null : editingList}
         remember={workspace.remember}
+        initialName={editingList === 'new' ? newListFromFile?.name : undefined}
+        initialTermsText={editingList === 'new' ? newListFromFile?.termsText : undefined}
         onSave={(pack) => {
           props.onSavePack(pack);
+          setNewListFromFile(null);
           setEditingList(null);
         }}
-        onCancel={() => setEditingList(null)}
+        onCancel={() => {
+          setNewListFromFile(null);
+          setEditingList(null);
+        }}
       />
     );
   }
@@ -272,6 +336,9 @@ export function ProfilesPacksSection(props: SettingsProps) {
                 <button type="button" className="btn btn-mini" onClick={() => props.onDuplicatePack(list.id)}>
                   Duplicate
                 </button>
+                <button type="button" className="btn btn-mini" onClick={() => void exportList(list)}>
+                  Export .txt
+                </button>
                 {confirmDeleteId === list.id ? (
                   <>
                     <button
@@ -302,10 +369,33 @@ export function ProfilesPacksSection(props: SettingsProps) {
             type="button"
             className="btn btn-ghost"
             disabled={workspace.customPacks.length >= MAX_CUSTOM_PACKS}
-            onClick={() => setEditingList('new')}
+            onClick={() => {
+              setNewListFromFile(null);
+              setEditingList('new');
+            }}
           >
             Create Cloak List
           </button>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            disabled={workspace.customPacks.length >= MAX_CUSTOM_PACKS}
+            onClick={() => importListInput.current?.click()}
+          >
+            Import Cloak List (.txt)
+          </button>
+          <input
+            ref={importListInput}
+            type="file"
+            accept=".txt,text/plain"
+            className="visually-hidden"
+            aria-label="Import Cloak List from .txt"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) void importListFile(file);
+              event.target.value = '';
+            }}
+          />
           <p className="muted">
             Name it, add exact terms, choose matching options, and (optionally) save the term
             values on this device.

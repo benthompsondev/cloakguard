@@ -1,8 +1,8 @@
-# CloakGuard for Linux (desktop)
+# CloakScan for Linux (desktop)
 
 > Looking for Windows? The setup-EXE guide is [docs/desktop.md](desktop.md).
 
-CloakGuard ships for Linux as two **x86_64** packages built from the same
+CloakScan ships for Linux as two **x86_64** packages built from the same
 source and the same privacy model as the Windows app:
 
 - **`.deb`** — for Debian 12, Ubuntu 22.04, or newer. Installs through the
@@ -23,27 +23,27 @@ network feature is the user-triggered **Check for updates** action.
 ## Install the .deb (Debian 12 / Ubuntu 22.04+)
 
 ```bash
-sudo apt install ./CloakGuard_<version>_amd64.deb
+sudo apt install ./CloakScan_<version>_amd64.deb
 ```
 
 `apt` resolves the WebKitGTK runtime dependencies automatically. Launch
-CloakGuard from your application menu or with `cloakguard`.
+CloakScan from your application menu or with `cloakscan`.
 
 - **Updating:** the `.deb` does **not** auto-update. When a new release is
   out, download the new `.deb` and install it the same way — it replaces the
   old version. The in-app **Check for updates** can still tell you a newer
   version exists and opens the GitHub release page for the new package.
 - **Uninstalling:** `sudo apt remove cloak-guard`. Saved preferences (if you
-  opted in) live under `~/.local/share/dev.benthompson.cloakguard/` and the
+  opted in) live under `~/.local/share/dev.benthompson.cloakscan/` and the
   WebKitGTK engine profile under `~/.cache/`; remove those folders yourself
   if you want them gone, or use *Clear preferences* inside the app first.
   The `.deb` also includes AppStream metadata so compatible software managers
-  can identify CloakGuard as an installed application.
+  can identify CloakScan as an installed application.
 
 Ubuntu App Center can still show **Unknown publisher** or **License unknown**
 for a sideloaded `.deb`, and it may not offer an uninstall action under
 *Manage*. Those labels come from App Center's handling of sideloaded packages,
-not missing fields CloakGuard can fill inside the package. GNOME Software and
+not missing fields CloakScan can fill inside the package. GNOME Software and
 KDE Discover can read the bundled AppStream details. The supported uninstall
 command remains:
 
@@ -54,8 +54,8 @@ sudo apt remove cloak-guard
 ## Run the AppImage (portable)
 
 ```bash
-chmod +x CloakGuard_<version>_amd64.AppImage
-./CloakGuard_<version>_amd64.AppImage
+chmod +x CloakScan_<version>_amd64.AppImage
+./CloakScan_<version>_amd64.AppImage
 ```
 
 No installation and no root. Keep the file wherever you like.
@@ -66,12 +66,12 @@ No installation and no root. Keep the file wherever you like.
   built into the app, and replaces itself only after you confirm. Nothing
   runs at launch or in the background.
 - **Uninstalling:** delete the file. Preference data (if you opted in) is in
-  the same `~/.local/share/dev.benthompson.cloakguard/` folder as the .deb
+  the same `~/.local/share/dev.benthompson.cloakscan/` folder as the .deb
   install.
 
 ## Privacy on Linux
 
-Identical to every other CloakGuard build: scanning runs on your device,
+Identical to every other CloakScan build: scanning runs on your device,
 content stays in memory, nothing is uploaded, and there is no telemetry.
 The webview keeps the strict production CSP (`connect-src 'none'`); the
 update check runs on the Rust side and only after you click it. The
@@ -83,15 +83,15 @@ for the exact guarantees.
 
 - **AppImage does not start and prints a FUSE error** — install FUSE 2
   (`sudo apt install libfuse2` on Ubuntu 22.04+), or run it without FUSE:
-  `./CloakGuard_<version>_amd64.AppImage --appimage-extract-and-run`.
+  `./CloakScan_<version>_amd64.AppImage --appimage-extract-and-run`.
 - **`.deb` install complains about webkit dependencies** — run
   `sudo apt -f install` to let apt pull the WebKitGTK runtime, and confirm
   you are on Debian 12 / Ubuntu 22.04 or newer.
 - **Blank or white window** — some GPU/driver combinations need WebKitGTK
-  compositing turned off: `WEBKIT_DISABLE_COMPOSITING_MODE=1 cloakguard`
+  compositing turned off: `WEBKIT_DISABLE_COMPOSITING_MODE=1 cloakscan`
   (or the same variable in front of the AppImage).
 - **Nothing happens on a Wayland session** — try forcing X11 for the run:
-  `GDK_BACKEND=x11 cloakguard`.
+  `GDK_BACKEND=x11 cloakscan`.
 
 ## For developers
 

@@ -1,12 +1,31 @@
 # Changelog
 
-This file tracks the public CloakGuard releases. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+This file tracks the public CloakScan releases. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+## [1.2.0] - 2026-07-07
+
+### Changed
+
+- Renamed the app to CloakScan across the UI, desktop package metadata, docs, and demo links.
+
+### Added
+
+- Added Cloak List `.txt` export and import so reusable exact-match terms can move between machines without copying from the editor by hand.
+- Added **New Scan** on the source panel to clear the current text and results while keeping session settings ready for the next paste or file.
+- Added internal Active Directory FQDN coverage for server-shaped hosts such as `DC02.ad.contoso.com`.
+- Added network port detection in host/IP and labeled-port contexts.
+- Added LDAP and LDAPS URL coverage when the host is internal-looking.
+
+### Safety
+
+- The desktop capability surface, updater signing key, CSP, preference schema, and scan overlap behavior are unchanged.
+- Cloak List imports stay in memory unless the user saves the list under the existing preference opt-ins.
 
 ## [1.1.2] - 2026-07-06
 
 ### Added
 
-- Added a narrowly scoped desktop link opener for the CloakGuard GitHub repository and live demo.
+- Added a narrowly scoped desktop link opener for the CloakScan GitHub repository and live demo.
 - Added AWS `ASIA` temporary access-key IDs to the existing AWS credential check.
 - Added a short app demo, branded social card, and a reusable press kit.
 - Added AppStream metadata to the AppImage as well as the Debian package.
@@ -17,7 +36,7 @@ This file tracks the public CloakGuard releases. The format follows [Keep a Chan
 
 ### Safety
 
-- The opener cannot launch arbitrary websites or local files. Its capability contains only the CloakGuard GitHub and GitHub Pages URL prefixes.
+- The opener cannot launch arbitrary websites or local files. Its capability contains only the CloakScan GitHub and GitHub Pages URL prefixes.
 - AWS credential detection still requires a distinctive provider prefix and exact access-key length.
 - The webview CSP remains unchanged at `connect-src 'none'`.
 
@@ -60,7 +79,7 @@ This file tracks the public CloakGuard releases. The format follows [Keep a Chan
 
 ### Safety
 
-- New secret checks require a distinctive prefix, webhook shape, or gated URL parameter. CloakGuard still does not guess secrets from entropy.
+- New secret checks require a distinctive prefix, webhook shape, or gated URL parameter. CloakScan still does not guess secrets from entropy.
 - The Linux package check exposes one Boolean to the UI and never exposes environment values.
 - Content storage, preference schema, scanner CSP, telemetry, and background-network behavior are unchanged.
 - Updater packages are signed for Tauri verification. The Windows installer itself is unsigned, so verify its published SHA-256 checksum.
@@ -111,8 +130,8 @@ This file tracks the public CloakGuard releases. The format follows [Keep a Chan
 ### Added
 
 - Added a user-triggered update check to the Windows app. It checks GitHub only after the user clicks the button.
-- Added signed update packages so CloakGuard can reject an installer with the wrong updater signature.
-- Added a new shield icon, matching app icons and favicon, and a two-tone CloakGuard wordmark.
+- Added signed update packages so CloakScan can reject an installer with the wrong updater signature.
+- Added a new shield icon, matching app icons and favicon, and a two-tone CloakScan wordmark.
 - Added a fuller About page with clear privacy notes, project links, and desktop update status.
 
 ### Changed
@@ -142,7 +161,7 @@ This file tracks the public CloakGuard releases. The format follows [Keep a Chan
 ### Safety
 
 - Suggestions never redact text automatically. The user must choose what to hide.
-- CloakGuard still uses contextual name and organization checks, not a built-in name dictionary.
+- CloakScan still uses contextual name and organization checks, not a built-in name dictionary.
 
 ## [0.7.3] - 2026-07-04
 
@@ -198,15 +217,16 @@ This file tracks the public CloakGuard releases. The format follows [Keep a Chan
 - Kept scanning local with no backend, account, or telemetry.
 - Documented the unsigned-installer warning and the need to review cleaned text before sharing.
 
-[1.1.2]: https://github.com/benthompsondev/cloakguard/compare/v1.1.1...v1.1.2
-[1.1.1]: https://github.com/benthompsondev/cloakguard/compare/v1.1.0...v1.1.1
-[1.1.0]: https://github.com/benthompsondev/cloakguard/compare/v1.0.1...v1.1.0
-[1.0.1]: https://github.com/benthompsondev/cloakguard/compare/v1.0.0...v1.0.1
-[1.0.0]: https://github.com/benthompsondev/cloakguard/compare/v0.9.0...v1.0.0
-[0.9.0]: https://github.com/benthompsondev/cloakguard/compare/v0.8.0...v0.9.0
-[0.8.0]: https://github.com/benthompsondev/cloakguard/compare/v0.7.3...v0.8.0
-[0.7.3]: https://github.com/benthompsondev/cloakguard/compare/v0.7.2...v0.7.3
-[0.7.2]: https://github.com/benthompsondev/cloakguard/compare/v0.7.1...v0.7.2
-[0.7.1]: https://github.com/benthompsondev/cloakguard/compare/v0.6.7...v0.7.1
-[0.6.7]: https://github.com/benthompsondev/cloakguard/compare/v0.6.5...v0.6.7
-[0.6.5]: https://github.com/benthompsondev/cloakguard/releases/tag/v0.6.5
+[1.2.0]: https://github.com/benthompsondev/cloakscan/compare/v1.1.2...v1.2.0
+[1.1.2]: https://github.com/benthompsondev/cloakscan/compare/v1.1.1...v1.1.2
+[1.1.1]: https://github.com/benthompsondev/cloakscan/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/benthompsondev/cloakscan/compare/v1.0.1...v1.1.0
+[1.0.1]: https://github.com/benthompsondev/cloakscan/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/benthompsondev/cloakscan/compare/v0.9.0...v1.0.0
+[0.9.0]: https://github.com/benthompsondev/cloakscan/compare/v0.8.0...v0.9.0
+[0.8.0]: https://github.com/benthompsondev/cloakscan/compare/v0.7.3...v0.8.0
+[0.7.3]: https://github.com/benthompsondev/cloakscan/compare/v0.7.2...v0.7.3
+[0.7.2]: https://github.com/benthompsondev/cloakscan/compare/v0.7.1...v0.7.2
+[0.7.1]: https://github.com/benthompsondev/cloakscan/compare/v0.6.7...v0.7.1
+[0.6.7]: https://github.com/benthompsondev/cloakscan/compare/v0.6.5...v0.6.7
+[0.6.5]: https://github.com/benthompsondev/cloakscan/releases/tag/v0.6.5

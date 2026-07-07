@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Start CloakGuard locally on Windows. No admin rights required.
+Start CloakScan locally on Windows. No admin rights required.
 
 .DESCRIPTION
 Checks for a Node.js version supported by the build tooling (20.19+ or
@@ -34,7 +34,7 @@ $major = [int]$parts[0]
 $minor = [int]$parts[1]
 $supported = ($major -eq 20 -and $minor -ge 19) -or ($major -eq 22 -and $minor -ge 12) -or ($major -gt 22)
 if (-not $supported) {
-    Fail "Node $nodeVersion is not supported. CloakGuard (Vite 8) needs Node 20.19+ or 22.12+."
+    Fail "Node $nodeVersion is not supported. CloakScan (Vite 8) needs Node 20.19+ or 22.12+."
 }
 Write-Host "Node $nodeVersion / npm $(npm --version) found." -ForegroundColor Green
 
@@ -43,7 +43,7 @@ if ($LASTEXITCODE -ne 0) { Fail 'Dependency setup failed. Check the output above
 
 Write-Host ''
 Write-Host 'Building the production app (one moment)...' -ForegroundColor Green
-Write-Host 'CloakGuard will open at http://127.0.0.1:4173 (this machine only).' -ForegroundColor Green
+Write-Host 'CloakScan will open at http://127.0.0.1:4173 (this machine only).' -ForegroundColor Green
 Write-Host 'To stop the app, press Ctrl+C in this window.' -ForegroundColor Green
 Write-Host ''
 

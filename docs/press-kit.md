@@ -1,23 +1,23 @@
-# CloakGuard press kit
+# CloakScan press kit
 
 This page collects the text and images needed for a directory listing, project roundup, or short review. Please link to the project rather than rehosting the installers.
 
 ## One line
 
-CloakGuard is an open-source Windows and Linux app that removes common secrets and personal details from text on your device before you share it.
+CloakScan is an open-source Windows and Linux app that removes common secrets and personal details from text on your device before you share it.
 
 ## Links
 
-- [Live demo](https://benthompsondev.github.io/cloakguard/)
-- [Windows and Linux downloads](https://github.com/benthompsondev/cloakguard/releases/latest)
-- [Source code](https://github.com/benthompsondev/cloakguard/)
+- [Live demo](https://benthompsondev.github.io/cloakscan/)
+- [Windows and Linux downloads](https://github.com/benthompsondev/cloakscan/releases/latest)
+- [Source code](https://github.com/benthompsondev/cloakscan/)
 - [Privacy and security notes](../SECURITY.md)
 
 ## Images
 
 ### Logo and social card
 
-- [CloakGuard logo](brand/cloakguard-mark-glossy.png)
+- [CloakScan logo](brand/cloakguard-mark-glossy.png)
 - [1280 × 640 social card](media/social-card.png)
 - [Short demo](media/cloakguard-demo.gif)
 
@@ -40,15 +40,15 @@ All screenshots use synthetic data.
 
 ## Short description
 
-CloakGuard helps clean sensitive details out of code, logs, prompts, support tickets, and draft posts before they are shared. Scanning runs on the user's device, and every replacement can be reviewed first. It is available for Windows and Linux, with a browser demo that also runs entirely on-device.
+CloakScan helps clean sensitive details out of code, logs, prompts, support tickets, and draft posts before they are shared. Scanning runs on the user's device, and every replacement can be reviewed first. It is available for Windows and Linux, with a browser demo that also runs entirely on-device.
 
 ## Longer description
 
-CloakGuard is a local-first text sanitizer for the point just before someone pastes a log into a ticket, posts code publicly, or sends a prompt to an AI tool. It checks for common secrets, credentials, personal data, network details, file paths, and organization-specific terms, then builds a cleaned copy with clear placeholders.
+CloakScan is a local-first text sanitizer for the point just before someone pastes a log into a ticket, posts code publicly, or sends a prompt to an AI tool. It checks for common secrets, credentials, personal data, network details, file paths, and organization-specific terms, then builds a cleaned copy with clear placeholders.
 
 The app has no account, backend, telemetry, or content upload. Source text, findings, and cleaned output stay in memory. Users can add one-time custom terms or save reusable Cloak Lists when built-in rules cannot know a project name, hostname, department, or internal phrase.
 
-CloakGuard is a focused review tool, not a DLP platform or a guarantee. It keeps the final check practical and visible while leaving the user in control of every replacement.
+CloakScan is a focused review tool, not a DLP platform or a guarantee. It keeps the final check practical and visible while leaving the user in control of every replacement.
 
 ## Listing notes
 

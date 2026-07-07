@@ -17,7 +17,7 @@
 // Usage:
 //   node scripts/update-manifest.mjs --validate latest.json
 //   node scripts/update-manifest.mjs \
-//     --version 1.1.0 --pub-date 2026-08-01T00:00:00Z --notes "CloakGuard 1.1.0" \
+//     --version 1.1.0 --pub-date 2026-08-01T00:00:00Z --notes "CloakScan 1.1.0" \
 //     --platform windows-x86_64 <artifact-url> <path-to-.sig> \
 //     --platform linux-x86_64 <artifact-url> <path-to-.sig> \
 //     [--existing previous-latest.json] --out latest.json

@@ -2,7 +2,7 @@
 
 ## Our pledge
 
-We want CloakGuard to be a welcoming place to report bugs, suggest changes, improve documentation, and contribute code. People should be able to take part without harassment, intimidation, or discrimination.
+We want CloakScan to be a welcoming place to report bugs, suggest changes, improve documentation, and contribute code. People should be able to take part without harassment, intimidation, or discrimination.
 
 ## Expected behavior
 

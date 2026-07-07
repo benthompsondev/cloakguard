@@ -132,7 +132,7 @@ export function UpdatePanel() {
                 </p>
                 <ExternalLink
                   className="btn btn-primary"
-                  href="https://github.com/benthompsondev/cloakguard/releases/latest"
+                  href="https://github.com/benthompsondev/cloakscan/releases/latest"
                 >
                   Open GitHub Releases
                 </ExternalLink>
@@ -164,7 +164,7 @@ export function UpdatePanel() {
       <p className="muted update-restart-note">
         {supportsSelfUpdate === false
           ? 'Debian packages are updated manually through the downloaded .deb file.'
-          : 'CloakGuard may close while the update is applied.'}
+          : 'CloakScan may close while the update is applied.'}
       </p>
     </section>
   );

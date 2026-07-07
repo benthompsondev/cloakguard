@@ -44,7 +44,7 @@ jobs:
           }
 
           New-Item -ItemType Directory -Path out -Force | Out-Null
-          $releaseName = "CloakGuard-Setup-$version-x64.exe"
+          $releaseName = "CloakScan-Setup-$version-x64.exe"
           Copy-Item -LiteralPath $installer.FullName -Destination "out/$releaseName"
           Copy-Item -LiteralPath $signature -Destination "out/$releaseName.sig"
           $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath "out/$releaseName").Hash.ToLowerInvariant()
@@ -52,6 +52,6 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
-          name: cloakguard-windows-x86_64
+          name: cloakscan-windows-x86_64
           path: out/
           if-no-files-found: error

@@ -6,6 +6,7 @@ import { apiKeyDetector, bearerTokenDetector, jwtDetector, secretAssignmentDetec
 import { windowsPathDetector, unixPathDetector } from './paths';
 import { uncPathDetector } from './unc';
 import { internalUrlDetector, internalHostnameDetector } from './internal';
+import { portDetector } from './ports';
 import { adDnDetector } from './activedirectory';
 import { guidDetector } from './guids';
 import {
@@ -64,6 +65,7 @@ export const detectors: Detector[] = [
   ipv6Detector,
   macAddressDetector,
   ipv4Detector,
+  portDetector,
   internalHostnameDetector,
   ticketIdDetector,
   usernameDetector,

@@ -17,7 +17,7 @@ describe('DemoBanner', () => {
     const demoHtml = renderToStaticMarkup(createElement(DemoBanner, { flag: '1' }));
     expect(demoHtml).toContain('Download for Windows or Linux');
     expect(demoHtml).toContain('⭐ Star on GitHub');
-    expect(demoHtml).toContain('https://github.com/benthompsondev/cloakguard/releases/latest');
+    expect(demoHtml).toContain('https://github.com/benthompsondev/cloakscan/releases/latest');
     expect(renderToStaticMarkup(createElement(DemoBanner, { flag: '0' }))).toBe('');
   });
 });

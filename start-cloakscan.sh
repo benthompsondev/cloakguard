@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Start CloakGuard locally on macOS or Linux. No root required.
+# Start CloakScan locally on macOS or Linux. No root required.
 #
 # Checks for a Node.js version supported by the build tooling (20.19+ or
 # 22.12+), installs dependencies only when missing or out of sync with
@@ -30,7 +30,7 @@ if [ "$major" -eq 20 ] && [ "$minor" -ge 19 ]; then supported=true; fi
 if [ "$major" -eq 22 ] && [ "$minor" -ge 12 ]; then supported=true; fi
 if [ "$major" -gt 22 ]; then supported=true; fi
 if [ "$supported" != true ]; then
-  fail "Node ${node_version} is not supported. CloakGuard (Vite 8) needs Node 20.19+ or 22.12+."
+  fail "Node ${node_version} is not supported. CloakScan (Vite 8) needs Node 20.19+ or 22.12+."
 fi
 echo "Node ${node_version} / npm $(npm --version) found."
 
@@ -38,7 +38,7 @@ node scripts/ensure-deps.mjs
 
 echo
 echo "Building the production app (one moment)..."
-echo "CloakGuard will open at http://127.0.0.1:4173 (this machine only)."
+echo "CloakScan will open at http://127.0.0.1:4173 (this machine only)."
 echo "To stop the app, press Ctrl+C here."
 echo
 

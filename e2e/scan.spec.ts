@@ -289,7 +289,7 @@ test('downloads the cleaned text as a .txt file', async ({ page }) => {
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download .txt' }).click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toBe('cloakguard-clean.txt');
+  expect(download.suggestedFilename()).toBe('cloakscan-clean.txt');
 });
 
 test('clear session wipes source, findings, and preview', async ({ page }) => {
@@ -298,6 +298,22 @@ test('clear session wipes source, findings, and preview', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Findings' })).toBeHidden();
   await expect(page.getByText('Run a scan to see the sanitized version here.')).toBeVisible();
   await expect(page.getByLabel('Source text input')).toHaveValue('');
+});
+
+test('New Scan clears the current source and findings for another input', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel('Source text input').fill('Contact alex.demo@example.internal');
+  await page.getByRole('button', { name: 'Scan locally' }).click();
+  await expect(page.getByRole('heading', { name: 'Findings' })).toBeVisible();
+
+  await page.getByRole('button', { name: 'New Scan' }).click();
+  await expect(page.getByRole('heading', { name: 'Findings' })).toBeHidden();
+  await expect(page.getByText('Run a scan to see the sanitized version here.')).toBeVisible();
+  await expect(page.getByLabel('Source text input')).toHaveValue('');
+
+  await page.getByLabel('Source text input').fill('Host IP: 10.20.30.40');
+  await page.getByRole('button', { name: 'Scan locally' }).click();
+  await expect(page.getByLabel('Sanitized output with placeholders')).toContainText('[IP_ADDRESS_1]');
 });
 
 test('production app contacts no non-local origin', async ({ page }) => {

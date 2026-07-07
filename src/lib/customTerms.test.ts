@@ -6,6 +6,7 @@ import {
   parsePrivateTerms,
 } from './customTerms';
 import { MAX_TERMS_PER_PACK, MAX_TERM_LENGTH, emptyPackTerms } from './customPacks';
+import { parseCloakListText, summarizeCloakListImport } from './customPacks';
 import { scanText } from './scan';
 import { buildCleanText } from './sanitize';
 import { createEmptySession } from './session';
@@ -72,6 +73,31 @@ describe('term safety', () => {
       'O’Brien   Health',
       'North–West Team',
     ]);
+  });
+});
+
+describe('Cloak List .txt import parsing', () => {
+  it('trims, dedupes, skips empty lines, appends to current terms, and reports the result', () => {
+    const result = parseCloakListText(
+      ' Contoso General \n\ncontoso general\nProject Nightjar\n',
+      ['Existing Term'],
+    );
+    expect(result.terms).toEqual(['Existing Term', 'Contoso General', 'Project Nightjar']);
+    expect(result.added).toBe(2);
+    expect(result.droppedEmpty).toBe(2);
+    expect(result.droppedDuplicate).toBe(1);
+    expect(summarizeCloakListImport(result)).toBe(
+      'Imported 2 terms — skipped 1 — content stays in memory only.',
+    );
+  });
+
+  it(`drops over-length terms and stops at ${MAX_TERMS_PER_PACK} total terms`, () => {
+    const existingTerms = Array.from({ length: MAX_TERMS_PER_PACK - 1 }, (_, i) => `term-${i}`);
+    const result = parseCloakListText(`fresh-one\n${'x'.repeat(MAX_TERM_LENGTH + 1)}\nfresh-two`, existingTerms);
+    expect(result.terms).toHaveLength(MAX_TERMS_PER_PACK);
+    expect(result.terms.at(-1)).toBe('fresh-one');
+    expect(result.droppedTooLong).toBe(1);
+    expect(result.capped).toBe(true);
   });
 });
 

@@ -340,6 +340,17 @@ export default function App() {
   const setSource = (sourceText: string) =>
     setSession((s) => ({ ...s, sourceText, findings: [], hasScanned: false }));
 
+  const newScan = () => {
+    setSession((s) => ({
+      ...s,
+      sourceText: '',
+      findings: [],
+      hasScanned: false,
+      dismissedCandidateKeys: [],
+    }));
+    setScanMeta(null);
+  };
+
   const updateTerms = (patch: Partial<SessionState>) =>
     setSession((s) => ({ ...s, ...patch, findings: [], hasScanned: false }));
 
@@ -484,6 +495,7 @@ export default function App() {
             onSource={setSource}
             onUpdateTerms={updateTerms}
             onScan={scan}
+            onNewScan={newScan}
             onToggleGroup={onToggleGroup}
             onHideCandidate={hideCandidate}
             onDismissCandidate={dismissCandidate}

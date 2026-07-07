@@ -8,9 +8,9 @@ import { Wordmark } from './Wordmark';
 const root = join(__dirname, '..', '..');
 
 describe('Wordmark', () => {
-  it('has one accessible CloakGuard name while keeping the colored parts decorative', () => {
+  it('has one accessible CloakScan name while keeping the colored parts decorative', () => {
     const html = renderToStaticMarkup(<Wordmark />);
-    expect(html).toContain('aria-label="CloakGuard"');
+    expect(html).toContain('aria-label="CloakScan"');
     expect(html.match(/aria-hidden="true"/g)).toHaveLength(2);
     expect(html).toContain('wordmark-accent');
   });

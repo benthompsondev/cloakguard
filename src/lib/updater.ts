@@ -108,6 +108,6 @@ export function updateErrorMessage(error: unknown, action: 'check' | 'install'):
   }
 
   return action === 'check'
-    ? 'CloakGuard could not check for updates. Please try again.'
-    : 'CloakGuard could not install the update. Nothing was changed.';
+    ? 'CloakScan could not check for updates. Please try again.'
+    : 'CloakScan could not install the update. Nothing was changed.';
 }

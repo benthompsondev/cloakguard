@@ -1,4 +1,4 @@
-/** Shared types for the CloakGuard scan engine. */
+/** Shared types for the CloakScan scan engine. */
 
 export type Category = 'secrets' | 'infrastructure' | 'personal' | 'paths';
 

@@ -13,7 +13,7 @@ try {
   const exitCode = await new Promise((resolve, reject) => {
     const child = spawn(
       process.execPath,
-      [viteCli, 'build', '--mode', 'pages', '--base=/cloakguard/'],
+      [viteCli, 'build', '--mode', 'pages', '--base=/cloakscan/'],
       { stdio: 'inherit' },
     );
     child.once('error', reject);

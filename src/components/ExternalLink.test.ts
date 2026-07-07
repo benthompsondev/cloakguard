@@ -23,10 +23,10 @@ describe('openExternal', () => {
     opener.openUrl.mockResolvedValue(undefined);
 
     await expect(
-      openExternal('https://github.com/benthompsondev/cloakguard/releases/latest'),
+      openExternal('https://github.com/benthompsondev/cloakscan/releases/latest'),
     ).resolves.toBe('desktop');
     expect(opener.openUrl).toHaveBeenCalledWith(
-      'https://github.com/benthompsondev/cloakguard/releases/latest',
+      'https://github.com/benthompsondev/cloakscan/releases/latest',
     );
   });
 
@@ -34,7 +34,7 @@ describe('openExternal', () => {
     tauriCore.isTauri.mockReturnValue(false);
 
     await expect(
-      openExternal('https://benthompsondev.github.io/cloakguard/'),
+      openExternal('https://benthompsondev.github.io/cloakscan/'),
     ).resolves.toBe('web');
     expect(opener.openUrl).not.toHaveBeenCalled();
   });

@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 
-const PREFS_KEY = 'cloakguard.prefs.v2';
+const PREFS_KEY = 'cloakscan.prefs.v2';
 
 async function storageSnapshot(page: Page) {
   return page.evaluate(async () => ({
@@ -94,7 +94,7 @@ test('strict profile detects labeled person and org names; balanced does not', a
 
   await page.getByRole('link', { name: 'Settings' }).click();
   await page.getByRole('radio', { name: /^Strict/ }).check();
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await page.getByRole('button', { name: 'Scan locally' }).click();
   await expect(preview).toContainText('Reported by: [NAME_1]');
   await expect(preview).toContainText('[NAME_1],[ORG_1],[EMAIL_1]');
@@ -110,7 +110,7 @@ test('toggling an individual rule switches the profile to Custom', async ({ page
   // And the disabled rule stops producing findings: no [EMAIL_n] anywhere.
   // (The internal-hostname rule still redacts the domain part — lower-priority
   // rules take over once the email rule is out of the way.)
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await page.getByRole('button', { name: 'Load sample' }).click();
   await page.getByRole('button', { name: 'Scan locally' }).click();
   const preview = page.getByRole('region', { name: /Redacted preview/i });
@@ -123,7 +123,7 @@ test('redaction format changes apply to the scan output', async ({ page }) => {
   await page.getByRole('radio', { name: /Uniform replacement/ }).check();
   await expect(page.locator('.format-preview')).toContainText('[REDACTED]');
 
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await page.getByRole('button', { name: 'Load sample' }).click();
   await page.getByRole('button', { name: 'Scan locally' }).click();
   const preview = page.getByRole('region', { name: /Redacted preview/i });

@@ -100,7 +100,7 @@ export function GeneralSection({
         <dl className="summary-list settings-info">
           <div className="summary-row">
             <dt>Version</dt>
-            <dd>CloakGuard {APP_VERSION}</dd>
+            <dd>CloakScan {APP_VERSION}</dd>
           </div>
           <div className="summary-row">
             <dt>Engine</dt>

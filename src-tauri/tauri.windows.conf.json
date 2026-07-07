@@ -3,7 +3,7 @@
   "app": {
     "windows": [
       {
-        "title": "CloakGuard",
+        "title": "CloakScan",
         "width": 1280,
         "height": 860,
         "minWidth": 1024,

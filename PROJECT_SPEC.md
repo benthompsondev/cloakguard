@@ -1,4 +1,4 @@
-# Project Spec: CloakGuard
+# Project Spec: CloakScan
 
 One short spec before any code. If this page cannot be filled in, the idea goes to `portfolio-lab` as a backlog note instead of becoming a repo.
 
@@ -18,7 +18,7 @@ One scan screen: paste or import text → optionally add custom terms to hide �
 
 - Input: pasted/edited text, an imported text/code file, or the built-in synthetic demo
 - Output: sanitized text with placeholders like `[EMAIL_1]`, plus a findings list
-- One command to run it on Windows: `.\Start-CloakGuard.ps1`
+- One command to run it on Windows: `.\Start-CloakScan.ps1`
 
 ## Done Means
 
@@ -26,15 +26,15 @@ One scan screen: paste or import text → optionally add custom terms to hide �
 - [x] Import UTF-8/UTF-16 text and PowerShell files; download cleaned output
 - [x] Session-only custom terms to hide are cleared on refresh or Clear session
 - [x] Repeated identical values share one placeholder; overlaps resolve to the more specific finding
-- [x] Forty registered detectors cover common secrets, identity, path, network, directory, PowerShell, and (pack-only) regional PII shapes
+- [x] Forty-one registered detectors cover common secrets, identity, path, network, directory, PowerShell, and (pack-only) regional PII shapes
 - [x] README explains what/why/run/verify
 - [x] `npm run verify` (audit + lint + unit tests + build + desktop e2e) passes
 
 ## Scope Boundaries
 
-- In scope: the desktop scan screen, Settings (profiles & packs with a draft-based Profile Editor, Cloak Lists, rule controls, redaction formats, privacy), Privacy/About page, hash navigation, file import/download, session-only custom terms to hide, 40 registered detectors, four built-in profiles, built-in country packs, custom packs with labeled-field rules, opt-in preference storage, production launchers, unit/e2e tests, CI, and docs.
+- In scope: the desktop scan screen, Settings (profiles & packs with a draft-based Profile Editor, Cloak Lists, rule controls, redaction formats, privacy), Privacy/About page, hash navigation, file import/download, session-only custom terms to hide, 41 registered detectors, four built-in profiles, built-in country packs, custom packs with labeled-field rules, opt-in preference storage, production launchers, unit/e2e tests, CI, and docs.
 - In scope since v0.6.1: a Tauri 2 desktop shell (`src-tauri/`, see `docs/desktop.md`) that bundles the same static frontend with one save-dialog command and one Boolean update-capability check. Windows-only at first; Linux x86_64 (`.deb` + AppImage, see `docs/linux.md`) ships with v1.1.0.
-- In scope for v0.6.5: public source repository, Windows setup release, checksum, and the `CloakGuard Project` installer publisher label.
+- In scope for v0.6.5: public source repository, Windows setup release, checksum, and the `CloakScan Project` installer publisher label.
 - In scope for v0.9.0: a user-triggered signed updater that contacts GitHub through Tauri's Rust plugin while the scanning webview keeps `connect-src 'none'`.
 - Out of scope (be ruthless): scan history (privacy decision; see SECURITY.md), user-editable regex rules, rule import/export, mobile-specific UI, dark/light toggle, PWA packaging, macOS desktop builds, non-x86_64 Linux builds, distro packages beyond deb/AppImage, Windows code signing, background update checks, backend anything, browser extension, i18n.
 - Ask Ben first before: publishing to GitHub, adding dependencies, persisting anything beyond the allowlisted preferences key.
@@ -91,12 +91,12 @@ One scan screen: paste or import text → optionally add custom terms to hide �
 | 2026-07-02 | v0.6.1: desktop save uses one app command (native save dialog + write to the picked path) | WebView2 silently drops blob-anchor downloads; this is the narrowest possible replacement |
 | 2026-07-03 | v0.6.2: IPC locked to a build-time command ACL + allow-export-clean-text only; core:default removed; withGlobalTauri off; @tauri-apps/api invoke/isTauri | Smallest possible frontend surface, enforced by a config unit test |
 | 2026-07-03 | v0.6.2: privacy wording says "on this device"; app requests distinguished from WebView2 platform networking; uninstall docs match the NSIS delete-app-data checkbox | Exact claims only — never promise the whole process tree is silent |
-| 2026-07-03 | v0.6.2: single user-facing artifact release/windows/CloakGuard-Setup-<version>-x64.exe (NSIS, per-user, offline); bare exe documented as developer-only | Everyday users get one download with no prerequisites |
+| 2026-07-03 | v0.6.2: single user-facing artifact release/windows/CloakScan-Setup-<version>-x64.exe (NSIS, per-user, offline); bare exe documented as developer-only | Everyday users get one download with no prerequisites |
 | 2026-07-03 | v0.6.3: "Quick Cloak" (session-only, badged never-saved) and "Cloak Lists" (term-only CustomPacks via isCloakList — no new schema) | Exact-term cloaking becomes a first-class, discoverable feature with temporary vs reusable made explicit |
 | 2026-07-03 | v0.6.3: over-length terms skipped whole with line numbers; 100-term cap reported, never silently partial; exact words/phrases as matching default | A truncated or silently dropped term cloaks something different from what the user typed |
 | 2026-07-03 | v0.6.3 correction: finished the visible Quick Cloak / Cloak List terminology sweep, reworded the local-save opt-ins, and blocked ambiguous empty creations (new Cloak List needs ≥1 valid term; Custom Pack needs ≥1 detector or rule) | Review found leftover "Private Terms" wording and save buttons that allowed collections with nothing to detect |
 | 2026-07-03 | v0.6.4: renamed the session-only action to "Hide custom terms" and its dialog to "Custom terms to hide"; reusable collections remain "Cloak Lists" | The previous "Quick Cloak" name described speed rather than what the control actually does |
-| 2026-07-04 | v0.6.5: first public release; Windows publisher set to "CloakGuard Project", public repository metadata added, and CI expanded to verify the desktop shell on Windows | Give users a clear package identity and publish a reproducible source release without implying code signing |
+| 2026-07-04 | v0.6.5: first public release; Windows publisher set to "CloakScan Project", public repository metadata added, and CI expanded to verify the desktop shell on Windows | Give users a clear package identity and publish a reproducible source release without implying code signing |
 | 2026-07-04 | v0.6.6 hardening: detect bare mail-domain suffixes and labeled domains, redact spaced Windows paths as a whole, broaden Strict name/organization context, and normalize common Cloak List punctuation variants | A private PowerShell stress test exposed partial path redaction and missed identity/domain shapes |
 | 2026-07-04 | v0.6.7: saved profiles have an explicit Edit rules flow and a clear editing-state banner | Named profiles were already editable in place, but the old UI made that behavior hard to discover |
 | 2026-07-04 | v0.7: one draft-based Profile Editor per saved profile (name, description, base mode, packs, Cloak Lists, rules, format) replacing the Edit rules action; Save is the only commit point and scan results invalidate only when scanning behavior actually changed | Live-applying edits across four settings pages made it too easy to change the wrong profile or not notice a change had already taken effect |

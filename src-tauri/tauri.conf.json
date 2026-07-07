@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "CloakGuard",
-  "version": "1.1.2",
-  "identifier": "dev.benthompson.cloakguard",
+  "productName": "CloakScan",
+  "version": "1.2.0",
+  "identifier": "dev.benthompson.cloakscan",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:5173",
@@ -13,7 +13,7 @@
     "withGlobalTauri": false,
     "windows": [
       {
-        "title": "CloakGuard",
+        "title": "CloakScan",
         "width": 1280,
         "height": 860,
         "minWidth": 1024,
@@ -29,10 +29,10 @@
     "active": true,
     "createUpdaterArtifacts": true,
     "category": "Utility",
-    "publisher": "CloakGuard Project",
-    "homepage": "https://github.com/benthompsondev/cloakguard",
+    "publisher": "CloakScan Project",
+    "homepage": "https://github.com/benthompsondev/cloakscan",
     "shortDescription": "Sanitize sensitive text before it leaves your machine.",
-    "longDescription": "CloakGuard scans pasted text locally for secrets, personal data, infrastructure details, and work-specific terms before sharing. Text is not uploaded, and the app has no account, backend, or telemetry. Automated detection can miss sensitive information, so review the cleaned text before sharing.",
+    "longDescription": "CloakScan scans pasted text locally for secrets, personal data, infrastructure details, and work-specific terms before sharing. Text is not uploaded, and the app has no account, backend, or telemetry. Automated detection can miss sensitive information, so review the cleaned text before sharing.",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -44,7 +44,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDdGRTkyMjA0OUQ3NTJBQQpSV1NxVXRkSklKTCtCejR1ZWdybXJaanJxODJtSXFTU2NLUW00S1Fram5Wa04yU1VlbzNSaVRqMQo=",
       "endpoints": [
-        "https://github.com/benthompsondev/cloakguard/releases/latest/download/latest.json"
+        "https://github.com/benthompsondev/cloakscan/releases/latest/download/latest.json"
       ]
     }
   }

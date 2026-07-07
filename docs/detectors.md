@@ -1,6 +1,6 @@
 # Detector behavior and safety
 
-CloakGuard findings are review leads, not verdicts. Pattern matching can miss
+CloakScan findings are review leads, not verdicts. Pattern matching can miss
 unusual sensitive values and can flag harmless identifiers. Review the cleaned
 text before sharing it.
 
@@ -25,7 +25,7 @@ text before sharing it.
   `ConnectionUri`, `Domain`, `Fqdn`, or `SmtpServer` is treated as
   infrastructure even when it uses an ordinary public DNS suffix.
 - Email templates are handled without damaging PowerShell variables. In
-  `"$alias@example.org"`, CloakGuard replaces only `@example.org`; complete
+  `"$alias@example.org"`, CloakScan replaces only `@example.org`; complete
   addresses and labeled mail/UPN domain fields are also detected.
 - Absolute Windows paths are redacted as a whole, including quoted paths and
   paths containing spaces. Unquoted paths stop before a following PowerShell
@@ -98,16 +98,31 @@ text before sharing it.
   `AKIA` long-term and `ASIA` temporary access-key IDs.
 - **Signed URL values:** Azure SAS `sig` and Amazon S3
   `X-Amz-Signature` values are detected only when they appear as URL query
-  parameters. CloakGuard replaces the value while preserving the parameter
+  parameters. CloakScan replaces the value while preserving the parameter
   name and surrounding URL.
 - **No entropy guessing:** these checks require a recognizable prefix or
-  query parameter and a provider-specific shape. CloakGuard does not flag an
+  query parameter and a provider-specific shape. CloakScan does not flag an
   arbitrary long random-looking string as a secret.
 - **Cleaner review suggestions:** common PowerShell colors, language
   keywords, log verbs, date-format tokens, and well-known technical acronyms
   no longer crowd the possible-name review panel. Multi-word names and project
   terms sort before single words and acronyms. Unknown acronyms still appear
   for human review.
+
+## v1.2 coverage
+
+- **Internal AD hostnames on public suffixes:** server-shaped internal hosts such as
+  `DC02.ad.contoso.com` and `EXCH01.ad.contoso.on.ca` are treated as internal even
+  though their final suffix is public. Public URLs such as GitHub, Microsoft, and
+  ad-tech domains stay untouched.
+- **LDAP and LDAPS URLs:** internal-looking LDAP(S) URLs are covered by the same
+  internal URL rule. Public LDAP examples are skipped.
+- **Network ports:** common service/admin ports are detected only beside a host/IP
+  or in explicit port fields such as `Port: 587` or `SMTP port 465`. Bare numbers
+  like `587 records processed` are ignored.
+- **Cloak List text files:** reusable exact-match lists can be exported and imported
+  as one-term-per-line `.txt` files. Imported values follow the same term caps and
+  save-on-device opt-ins as typed terms.
 
 ## Known boundaries
 

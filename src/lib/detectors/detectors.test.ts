@@ -9,6 +9,7 @@ import {
 } from './secrets';
 import { windowsPathDetector, unixPathDetector } from './paths';
 import { internalUrlDetector, internalHostnameDetector, looksInternalHost } from './internal';
+import { portDetector } from './ports';
 import { ticketIdDetector } from './tickets';
 import { usernameDetector } from './usernames';
 import {
@@ -315,6 +316,15 @@ describe('internal URL and hostname detectors', () => {
     ).toEqual(['https://admin.example.internal/api']);
   });
 
+  it('flags LDAP URLs only when the host is internal-looking', () => {
+    expect(
+      values(
+        internalUrlDetector,
+        'bind ldaps://DC02.ad.contoso.com/CN=Users but skip ldap://example.com/CN=Users',
+      ),
+    ).toEqual(['ldaps://DC02.ad.contoso.com/CN=Users']);
+  });
+
   it('flags private-IP and single-label URLs', () => {
     expect(looksInternalHost('10.0.0.5')).toBe(true);
     expect(looksInternalHost('intranet')).toBe(true);
@@ -325,6 +335,44 @@ describe('internal URL and hostname detectors', () => {
     expect(values(internalHostnameDetector, 'deployed on ws-144.example.internal today')).toEqual([
       'ws-144.example.internal',
     ]);
+  });
+
+  it('flags AD and Windows-server-shaped internal FQDNs on public suffixes', () => {
+    expect(values(internalUrlDetector, 'open http://EXCH01.ad.contoso.on.ca/PowerShell/')).toEqual([
+      'http://EXCH01.ad.contoso.on.ca/PowerShell/',
+    ]);
+    expect(values(internalHostnameDetector, 'replicate DC02.ad.contoso.com now')).toEqual([
+      'DC02.ad.contoso.com',
+    ]);
+    expect(values(internalHostnameDetector, 'deploy SRV-APP01.corp.example.com')).toEqual([
+      'SRV-APP01.corp.example.com',
+    ]);
+  });
+
+  it('does not flag ordinary public or ad-tech domains as internal', () => {
+    expect(
+      values(
+        internalUrlDetector,
+        'https://api.github.com/repos/o/r https://example.com https://ad.doubleclick.net/pagead',
+      ),
+    ).toEqual([]);
+    expect(values(internalHostnameDetector, 'api.github.com ad.doubleclick.net example.com')).toEqual([]);
+  });
+});
+
+describe('network port detector', () => {
+  it('finds common ports in infrastructure context', () => {
+    expect(values(portDetector, 'Server: mail.contoso.local Port: 587')).toEqual(['587']);
+    expect(values(portDetector, 'smtp.contoso.local:587 and 10.20.0.5:1433')).toEqual([
+      '587',
+      '1433',
+    ]);
+    expect(values(portDetector, 'SMTP port 465')).toEqual(['465']);
+  });
+
+  it('ignores bare numbers and uncommon ports', () => {
+    expect(values(portDetector, '587 records processed, build 5432, v1.2.587')).toEqual([]);
+    expect(values(portDetector, 'Port: 54321')).toEqual([]);
   });
 });
 

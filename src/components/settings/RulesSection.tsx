@@ -251,7 +251,7 @@ function RuleDetail({
       <p className="muted">{detector.explanation}</p>
       {(detector.id === 'person-name' || detector.id === 'org-name') && (
         <p className="muted rule-coverage-note" role="note" data-testid="name-coverage-note">
-          CloakGuard may not find every name or organization — this rule only detects values with
+          CloakScan may not find every name or organization — this rule only detects values with
           recognizable context. For anything it misses, add the exact words with{' '}
           <strong>Hide custom terms</strong> on the Scan screen, or keep a reusable{' '}
           <a href="#/settings/profiles">Cloak List</a>.

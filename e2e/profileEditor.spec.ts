@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 
-const PREFS_V2 = 'cloakguard.prefs.v2';
+const PREFS_V2 = 'cloakscan.prefs.v2';
 
 /** Create a named profile from the current configuration and return to Profiles. */
 async function createProfile(page: Page, name: string) {
@@ -107,7 +107,7 @@ test('saved base mode, Cloak List, and format changes drive real scan output', a
 
   // Activate it and scan synthetic text.
   await page.getByRole('button', { name: /^Sharing profile/ }).click();
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await expect(page.getByLabel('Active packs')).toContainText('Org names · Cloak List');
   await page
     .getByLabel('Source text input')
@@ -164,7 +164,7 @@ test('saving an ACTIVE profile invalidates results only when scanning behavior c
   page,
 }) => {
   await createProfile(page, 'Support profile'); // created active
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await page.getByRole('button', { name: 'Load sample' }).click();
   await page.getByRole('button', { name: 'Scan locally' }).click();
   await expect(page.getByText('Local scan complete')).toBeVisible();
@@ -174,7 +174,7 @@ test('saving an ACTIVE profile invalidates results only when scanning behavior c
   await openEditor(page, 'Support profile');
   await page.getByLabel('Profile description').fill('Only words changed');
   await page.getByRole('button', { name: 'Save profile' }).click();
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await expect(page.getByText('Local scan complete')).toBeVisible();
 
   // Rule-change save: stale results are cleared.
@@ -182,7 +182,7 @@ test('saving an ACTIVE profile invalidates results only when scanning behavior c
   await openEditor(page, 'Support profile');
   await page.getByRole('switch', { name: 'Enable rule Email address' }).uncheck();
   await page.getByRole('button', { name: 'Save profile' }).click();
-  await page.getByRole('link', { name: 'Scan' }).click();
+  await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await expect(page.getByText('Local scan complete')).toBeHidden();
 });
 

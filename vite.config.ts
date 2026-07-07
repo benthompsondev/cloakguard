@@ -22,7 +22,7 @@ const PRODUCTION_CSP = [
 
 function productionCsp(): Plugin {
   return {
-    name: 'cloakguard-production-csp',
+    name: 'cloakscan-production-csp',
     apply: 'build',
     transformIndexHtml() {
       return [

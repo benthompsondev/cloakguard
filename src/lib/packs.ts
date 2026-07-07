@@ -4,7 +4,7 @@
  * Packs only ever ENABLE rules; per-rule overrides are applied after packs.
  *
  * Policy packs improve regional detection coverage. They do not guarantee
- * legal or regulatory compliance, and CloakGuard claims no certification.
+ * legal or regulatory compliance, and CloakScan claims no certification.
  */
 
 export interface PackDefinition {

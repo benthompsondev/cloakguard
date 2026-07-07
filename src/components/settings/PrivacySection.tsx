@@ -25,7 +25,7 @@ export function PrivacySection({ workspace, onSetRemember, onClearPreferences }:
             </>
           ) : (
             <>
-              <strong>Preference storage is OFF.</strong> CloakGuard writes nothing to this device
+              <strong>Preference storage is OFF.</strong> CloakScan writes nothing to this device
               — no localStorage, sessionStorage, IndexedDB, or cookies. Named profiles, custom
               packs, Cloak Lists, custom rules, and cloak terms all vanish on reload.
             </>

@@ -14,13 +14,13 @@ interface AboutViewProps {
 }
 
 const PROJECT_LINKS = [
-  ['GitHub', 'https://github.com/benthompsondev/cloakguard/'],
-  ['Live demo', 'https://benthompsondev.github.io/cloakguard/'],
-  ['Changelog', 'https://github.com/benthompsondev/cloakguard/blob/main/CHANGELOG.md'],
-  ['Report an issue', 'https://github.com/benthompsondev/cloakguard/issues'],
-  ['Security policy', 'https://github.com/benthompsondev/cloakguard/blob/main/SECURITY.md'],
-  ['License', 'https://github.com/benthompsondev/cloakguard/blob/main/LICENSE'],
-  ['How it works', 'https://github.com/benthompsondev/cloakguard/blob/main/docs/architecture.md'],
+  ['GitHub', 'https://github.com/benthompsondev/cloakscan/'],
+  ['Live demo', 'https://benthompsondev.github.io/cloakscan/'],
+  ['Changelog', 'https://github.com/benthompsondev/cloakscan/blob/main/CHANGELOG.md'],
+  ['Report an issue', 'https://github.com/benthompsondev/cloakscan/issues'],
+  ['Security policy', 'https://github.com/benthompsondev/cloakscan/blob/main/SECURITY.md'],
+  ['License', 'https://github.com/benthompsondev/cloakscan/blob/main/LICENSE'],
+  ['How it works', 'https://github.com/benthompsondev/cloakscan/blob/main/docs/architecture.md'],
 ] as const;
 
 export function AboutView({ remember, isDesktop, onClearPreferences }: AboutViewProps) {
@@ -95,7 +95,7 @@ export function AboutView({ remember, isDesktop, onClearPreferences }: AboutView
                   </>
                 ) : (
                   <>
-                    Storage is currently <strong>OFF</strong>. No CloakGuard preferences are saved
+                    Storage is currently <strong>OFF</strong>. No CloakScan preferences are saved
                     on this device.
                   </>
                 )}

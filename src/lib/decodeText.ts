@@ -1,7 +1,7 @@
 /**
  * Decode imported file bytes to text. PowerShell tooling frequently writes
  * UTF-16LE (with or without BOM), so plain UTF-8 decoding would produce
- * garbage for exactly the files CloakGuard is most useful on.
+ * garbage for exactly the files CloakScan is most useful on.
  *
  * Handles: UTF-8, UTF-8 BOM, UTF-16LE/BE with BOM, and BOM-less UTF-16LE via
  * a NUL-byte heuristic. Returns null when decoding fails.

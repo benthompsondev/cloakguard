@@ -1,7 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { generateId, validateName } from '../../lib/profiles';
-import { cloakListSaveBlocker, emptyPackTerms, type CustomPack } from '../../lib/customPacks';
+import {
+  MAX_CLOAK_LIST_IMPORT_BYTES,
+  cloakListSaveBlocker,
+  emptyPackTerms,
+  parseCloakListText,
+  summarizeCloakListImport,
+  type CustomPack,
+} from '../../lib/customPacks';
 import { analyzePrivateTerms, createPrivateTermsDetector } from '../../lib/customTerms';
+import { decodeText } from '../../lib/decodeText';
 import { scanText } from '../../lib/scan';
 import { buildCleanText } from '../../lib/sanitize';
 import { TermsFeedback } from '../TermsFeedback';
@@ -20,6 +28,8 @@ import {
 interface CloakListEditorProps {
   list: CustomPack | null; // null = create new
   remember: boolean;
+  initialName?: string;
+  initialTermsText?: string;
   onSave: (pack: CustomPack) => void;
   onCancel: () => void;
 }
@@ -29,13 +39,21 @@ interface CloakListEditorProps {
  * hood it is a term-only CustomPack (no registry rules, no labeled-field
  * rules) — same model, same persistence rules, nothing new to store.
  */
-export function CloakListEditor({ list, remember, onSave, onCancel }: CloakListEditorProps) {
+export function CloakListEditor({
+  list,
+  remember,
+  initialName = '',
+  initialTermsText = '',
+  onSave,
+  onCancel,
+}: CloakListEditorProps) {
+  const importInput = useRef<HTMLInputElement>(null);
   const [draft, setDraft] = useState<CustomPack>(
     list
       ? JSON.parse(JSON.stringify(list))
       : {
           id: generateId('pack'),
-          name: '',
+          name: initialName,
           description: '',
           detectorIds: [],
           rules: [],
@@ -43,7 +61,12 @@ export function CloakListEditor({ list, remember, onSave, onCancel }: CloakListE
           enabled: true,
         },
   );
-  const [termsText, setTermsText] = useState(draft.terms.values.join('\n'));
+  const [termsText, setTermsText] = useState(
+    list ? draft.terms.values.join('\n') : initialTermsText,
+  );
+  const [importNotice, setImportNotice] = useState<string | null>(
+    initialTermsText ? 'Imported terms — content stays in memory only.' : null,
+  );
 
   // The editor header (title, privacy status, Cancel/Save) must be visible
   // immediately, wherever the packs page was scrolled to.
@@ -87,6 +110,30 @@ export function CloakListEditor({ list, remember, onSave, onCancel }: CloakListE
       name: draft.name.trim(),
       terms: { ...draft.terms, values: analysis.terms },
     });
+
+  const importTermsFile = async (file: File) => {
+    if (!file.name.toLocaleLowerCase().endsWith('.txt')) {
+      setImportNotice('Import a plain .txt file with one term per line.');
+      return;
+    }
+    if (file.size > MAX_CLOAK_LIST_IMPORT_BYTES) {
+      setImportNotice('That list is too large. Import a .txt file under 256 KB.');
+      return;
+    }
+    try {
+      const decoded = decodeText(new Uint8Array(await file.arrayBuffer()));
+      if (decoded === null) {
+        setImportNotice('Could not decode that .txt file.');
+        return;
+      }
+      const currentTerms = analyzePrivateTerms(termsText, draft.terms.caseSensitive).terms;
+      const result = parseCloakListText(decoded, currentTerms, draft.terms.caseSensitive);
+      setTermsText(result.terms.join('\n'));
+      setImportNotice(summarizeCloakListImport(result));
+    } catch {
+      setImportNotice('Could not read that .txt file.');
+    }
+  };
 
   return (
     <section className="panel settings-panel" aria-label="Cloak List editor">
@@ -144,12 +191,34 @@ export function CloakListEditor({ list, remember, onSave, onCancel }: CloakListE
           </label>
         </div>
 
-        <h3>Exact terms ({analysis.terms.length})</h3>
+        <div className="section-heading-row">
+          <h3>Exact terms ({analysis.terms.length})</h3>
+          <button type="button" className="btn btn-mini" onClick={() => importInput.current?.click()}>
+            Import .txt
+          </button>
+          <input
+            ref={importInput}
+            type="file"
+            accept=".txt,text/plain"
+            className="visually-hidden"
+            aria-label="Import terms from .txt"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) void importTermsFile(file);
+              event.target.value = '';
+            }}
+          />
+        </div>
         <p className="muted">
           Exact words or phrases — organization names, domains, hostnames, usernames, project
           names, team names. One per line, never as a regular expression. Common apostrophe,
           dash, and horizontal-spacing variants match automatically.
         </p>
+        {importNotice && (
+          <p className="muted" role="status">
+            {importNotice}
+          </p>
+        )}
         <textarea
           className="terms-input"
           rows={6}

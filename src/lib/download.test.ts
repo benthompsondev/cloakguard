@@ -23,7 +23,7 @@ function stubBrowserGlobals() {
     createElement: vi.fn(() => anchor),
     body: { appendChild: (el: unknown) => appended.push(el) },
   });
-  const createObjectURL = vi.fn(() => 'blob:cloakguard-test');
+  const createObjectURL = vi.fn(() => 'blob:cloakscan-test');
   const revokeObjectURL = vi.fn();
   vi.stubGlobal('URL', { createObjectURL, revokeObjectURL });
   return { anchor, appended, createObjectURL, revokeObjectURL };
@@ -43,12 +43,12 @@ describe('downloadTextFile in the browser', () => {
     tauriCore.isTauri.mockReturnValue(false);
     const { anchor, createObjectURL, revokeObjectURL } = stubBrowserGlobals();
 
-    const result = await downloadTextFile('cloakguard-clean.txt', 'cleaned [EMAIL_1]');
+    const result = await downloadTextFile('cloakscan-clean.txt', 'cleaned [EMAIL_1]');
 
     expect(result).toBe('downloaded');
     expect(createObjectURL).toHaveBeenCalledTimes(1);
-    expect(anchor.download).toBe('cloakguard-clean.txt');
-    expect(anchor.href).toBe('blob:cloakguard-test');
+    expect(anchor.download).toBe('cloakscan-clean.txt');
+    expect(anchor.href).toBe('blob:cloakscan-test');
     expect(anchor.click).toHaveBeenCalledTimes(1);
     expect(anchor.remove).toHaveBeenCalledTimes(1);
     expect(tauriCore.invoke).not.toHaveBeenCalled();
@@ -56,7 +56,7 @@ describe('downloadTextFile in the browser', () => {
     // The object URL is revoked on the next tick, after the click.
     expect(revokeObjectURL).not.toHaveBeenCalled();
     await new Promise((r) => setTimeout(r, 5));
-    expect(revokeObjectURL).toHaveBeenCalledWith('blob:cloakguard-test');
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:cloakscan-test');
   });
 });
 
@@ -65,7 +65,7 @@ describe('downloadTextFile on the desktop (Tauri)', () => {
     tauriCore.isTauri.mockReturnValue(true);
     tauriCore.invoke.mockResolvedValue(true);
 
-    const result = await downloadTextFile('cloakguard-clean.txt', 'note for [CUSTOM_TERM_1]');
+    const result = await downloadTextFile('cloakscan-clean.txt', 'note for [CUSTOM_TERM_1]');
 
     expect(result).toBe('saved');
     expect(tauriCore.invoke).toHaveBeenCalledTimes(1);

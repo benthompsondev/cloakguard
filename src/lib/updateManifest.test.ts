@@ -17,12 +17,12 @@ import {
 
 const WINDOWS_ENTRY: PlatformEntry = {
   signature: 'dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkK',
-  url: 'https://github.com/benthompsondev/cloakguard/releases/download/v1.1.0/CloakGuard_1.1.0_x64-setup.exe',
+  url: 'https://github.com/benthompsondev/cloakscan/releases/download/v1.1.0/CloakScan_1.1.0_x64-setup.exe',
 };
 
 const LINUX_ENTRY: PlatformEntry = {
   signature: 'dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkx',
-  url: 'https://github.com/benthompsondev/cloakguard/releases/download/v1.1.0/CloakGuard_1.1.0_amd64.AppImage',
+  url: 'https://github.com/benthompsondev/cloakscan/releases/download/v1.1.0/CloakScan_1.1.0_amd64.AppImage',
 };
 
 const BOTH = {
@@ -33,7 +33,7 @@ const BOTH = {
 function build(overrides: Partial<Parameters<typeof buildManifest>[0]> = {}) {
   return buildManifest({
     version: '1.1.0',
-    notes: 'CloakGuard 1.1.0',
+    notes: 'CloakScan 1.1.0',
     pubDate: '2026-08-01T00:00:00Z',
     platforms: BOTH,
     ...overrides,
@@ -99,7 +99,7 @@ describe('buildManifest', () => {
 describe('mergeManifest', () => {
   const existing = validateManifest({
     version: '1.1.0',
-    notes: 'CloakGuard 1.1.0',
+    notes: 'CloakScan 1.1.0',
     pub_date: '2026-08-01T00:00:00Z',
     platforms: { 'windows-x86_64': WINDOWS_ENTRY, 'linux-x86_64': LINUX_ENTRY },
   });
@@ -107,7 +107,7 @@ describe('mergeManifest', () => {
   it('adds a new platform while preserving the existing entries byte for byte', () => {
     const windowsOnly = {
       version: '1.1.0',
-      notes: 'CloakGuard 1.1.0',
+      notes: 'CloakScan 1.1.0',
       pub_date: '2026-08-01T00:00:00Z',
       platforms: { 'windows-x86_64': WINDOWS_ENTRY },
     };

@@ -47,7 +47,7 @@ jobs:
           dpkg-deb --contents "$DEB"
           file "$DEB" | grep -q . # sanity: file exists and is readable
           dpkg-deb --field "$DEB" Architecture | grep -qx amd64
-          dpkg-deb --contents "$DEB" | grep -q 'usr/share/metainfo/dev.benthompson.cloakguard.metainfo.xml'
+          dpkg-deb --contents "$DEB" | grep -q 'usr/share/metainfo/dev.benthompson.cloakscan.metainfo.xml'
           DESCRIPTION=$(dpkg-deb --field "$DEB" Description)
           printf '%s\n' "$DESCRIPTION"
           printf '%s\n' "$DESCRIPTION" | grep -q 'scans pasted text locally'
@@ -55,8 +55,8 @@ jobs:
           EXTRACTED=$(mktemp -d)
           dpkg-deb --extract "$DEB" "$EXTRACTED"
           appstreamcli validate --no-net \
-            "$EXTRACTED/usr/share/metainfo/dev.benthompson.cloakguard.metainfo.xml"
-          desktop-file-validate "$EXTRACTED/usr/share/applications/CloakGuard.desktop"
+            "$EXTRACTED/usr/share/metainfo/dev.benthompson.cloakscan.metainfo.xml"
+          desktop-file-validate "$EXTRACTED/usr/share/applications/CloakScan.desktop"
 
       - name: Verify AppImage architecture and signature file
         run: |
@@ -71,7 +71,7 @@ jobs:
             cd "$EXTRACTED"
             "$GITHUB_WORKSPACE/$APPIMAGE" --appimage-extract >/dev/null
           )
-          METAINFO="$EXTRACTED/squashfs-root/usr/share/metainfo/dev.benthompson.cloakguard.metainfo.xml"
+          METAINFO="$EXTRACTED/squashfs-root/usr/share/metainfo/dev.benthompson.cloakscan.metainfo.xml"
           test -f "$METAINFO" || { echo "AppImage is missing AppStream metainfo"; exit 1; }
           appstreamcli validate --no-net "$METAINFO"
           echo "AppImage contains AppStream metainfo."
@@ -108,6 +108,6 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
-          name: cloakguard-linux-x86_64
+          name: cloakscan-linux-x86_64
           path: out/
           if-no-files-found: error

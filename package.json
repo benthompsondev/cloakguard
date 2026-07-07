@@ -1,18 +1,18 @@
 {
-  "name": "cloakguard",
+  "name": "cloakscan",
   "private": true,
-  "version": "1.1.2",
+  "version": "1.2.0",
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
   },
   "description": "Local-first text sanitizer. Detects and redacts secrets, credentials, infrastructure details, and personal data entirely on this device.",
-  "homepage": "https://github.com/benthompsondev/cloakguard#readme",
+  "homepage": "https://github.com/benthompsondev/cloakscan#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/benthompsondev/cloakguard.git"
+    "url": "https://github.com/benthompsondev/cloakscan.git"
   },
   "bugs": {
-    "url": "https://github.com/benthompsondev/cloakguard/issues"
+    "url": "https://github.com/benthompsondev/cloakscan/issues"
   },
   "type": "module",
   "scripts": {

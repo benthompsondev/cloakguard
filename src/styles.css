@@ -1,4 +1,4 @@
-/* CloakGuard — dark charcoal, restrained emerald, calm and technical. */
+/* CloakScan — dark charcoal, restrained emerald, calm and technical. */
 
 :root {
   --bg: #0d1112;
@@ -1248,6 +1248,17 @@ body {
 
 .settings-subhead .panel-actions {
   flex: 0 0 auto;
+}
+
+.section-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.section-heading-row h3 {
+  margin: 0;
 }
 
 .settings-body h4 {
