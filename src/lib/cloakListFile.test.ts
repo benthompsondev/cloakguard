@@ -113,6 +113,41 @@ describe('parseCloakListFile', () => {
     expect(mappings[1].replacement).toBe('');
   });
 
+  it('round-trips the strategy field', () => {
+    const list = sampleList();
+    list.terms.mappings = [
+      { ...emptyMappingEntry('m-1'), term: 'Nirv', replacement: 'SourceSystem', strategy: 'genericize', codeSafe: true },
+      { ...emptyMappingEntry('m-2'), term: 'Contoso', replacement: '', strategy: 'review-lead', codeSafe: false },
+    ];
+    const result = parseCloakListFile(serializeCloakList(list));
+    if (!result.ok) throw new Error(result.error);
+    expect(result.pack.terms.mappings?.map((m) => m.strategy)).toEqual([
+      'genericize',
+      'review-lead',
+    ]);
+  });
+
+  it('derives the strategy from codeSafe in files exported by 1.3 builds', () => {
+    const json = JSON.stringify({
+      kind: 'cloakscan.cloak-list',
+      version: 1,
+      name: 'From 1.3',
+      terms: [],
+      mappings: [
+        { term: 'Nirv', replacement: 'SourceSystem', codeSafe: true },
+        { term: 'Contoso', replacement: '', codeSafe: false },
+        { term: 'Fabrikam', replacement: '', codeSafe: true }, // codeSafe but no replacement
+      ],
+    });
+    const result = parseCloakListFile(json);
+    if (!result.ok) throw new Error(result.error);
+    expect(result.pack.terms.mappings?.map((m) => m.strategy)).toEqual([
+      'code-only',
+      'placeholder',
+      'placeholder',
+    ]);
+  });
+
   it('ignores unknown fields instead of importing them', () => {
     const json = JSON.stringify({
       kind: 'cloakscan.cloak-list',

@@ -117,10 +117,10 @@ export function scanText(text: string, options: ScanOptions = {}): Finding[] {
       value: c.value,
       placeholder,
       ...(c.replacement !== undefined ? { replacement: c.replacement } : {}),
-      ...(c.detector.reviewLead ? { reviewLead: true } : {}),
+      ...(c.reviewLead ?? c.detector.reviewLead ? { reviewLead: true } : {}),
       // Review leads start disabled: they flag things worth checking, and
       // silently rewriting them (e.g. SamAccountName) would corrupt code.
-      enabled: !c.detector.reviewLead,
+      enabled: !(c.reviewLead ?? c.detector.reviewLead),
     };
   });
 }

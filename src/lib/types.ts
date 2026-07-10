@@ -33,6 +33,12 @@ export interface RawMatch {
   category?: Category;
   /** Optional per-match severity override (Cloak List mapping entries). */
   severity?: Severity;
+  /**
+   * Optional per-match review-lead flag (Cloak List mapping entries with the
+   * review-lead strategy). Like detector-level reviewLead, the finding starts
+   * disabled and never silently rewrites output.
+   */
+  reviewLead?: boolean;
 }
 
 /** A single detection rule. Each detector stays small and independently testable. */

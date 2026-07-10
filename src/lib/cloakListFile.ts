@@ -59,7 +59,10 @@ export function serializeCloakList(pack: CustomPack): string {
       categoryLabel: m.categoryLabel,
       severity: m.severity,
       matchMode: m.matchMode,
+      // codeSafe travels alongside strategy so 1.3 builds import the file
+      // with the closest matching behavior.
       codeSafe: m.codeSafe,
+      strategy: m.strategy,
     })),
   };
   return `${JSON.stringify(file, null, 2)}\n`;

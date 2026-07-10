@@ -3,14 +3,20 @@ import type { Line } from '../lib/segments';
 interface CodeViewProps {
   lines: Line[];
   label: string;
+  /** When set, each line gets id `${lineIdPrefix}-N` (1-based) as a jump target. */
+  lineIdPrefix?: string;
 }
 
 /** Line-numbered read-only code view with highlighted matches/placeholders. */
-export function CodeView({ lines, label }: CodeViewProps) {
+export function CodeView({ lines, label, lineIdPrefix }: CodeViewProps) {
   return (
     <div className="code-view" role="region" aria-label={label} tabIndex={0}>
       {lines.map((segments, i) => (
-        <div className="code-line" key={i}>
+        <div
+          className="code-line"
+          key={i}
+          {...(lineIdPrefix ? { id: `${lineIdPrefix}-${i + 1}` } : {})}
+        >
           <span className="code-ln" aria-hidden="true">
             {i + 1}
           </span>
@@ -28,7 +34,7 @@ export function CodeView({ lines, label }: CodeViewProps) {
                 </span>
               ),
             )}
-            {segments.length === 0 && ' '}
+            {segments.length === 0 && ' '}
           </span>
         </div>
       ))}

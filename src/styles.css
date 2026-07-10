@@ -2297,3 +2297,97 @@ body {
   font-size: 0.8rem;
   max-width: 220px;
 }
+
+/* ---------- v1.4: Portfolio Review Workspace ---------- */
+
+.candidate-bulk {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 10px;
+}
+
+.candidate-select {
+  flex: none;
+  display: flex;
+  align-items: center;
+}
+
+.chip-generic {
+  color: var(--text-muted);
+  border-color: var(--border);
+  font-size: 0.7rem;
+  margin-left: 6px;
+}
+
+.readiness {
+  margin-top: 14px;
+}
+
+.readiness-ready .chip-ready {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.readiness-review .chip-review {
+  color: var(--cat-workflow);
+  border-color: color-mix(in srgb, var(--cat-workflow) 45%, transparent);
+}
+
+.readiness-items {
+  list-style: none;
+  margin: 0;
+  padding: 6px 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.readiness-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.readiness-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: translateY(-1px);
+}
+
+.dot-warn {
+  background: var(--cat-secrets);
+}
+
+.dot-info {
+  background: var(--cat-workflow);
+}
+
+.readiness-note {
+  margin: 0;
+  padding: 6px 14px 12px;
+  font-size: 0.85rem;
+}
+
+.warning-jump {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.warning-mode-switch {
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.mapping-strategy {
+  max-width: 200px;
+}

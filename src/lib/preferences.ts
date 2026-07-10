@@ -384,6 +384,7 @@ export function savePreferencesV2(prefs: PreferencesV2): void {
                 severity: m.severity,
                 matchMode: m.matchMode,
                 codeSafe: m.codeSafe,
+                strategy: m.strategy,
               })),
             }
           : {}),

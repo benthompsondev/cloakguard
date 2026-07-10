@@ -41,6 +41,16 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="1.4.0" date="2026-07-10">
+      <description>
+        <p>
+          Adds the Portfolio Review Workspace: Cloak List replacement
+          strategies, smart mapping suggestions, a Build Portfolio Cloak List
+          flow, a sanitization readiness summary, a script header metadata
+          review lead, and output mode as a first-class setting.
+        </p>
+      </description>
+    </release>
     <release version="1.3.0" date="2026-07-10">
       <description>
         <p>

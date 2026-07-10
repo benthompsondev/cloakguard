@@ -160,6 +160,45 @@ export const authorInitialsDetector: Detector = {
   },
 };
 
+// ------------------------------------------------- header/history metadata --
+
+// `# Author: Jane Q` / `# Created by J. Q.` / `.AUTHOR Jane Q` — the VALUE
+// after the label is what can identify a person, team, or employer. Comment
+// context only, so ordinary code never matches.
+const HEADER_META_LINE_RE =
+  /^[ \t]*#[ \t]*(?:Author|Owner|Company|Organization|Organisation|Department|Team|Contact|Maintainer|Written by|Created by|Modified by|Reviewed by)[ \t]*[:=-][ \t]*([^\r\n]{2,80}?)[ \t]*$/gim;
+const HELP_META_RE =
+  /^[ \t]*\.(?:AUTHOR|COMPANYNAME)[ \t]+([^\r\n]{2,80}?)[ \t]*$/gim;
+
+export const headerMetadataDetector: Detector = {
+  id: 'header-metadata',
+  name: 'Script header metadata',
+  category: 'workflow',
+  severity: 'low',
+  label: 'HEADER_META',
+  priority: 36,
+  reviewLead: true,
+  explanation:
+    'Author, company, and team lines in script headers and revision history tie the script to real people and employers.',
+  detect: (text): RawMatch[] => {
+    const matches: RawMatch[] = [];
+    for (const pattern of [HEADER_META_LINE_RE, HELP_META_RE]) {
+      const re = new RegExp(pattern.source, pattern.flags);
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(text)) !== null) {
+        const value = m[1];
+        if (!value) continue;
+        const offset = m[0].lastIndexOf(value);
+        if (offset < 0) continue;
+        const start = m.index + offset;
+        matches.push({ start, end: start + value.length, value, confidence: 'low' });
+        if (m[0].length === 0) re.lastIndex += 1;
+      }
+    }
+    return matches;
+  },
+};
+
 // ------------------------------------------------------ workflow artifacts --
 
 const WORKFLOW_ARTIFACT_RE =

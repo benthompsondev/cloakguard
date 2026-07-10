@@ -30,7 +30,7 @@ test('a Cloak List mapping rewrites identifiers in Portfolio-code mode', async (
   await expect(page.getByRole('note', { name: 'Possible invalid code' })).toBeVisible();
 
   // Portfolio-code: valid generic identifiers, instantly, no rescan.
-  await page.getByRole('button', { name: 'Portfolio-code' }).click();
+  await page.getByRole('button', { name: 'Portfolio-code', exact: true }).click();
   await expect(preview).toContainText('$SourceSystemSystemID = 4');
   await expect(preview).toContainText('function Enable-SourceSystemAccount');
   await expect(preview).toContainText('param([string]$SourceSystemId)');

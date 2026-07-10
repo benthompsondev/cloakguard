@@ -2,6 +2,26 @@
 
 This file tracks the public CloakScan releases. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.0] - 2026-07-10
+
+### Added
+
+- Added the **Portfolio Review Workspace**: the pieces for turning a private IT automation script into safe, readable portfolio code now work as one flow.
+- Added **replacement strategies** to Cloak List mappings: *Code identifiers only* (the old code-safe behavior, still the default), *Genericize everywhere* (replacement in prose and strings too), *Placeholder*, and *Review lead only* (flag matches, rewrite nothing). Lists exported by 1.3 import with their old behavior intact, and 1.4 exports still carry the code-safe flag so 1.3 builds can read them.
+- Added a **Sanitization readiness** summary after each scan: high-severity findings kept as-is, unreviewed review leads, suggested terms not yet handled, invalid-code warnings, and a Safe-share vs Portfolio-code comparison. Guidance, not a guarantee — the honest-limits footer stays.
+- Added **smart mapping suggestions**: likely terms in the review panel show a suggested generic replacement (SourceSystem, SourceSystemID, ProviderLicenseId, TicketingSystem, ...) based on the term's shape.
+- Added **bulk suggestion actions** and a **Build Portfolio Cloak List** flow: select the terms that matter and open the Cloak List editor pre-filled with ready-to-edit mappings.
+- Added **Output mode** to Settings → General as a first-class, profile-independent setting (it also stays in the Scan toolbar).
+- Added a **script header metadata** review lead: the value after `# Author:`, `# Company:`, `.AUTHOR`, and similar labels in comment headers.
+- Added Detection Rules filters for the newer categories (Organization, Code identifiers, Directory / AD, Messaging / Exchange, Workflow) and a review-leads filter chip.
+- Suggested terms now sort org-specific candidates first and tag well-known product phrases (Active Directory, Start Date, ...) as *common term* instead of ranking them with real leads.
+- Invalid-code warnings now link to the line in the preview and offer a one-click switch to Portfolio-code mode when that is the likely fix.
+
+### Safety
+
+- Source text, findings, matched values, filenames, clipboard content, and sanitized output still never persist. The readiness summary and list seeds are computed in memory from the current session only.
+- The desktop capability surface, updater signing key, CSP, preference schema version, and Cloak List file format version are unchanged.
+
 ## [1.3.0] - 2026-07-10
 
 ### Added

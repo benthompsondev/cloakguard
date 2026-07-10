@@ -3,6 +3,7 @@ import { BUILT_IN_PACKS, PACK_DISCLAIMER, type PackDefinition } from '../../lib/
 import {
   BUILT_IN_PROFILES,
   enabledRuleIds,
+  generateId,
   resolveRuleStates,
   MAX_PROFILES,
 } from '../../lib/profiles';
@@ -15,6 +16,7 @@ import {
   type CustomPack,
 } from '../../lib/customPacks';
 import { parseCloakListFile, serializeCloakList } from '../../lib/cloakListFile';
+import { suggestMappings, suggestionsToMappings } from '../../lib/mappingSuggestions';
 import { decodeText } from '../../lib/decodeText';
 import { downloadTextFile } from '../../lib/download';
 import type { SettingsProps } from './SettingsView';
@@ -28,7 +30,16 @@ export function ProfilesPacksSection(props: SettingsProps) {
   const importJsonInput = useRef<HTMLInputElement>(null);
   const [confirmExportId, setConfirmExportId] = useState<string | null>(null);
   const [editingPack, setEditingPack] = useState<CustomPack | 'new' | null>(null);
-  const [editingList, setEditingList] = useState<CustomPack | 'new' | null>(null);
+  // A pending seed from the Scan screen opens the editor immediately with
+  // suggested mappings; it is consumed on save/cancel. Memory-only.
+  const [seedMappings, setSeedMappings] = useState(() =>
+    props.listSeed && props.listSeed.terms.length > 0
+      ? suggestionsToMappings(suggestMappings(props.listSeed.terms), generateId)
+      : null,
+  );
+  const [editingList, setEditingList] = useState<CustomPack | 'new' | null>(
+    seedMappings ? 'new' : null,
+  );
   const [newListFromFile, setNewListFromFile] = useState<{ name: string; termsText: string } | null>(null);
   const [editingProfileId, setEditingProfileId] = useState<string | null>(null);
   const [detailsPackId, setDetailsPackId] = useState<string | null>(null);
@@ -156,16 +167,25 @@ export function ProfilesPacksSection(props: SettingsProps) {
       <CloakListEditor
         list={editingList === 'new' ? null : editingList}
         remember={workspace.remember}
-        initialName={editingList === 'new' ? newListFromFile?.name : undefined}
+        initialName={
+          editingList === 'new'
+            ? (newListFromFile?.name ?? (seedMappings ? 'Portfolio Cloak List' : undefined))
+            : undefined
+        }
         initialTermsText={editingList === 'new' ? newListFromFile?.termsText : undefined}
+        initialMappings={editingList === 'new' ? (seedMappings ?? undefined) : undefined}
         onSave={(pack) => {
           props.onSavePack(pack);
           setNewListFromFile(null);
           setEditingList(null);
+          setSeedMappings(null);
+          props.onConsumeListSeed();
         }}
         onCancel={() => {
           setNewListFromFile(null);
           setEditingList(null);
+          setSeedMappings(null);
+          props.onConsumeListSeed();
         }}
       />
     );

@@ -31,7 +31,21 @@ function scanWith(text: string, entries: CloakMappingEntry[]) {
 describe('validateMappingEntry', () => {
   it('accepts a plain term with an identifier replacement', () => {
     expect(validateMappingEntry(nirv)).toBeNull();
-    expect(validateMappingEntry(entry({ term: 'Contoso', replacement: '' }))).toBeNull();
+    expect(
+      validateMappingEntry(entry({ term: 'Contoso', replacement: '', strategy: 'placeholder' })),
+    ).toBeNull();
+  });
+
+  it('requires a replacement for the code-only and genericize strategies', () => {
+    expect(validateMappingEntry(entry({ term: 'Contoso', replacement: '' }))).toMatch(
+      /needs a replacement/,
+    );
+    expect(
+      validateMappingEntry(entry({ term: 'Contoso', replacement: '', strategy: 'genericize' })),
+    ).toMatch(/needs a replacement/);
+    expect(
+      validateMappingEntry(entry({ term: 'Contoso', replacement: '', strategy: 'review-lead' })),
+    ).toBeNull();
   });
 
   it('rejects short terms and non-identifier replacements', () => {
@@ -103,15 +117,68 @@ describe('portfolio-code replacements', () => {
 
   it('respects match modes', () => {
     const exact = scanWith('nirv and Nirv', [
-      entry({ term: 'Nirv', matchMode: 'literal' }),
+      entry({ term: 'Nirv', matchMode: 'literal', strategy: 'placeholder' }),
     ]);
     expect(exact).toHaveLength(1);
 
     const word = scanWith('NirvAccess and Nirv', [
-      entry({ term: 'Nirv', matchMode: 'word' }),
+      entry({ term: 'Nirv', matchMode: 'word', strategy: 'placeholder' }),
     ]);
     expect(word).toHaveLength(1);
     expect(word[0].start).toBe('NirvAccess and '.length);
+  });
+});
+
+describe('replacement strategies', () => {
+  it('placeholder strategy never swaps in the replacement, even in portfolio-code', () => {
+    const text = '$NirvId = 1; # Nirv export';
+    const findings = applyOutputMode(
+      scanWith(text, [
+        entry({ term: 'Nirv', replacement: 'SourceSystem', strategy: 'placeholder' }),
+      ]),
+      'portfolio-code',
+    );
+    const cleaned = buildCleanText(text, findings);
+    expect(cleaned).not.toContain('SourceSystem');
+    expect(cleaned).toContain('[CUSTOM_TERM_1]');
+  });
+
+  it('genericize strategy replaces in prose and strings too', () => {
+    const text = ["$NirvId = 1", "Write-Output 'Nirv sync done'", '# Nirv handoff'].join('\n');
+    const findings = applyOutputMode(
+      scanWith(text, [
+        entry({ term: 'Nirv', replacement: 'SourceSystem', strategy: 'genericize' }),
+      ]),
+      'portfolio-code',
+    );
+    const cleaned = buildCleanText(text, findings);
+    expect(cleaned).toBe(
+      ['$SourceSystemId = 1', "Write-Output 'SourceSystem sync done'", '# SourceSystem handoff'].join(
+        '\n',
+      ),
+    );
+  });
+
+  it('genericize still uses placeholders in safe-share mode', () => {
+    const text = '# Nirv handoff';
+    const findings = applyOutputMode(
+      scanWith(text, [
+        entry({ term: 'Nirv', replacement: 'SourceSystem', strategy: 'genericize' }),
+      ]),
+      'safe-share',
+    );
+    expect(buildCleanText(text, findings)).toBe('# [CUSTOM_TERM_1] handoff');
+  });
+
+  it('review-lead strategy starts disabled and never rewrites output', () => {
+    const text = '$NirvId = 1';
+    const findings = scanWith(text, [
+      entry({ term: 'Nirv', replacement: '', strategy: 'review-lead' }),
+    ]);
+    expect(findings).toHaveLength(1);
+    expect(findings[0].reviewLead).toBe(true);
+    expect(findings[0].enabled).toBe(false);
+    expect(buildCleanText(text, applyOutputMode(findings, 'portfolio-code'))).toBe(text);
   });
 });
 
@@ -137,7 +204,9 @@ describe('replacement precedence', () => {
     const text = `$clean = $name -replace '[^a-zA-Z0-9]', ''`;
     const findings = scanText(text, {
       extraDetectors: [
-        createMappedTermsDetector([entry({ term: 'a-zA-Z0-9', matchMode: 'ci-literal' })]),
+        createMappedTermsDetector([
+          entry({ term: 'a-zA-Z0-9', matchMode: 'ci-literal', strategy: 'placeholder' }),
+        ]),
       ],
     });
     expect(buildCleanText(text, findings)).toBe(text);

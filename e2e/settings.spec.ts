@@ -27,7 +27,7 @@ test('default load writes nothing to browser storage, even after a full scan', a
 
 test('navigation is keyboard accessible', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('link', { name: 'Settings' }).focus();
+  await page.getByRole('link', { name: 'Settings', exact: true }).focus();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('heading', { name: 'General' })).toBeVisible();
 
@@ -92,7 +92,7 @@ test('strict profile detects labeled person and org names; balanced does not', a
   await expect(preview).toContainText('Reported by: Alex Demo'); // balanced keeps it
   await expect(preview).toContainText('Alex Demo,Contoso Health,[EMAIL_1]');
 
-  await page.getByRole('link', { name: 'Settings' }).click();
+  await page.getByRole('link', { name: 'Settings', exact: true }).click();
   await page.getByRole('radio', { name: /^Strict/ }).check();
   await page.getByRole('link', { name: 'Scan', exact: true }).click();
   await page.getByRole('button', { name: 'Scan locally' }).click();

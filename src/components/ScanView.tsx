@@ -10,12 +10,14 @@ import { isCloakList } from '../lib/customPacks';
 import { packById } from '../lib/packs';
 import { BUILT_IN_PROFILES, type ProfileConfig } from '../lib/profiles';
 import type { Notice, ScanMeta, Workspace } from '../App';
+import { assessReadiness } from '../lib/readiness';
 import { SourcePanel } from './SourcePanel';
 import { PreviewPanel } from './PreviewPanel';
 import { FindingsPanel } from './FindingsPanel';
 import { ScanSummary } from './ScanSummary';
 import { PrivateTermsDialog } from './PrivateTermsDialog';
 import { CandidatePanel } from './CandidatePanel';
+import { ReadinessSummary } from './ReadinessSummary';
 
 interface ScanViewProps {
   session: SessionState;
@@ -38,6 +40,7 @@ interface ScanViewProps {
   onToggleGroup: (ids: readonly string[], enabled: boolean) => void;
   onHideCandidate: (term: string) => void;
   onDismissCandidate: (term: string) => void;
+  onBuildCloakList: (terms: string[]) => void;
   onSelectProfile: (id: string) => void;
   onClear: () => void;
   onNotice: (notice: Notice) => void;
@@ -63,6 +66,7 @@ export function ScanView({
   onToggleGroup,
   onHideCandidate,
   onDismissCandidate,
+  onBuildCloakList,
   onSelectProfile,
   onClear,
   onNotice,
@@ -166,7 +170,9 @@ export function ScanView({
       <p className="muted mode-helper">
         {session.outputMode === 'safe-share'
           ? 'Safe-share: everything becomes bracket placeholders like [EMAIL_1] — best for prompts, tickets, logs, and issues.'
-          : 'Portfolio-code: Cloak List mappings with a replacement swap in valid generic identifiers inside code; secrets, string values, and paths still become placeholders.'}
+          : 'Portfolio-code: Cloak List mappings with a replacement swap in valid generic identifiers inside code; secrets, string values, and paths still become placeholders.'}{' '}
+        The output mode works with every profile and never rescans —{' '}
+        <a href="#/settings/general">more in Settings</a>.
       </p>
 
       {guidanceVisible && (
@@ -211,12 +217,23 @@ export function ScanView({
           findings={effectiveFindings}
           cleanText={cleanText}
           codeWarnings={codeWarnings}
+          outputMode={session.outputMode}
+          onSetOutputMode={onSetOutputMode}
           onNotice={onNotice}
         />
       </div>
 
       {session.hasScanned && (
         <>
+          <ReadinessSummary
+            report={assessReadiness({
+              findings: effectiveFindings,
+              candidates,
+              codeWarnings,
+              outputMode: session.outputMode,
+            })}
+            outputMode={session.outputMode}
+          />
           <div className="results">
             <FindingsPanel groups={groups} onToggleGroup={onToggleGroup} />
             <ScanSummary
@@ -232,6 +249,7 @@ export function ScanView({
               candidates={candidates}
               onHideCandidate={onHideCandidate}
               onDismissCandidate={onDismissCandidate}
+              onBuildCloakList={onBuildCloakList}
             />
           )}
         </>

@@ -1,9 +1,14 @@
 # Output modes, Cloak List mappings, and review leads
 
-CloakScan v1.3 adds a second output mode aimed at one specific job: getting a
+CloakScan v1.3 added a second output mode aimed at one specific job: getting a
 real PowerShell script ready for a public repo without turning it into broken
-redaction soup. This page explains the two modes, the new Cloak List
-mappings, and what a "review lead" is.
+redaction soup. v1.4 builds the workflow around it — replacement strategies,
+mapping suggestions, and a readiness summary. This page explains the two
+modes, Cloak List mappings, and what a "review lead" is.
+
+The output mode is independent of the detection profile: Balanced, Strict,
+Maximum, and Code & secrets all work with either mode. It lives in the Scan
+toolbar and in Settings → General, and switching never rescans.
 
 ## Safe-share mode (default)
 
@@ -60,7 +65,49 @@ Each mapping entry has:
 - **severity** — high / medium / low
 - **match behavior** — case-insensitive (default, matches inside
   identifiers), exact case, or whole word
-- **code-safe** — whether the replacement may be used in identifier position
+- **strategy** — what a match turns into (see below)
+
+## Replacement strategies (v1.4)
+
+Each mapping picks one of four strategies:
+
+| Strategy | Safe-share mode | Portfolio-code mode |
+| --- | --- | --- |
+| **Code identifiers only** (default) | placeholder | replacement inside variable/function/property/command names; placeholder in prose and strings |
+| **Genericize everywhere** | placeholder | replacement everywhere, including prose and string literals |
+| **Placeholder** | placeholder | placeholder |
+| **Review lead only** | flagged, nothing rewritten | flagged, nothing rewritten |
+
+*Code identifiers only* is the old code-safe behavior and the right default
+for org prefixes that live inside identifiers. *Genericize everywhere* is for
+terms that should read naturally in comments and log messages too
+(`# Nirv handoff` → `# SourceSystem handoff`). *Placeholder* is for terms
+that should always be obviously redacted. *Review lead only* turns the
+mapping into a pointer: matches show up in the findings list unchecked and
+nothing changes until you enable them.
+
+Lists exported by v1.3 import cleanly: entries with code-safe on and a
+replacement become *Code identifiers only*, everything else becomes
+*Placeholder*. v1.4 exports still carry the old code-safe flag so a v1.3
+build can read them.
+
+## The portfolio review flow (v1.4)
+
+After a scan, three panels work together:
+
+- **Sanitization readiness** — one summary of what still deserves a look:
+  high-severity findings you kept as-is, unreviewed review leads, suggested
+  terms you have not dealt with, and invalid-code warnings. "No open items"
+  means exactly that — it is guidance, not a guarantee.
+- **Possible names & terms to review** — suggestions now sort org-specific
+  terms first and tag well-known product phrases (Active Directory, Start
+  Date) as *common term*. Each likely term shows a suggested generic
+  replacement. Select the ones that matter and **Build Portfolio Cloak
+  List** opens the editor pre-filled with ready-to-edit mappings; bulk
+  hide/dismiss handle the rest.
+- **Invalid-code warnings** — each warning links to the line in the preview,
+  and a one-click switch to Portfolio-code mode is offered when that is the
+  likely fix.
 
 ## Import and export
 
@@ -85,7 +132,9 @@ stays a separate opt-in.
 v1.3 also ships detectors for the fingerprints that real IT automation
 scripts leak: directory attribute names, Exchange workflow cmdlets,
 credential handling commands, author initials in history blocks,
-scheduled-job state files, and identity CSV headers.
+scheduled-job state files, and identity CSV headers. v1.4 adds script header
+metadata — the value after `# Author:`, `# Company:`, `.AUTHOR`, and similar
+labels in comment headers, which ties a script to real people and employers.
 
 These are **review leads, not confirmed secrets**. The attribute name
 `SamAccountName` is harmless; the value on that line often is not. So lead

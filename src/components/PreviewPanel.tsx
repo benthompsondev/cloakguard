@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import type { Finding } from '../lib/types';
 import type { CodeWarning } from '../lib/codeWarnings';
+import type { OutputMode } from '../lib/sanitize';
 import { buildPreviewSegments, segmentsToLines } from '../lib/segments';
 import { downloadTextFile } from '../lib/download';
 import { CodeView } from './CodeView';
@@ -12,6 +13,8 @@ interface PreviewPanelProps {
   findings: Finding[];
   cleanText: string;
   codeWarnings: CodeWarning[];
+  outputMode: OutputMode;
+  onSetOutputMode: (mode: OutputMode) => void;
   onNotice: (notice: Notice) => void;
 }
 
@@ -21,6 +24,8 @@ export function PreviewPanel({
   findings,
   cleanText,
   codeWarnings,
+  outputMode,
+  onSetOutputMode,
   onNotice,
 }: PreviewPanelProps) {
   const lines = useMemo(
@@ -74,7 +79,11 @@ export function PreviewPanel({
         </div>
       </div>
       {hasScanned ? (
-        <CodeView lines={lines} label="Sanitized output with placeholders" />
+        <CodeView
+          lines={lines}
+          label="Sanitized output with placeholders"
+          lineIdPrefix="preview-line"
+        />
       ) : (
         <div className="output-empty muted">Run a scan to see the sanitized version here.</div>
       )}
@@ -85,13 +94,35 @@ export function PreviewPanel({
             valid PowerShell
           </strong>
           <span className="muted">
-            A placeholder landed inside an identifier. Add a code-safe replacement to a Cloak
-            List mapping and use Portfolio-code mode, or keep that finding as-is.
+            A placeholder landed inside an identifier. To fix it: map the term in a Cloak List
+            with the <em>Code identifiers only</em> strategy and a generic replacement, then use
+            Portfolio-code mode — or keep that finding as-is if the name is safe.
           </span>
+          {outputMode === 'safe-share' && (
+            <button
+              type="button"
+              className="btn btn-mini warning-mode-switch"
+              onClick={() => onSetOutputMode('portfolio-code')}
+            >
+              Switch to Portfolio-code mode
+            </button>
+          )}
           <ul>
             {codeWarnings.slice(0, 6).map((w, index) => (
               <li key={`${w.line}-${index}`}>
-                <span className="muted">line {w.line}:</span> <code>{w.snippet}</code>
+                <button
+                  type="button"
+                  className="warning-jump"
+                  title={`Jump to line ${w.line} in the preview`}
+                  onClick={() =>
+                    document
+                      .getElementById(`preview-line-${w.line}`)
+                      ?.scrollIntoView({ block: 'center' })
+                  }
+                >
+                  line {w.line}
+                </button>
+                : <code>{w.snippet}</code>
                 <span className="muted"> — {w.reason}</span>
               </li>
             ))}

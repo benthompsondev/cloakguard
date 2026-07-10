@@ -48,6 +48,14 @@ export interface ScanMeta {
   durationMs: number;
 }
 
+/**
+ * Seed for the "Build Portfolio Cloak List" flow: reviewed candidate terms
+ * carried (in memory only) from the Scan screen into the Cloak List editor.
+ */
+export interface CloakListSeed {
+  terms: string[];
+}
+
 export interface Workspace {
   remember: boolean;
   /** A built-in id, 'unsaved', or a named profile id. */
@@ -72,6 +80,7 @@ export default function App() {
   const route = useHashRoute();
   const [session, setSession] = useState<SessionState>(createEmptySession);
   const [scanMeta, setScanMeta] = useState<ScanMeta | null>(null);
+  const [listSeed, setListSeed] = useState<CloakListSeed | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
   const noticeTimer = useRef<number | undefined>(undefined);
   const [workspace, setWorkspace] = useState<Workspace>(() => {
@@ -461,6 +470,15 @@ export default function App() {
     setScanMeta({ startedAt, durationMs: performance.now() - t0 });
   };
 
+  // Carry reviewed candidate terms into the Cloak List editor. The seed is
+  // React state only — nothing about it is stored, and it is consumed (and
+  // cleared) the moment the editor opens with it.
+  const buildCloakList = (terms: string[]) => {
+    if (terms.length === 0) return;
+    setListSeed({ terms });
+    window.location.hash = '#/settings/profiles';
+  };
+
   const dismissCandidate = (term: string) =>
     setSession((current) => {
       const key = candidateKey(term);
@@ -485,6 +503,10 @@ export default function App() {
     workspace,
     activeConfig,
     resolvedStates,
+    outputMode: session.outputMode,
+    onSetOutputMode: setOutputMode,
+    listSeed,
+    onConsumeListSeed: () => setListSeed(null),
     onSelectProfile,
     onToggleRule,
     onChangeFormat,
@@ -531,6 +553,7 @@ export default function App() {
             onToggleGroup={onToggleGroup}
             onHideCandidate={hideCandidate}
             onDismissCandidate={dismissCandidate}
+            onBuildCloakList={buildCloakList}
             onSelectProfile={onSelectProfile}
             onClear={clearAll}
             onNotice={showNotice}

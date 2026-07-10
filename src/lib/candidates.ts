@@ -11,6 +11,12 @@ export interface CloakCandidate {
   text: string;
   count: number;
   firstStart: number;
+  /**
+   * True for well-known product/IT phrases (Active Directory, Start Date...)
+   * that are usually safe to publish. They stay visible — a reviewer may
+   * still want them — but sort after likely org-specific terms.
+   */
+  generic: boolean;
 }
 
 interface CandidateOccurrence {
@@ -126,6 +132,71 @@ const TECH_ACRONYMS = new Set([
 ]);
 
 const DATE_FORMAT_TOKENS = new Set(['YYYY', 'YY', 'MM', 'MMM', 'MMMM', 'DD', 'HH', 'SS', 'MS']);
+
+/**
+ * Product names and everyday IT phrases that title-case detection keeps
+ * surfacing but are almost never org-specific. Keys are candidateKey()
+ * normalized (lowercase, collapsed spaces).
+ */
+const GENERIC_IT_PHRASES = new Set([
+  'active directory',
+  'azure active directory',
+  'entra id',
+  'exchange online',
+  'exchange server',
+  'microsoft exchange',
+  'microsoft teams',
+  'microsoft office',
+  'microsoft graph',
+  'windows server',
+  'windows update',
+  'group policy',
+  'task scheduler',
+  'scheduled task',
+  'scheduled tasks',
+  'domain controller',
+  'distribution list',
+  'distribution group',
+  'security group',
+  'service account',
+  'shared mailbox',
+  'user principal name',
+  'display name',
+  'first name',
+  'last name',
+  'full name',
+  'user name',
+  'start date',
+  'end date',
+  'due date',
+  'hire date',
+  'created date',
+  'modified date',
+  'activation date',
+  'deactivation date',
+  'last logon',
+  'last modified',
+  'file share',
+  'file server',
+  'print server',
+  'remote desktop',
+  'control panel',
+  'event viewer',
+  'event log',
+  'recycle bin',
+  'organizational unit',
+  'operating system',
+  'power shell',
+  'visual studio',
+  'internet explorer',
+  'google chrome',
+  'microsoft edge',
+]);
+
+/** True when a candidate is a well-known product/IT phrase, not an org term. */
+export function isGenericItPhrase(text: string): boolean {
+  return GENERIC_IT_PHRASES.has(candidateKey(text));
+}
 
 function isTitleStopWord(value: string): boolean {
   const lower = value.toLocaleLowerCase();
@@ -330,16 +401,21 @@ export function findCloakCandidates(
   return [...grouped.values()]
     .filter((candidate) => candidate.qualifiesImmediately || candidate.count >= 2)
     .filter((candidate) => !dismissed.has(candidateKey(candidate.text)))
+    .map((candidate) => ({ ...candidate, generic: isGenericItPhrase(candidate.text) }))
     .sort(
+      // Likely org-specific terms first; well-known IT phrases sink to the
+      // bottom (and get cut first when over the cap).
       (a, b) =>
+        Number(a.generic) - Number(b.generic) ||
         Number(b.isMultiWordTitle) - Number(a.isMultiWordTitle) ||
         b.count - a.count ||
         a.firstStart - b.firstStart,
     )
     .slice(0, MAX_CANDIDATES)
-    .map(({ text: candidateText, count, firstStart }) => ({
+    .map(({ text: candidateText, count, firstStart, generic }) => ({
       text: candidateText,
       count,
       firstStart,
+      generic,
     }));
 }

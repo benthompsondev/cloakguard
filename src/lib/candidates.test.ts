@@ -24,7 +24,7 @@ describe('findCloakCandidates', () => {
   it('suggests a repeated single Title-Case word', () => {
     const text = 'Alice approved the draft. Later, Alice reviewed the output.';
     expect(findCloakCandidates(text, [])).toEqual([
-      { text: 'Alice', count: 2, firstStart: 0 },
+      { text: 'Alice', count: 2, firstStart: 0, generic: false },
     ]);
   });
 
@@ -35,6 +35,7 @@ describe('findCloakCandidates', () => {
         text: 'Northwind Regional Health',
         count: 1,
         firstStart: text.indexOf('Northwind'),
+        generic: false,
       },
     ]);
   });
@@ -42,14 +43,14 @@ describe('findCloakCandidates', () => {
   it('keeps interior connectors in a suggested phrase', () => {
     const text = 'The file belongs to Bank of Northwind.';
     expect(findCloakCandidates(text, [])).toEqual([
-      { text: 'Bank of Northwind', count: 1, firstStart: text.indexOf('Bank') },
+      { text: 'Bank of Northwind', count: 1, firstStart: text.indexOf('Bank'), generic: false },
     ]);
   });
 
   it('suggests a repeated 2-6 character acronym', () => {
     const text = 'NWRH opened the case. Send the result back to NWRH.';
     expect(findCloakCandidates(text, [])).toEqual([
-      { text: 'NWRH', count: 2, firstStart: 0 },
+      { text: 'NWRH', count: 2, firstStart: 0, generic: false },
     ]);
   });
 
@@ -81,8 +82,8 @@ describe('findCloakCandidates', () => {
       'Northwind Health opened the case for NWRH. ' +
       'NWRH replied, then Northwind Health closed it.';
     expect(findCloakCandidates(text, [])).toEqual([
-      { text: 'Northwind Health', count: 2, firstStart: 0 },
-      { text: 'NWRH', count: 2, firstStart: text.indexOf('NWRH') },
+      { text: 'Northwind Health', count: 2, firstStart: 0, generic: false },
+      { text: 'NWRH', count: 2, firstStart: text.indexOf('NWRH'), generic: false },
     ]);
   });
 
@@ -195,6 +196,20 @@ describe('findCloakCandidates', () => {
     ]) {
       expect(candidateTexts).not.toContain(junk);
     }
+  });
+
+  it('marks well-known IT phrases generic and sorts them after org-specific terms', () => {
+    const text = [
+      'Active Directory sync ran.',
+      'Active Directory sync ran again.',
+      'Contoso Health opened the case.',
+      'Contoso Health closed the case.',
+    ].join('\n');
+    const candidates = findCloakCandidates(text, []);
+    const texts = candidates.map((c) => c.text);
+    expect(texts.indexOf('Contoso Health')).toBeLessThan(texts.indexOf('Active Directory'));
+    expect(candidates.find((c) => c.text === 'Active Directory')?.generic).toBe(true);
+    expect(candidates.find((c) => c.text === 'Contoso Health')?.generic).toBe(false);
   });
 
   it('excludes common privacy and infrastructure labels from the review panel', () => {

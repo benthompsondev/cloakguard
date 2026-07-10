@@ -6,6 +6,7 @@ import {
   csvIdentityHeaderDetector,
   directoryAttributeDetector,
   exchangeWorkflowDetector,
+  headerMetadataDetector,
   workflowArtifactDetector,
 } from './reviewLeads';
 import { scanText } from '../scan';
@@ -115,6 +116,41 @@ describe('author initials detector', () => {
     expect(
       values(authorInitialsDetector, '# Modified: CSV export now includes AD and UPN fields'),
     ).toEqual([]);
+  });
+});
+
+describe('header metadata detector', () => {
+  it('captures the value after author/company/team labels in comment headers', () => {
+    expect(values(headerMetadataDetector, '# Author: Jordan Quill')).toEqual(['Jordan Quill']);
+    expect(values(headerMetadataDetector, '#  Company = Contoso Health')).toEqual([
+      'Contoso Health',
+    ]);
+    expect(values(headerMetadataDetector, '# Created by - Ops Team West')).toEqual([
+      'Ops Team West',
+    ]);
+  });
+
+  it('captures comment-based help .AUTHOR and .COMPANYNAME values', () => {
+    expect(values(headerMetadataDetector, '  .AUTHOR Jordan Quill')).toEqual(['Jordan Quill']);
+    expect(values(headerMetadataDetector, '.COMPANYNAME Contoso Health')).toEqual([
+      'Contoso Health',
+    ]);
+  });
+
+  it('ignores non-comment code and unlabeled lines', () => {
+    expect(values(headerMetadataDetector, '$author = "Jordan"')).toEqual([]);
+    expect(values(headerMetadataDetector, '# just a note about the author of the RFC')).toEqual(
+      [],
+    );
+  });
+
+  it('is a review lead: starts disabled and rewrites nothing by default', () => {
+    const text = '# Author: Jordan Quill';
+    const findings = scanText(text);
+    const lead = findings.find((f) => f.detectorId === 'header-metadata');
+    expect(lead?.reviewLead).toBe(true);
+    expect(lead?.enabled).toBe(false);
+    expect(buildCleanText(text, findings)).toBe(text);
   });
 });
 

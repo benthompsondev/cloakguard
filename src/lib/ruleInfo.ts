@@ -313,6 +313,13 @@ export const RULE_INFO: Record<string, RuleInfo> = {
     confidence: 'Low — initials and acronyms look identical.',
     sample: '# 2024-05-01 Modified by JD cleanup pass',
   },
+  'header-metadata': {
+    detects:
+      'The value after Author, Company, Team, Contact, and similar labels in comment headers, plus .AUTHOR and .COMPANYNAME in comment-based help. Review lead.',
+    falsePositives: 'Template headers with placeholder names.',
+    confidence: 'Low — comment context only; the label is generic, the value may not be.',
+    sample: '# Author: Jordan Quill',
+  },
   'workflow-artifact': {
     detects:
       'Scheduled-job state and evidence files: cycle_state/run_state/last_run names, audit logs, snapshots, and .clixml credential files. Review lead.',

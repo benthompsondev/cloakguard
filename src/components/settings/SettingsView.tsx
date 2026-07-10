@@ -1,8 +1,9 @@
 import type { SettingsSection } from '../../hooks/useHashRoute';
-import type { Notice, Workspace } from '../../App';
+import type { CloakListSeed, Notice, Workspace } from '../../App';
 import type { ProfileConfig } from '../../lib/profiles';
 import type { CustomPack } from '../../lib/customPacks';
 import type { RedactionChoice } from '../../lib/redaction';
+import type { OutputMode } from '../../lib/sanitize';
 import { GeneralSection } from './GeneralSection';
 import { ProfilesPacksSection } from './ProfilesPacksSection';
 import { RulesSection } from './RulesSection';
@@ -13,6 +14,12 @@ export interface SettingsProps {
   workspace: Workspace;
   activeConfig: ProfileConfig;
   resolvedStates: Record<string, boolean>;
+  /** Session output mode — independent of the active profile. */
+  outputMode: OutputMode;
+  onSetOutputMode: (mode: OutputMode) => void;
+  /** Pending "Build Portfolio Cloak List" seed from the Scan screen. */
+  listSeed: CloakListSeed | null;
+  onConsumeListSeed: () => void;
   onSelectProfile: (id: string) => void;
   onToggleRule: (id: string, enabled: boolean) => void;
   onChangeFormat: (format: RedactionChoice) => void;

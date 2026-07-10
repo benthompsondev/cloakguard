@@ -44,6 +44,7 @@ import {
   csvIdentityHeaderDetector,
   directoryAttributeDetector,
   exchangeWorkflowDetector,
+  headerMetadataDetector,
   workflowArtifactDetector,
 } from './reviewLeads';
 
@@ -101,5 +102,6 @@ export const detectors: Detector[] = [
   exchangeWorkflowDetector,
   credentialWorkflowDetector,
   authorInitialsDetector,
+  headerMetadataDetector,
   csvIdentityHeaderDetector,
 ];

@@ -31,7 +31,7 @@ It is smaller and more focused than a full DLP platform or repository secret sca
 
 ### Windows
 
-Download `CloakScan-Setup-1.3.0-x64.exe` from [GitHub Releases](https://github.com/benthompsondev/cloakscan/releases/latest), open it, and follow the installer. It installs for the current Windows user and does not require Node, Rust, administrator rights, or an internet connection.
+Download `CloakScan-Setup-1.4.0-x64.exe` from [GitHub Releases](https://github.com/benthompsondev/cloakscan/releases/latest), open it, and follow the installer. It installs for the current Windows user and does not require Node, Rust, administrator rights, or an internet connection.
 
 The installer is currently unsigned, so Windows SmartScreen may show a warning. Verify the published SHA-256 checksum before running it.
 
@@ -43,7 +43,7 @@ For Debian 12, Ubuntu 22.04, or newer, install the `.deb`:
 
 ```bash
 cd ~/Downloads
-sudo apt install ./CloakScan_1.3.0_amd64.deb
+sudo apt install ./CloakScan_1.4.0_amd64.deb
 ```
 
 Launch it from your applications menu or run:
@@ -56,8 +56,8 @@ The AppImage is portable and does not install anything:
 
 ```bash
 cd ~/Downloads
-chmod +x CloakScan_1.3.0_amd64.AppImage
-./CloakScan_1.3.0_amd64.AppImage
+chmod +x CloakScan_1.4.0_amd64.AppImage
+./CloakScan_1.4.0_amd64.AppImage
 ```
 
 See [the Linux guide](docs/linux.md) for updates, uninstall steps, and troubleshooting.
@@ -95,12 +95,13 @@ npm run verify    # audit + lint + unit tests + build + e2e, all in one
 ## What it does
 
 1. Paste text, import a text/log/code/config file (read in memory, max 2 MB; UTF-8 and UTF-16 PowerShell files both decode correctly), or use **Load sample** for one synthetic incident that covers secrets, infrastructure, and labeled personal data.
-2. Click **Scan locally**. CloakScan has 48 focused detectors covering common secrets, credentials, network details, ports, file paths, cloud identifiers, personal data, regional formats, and IT automation fingerprints (AD groups, directory attributes, Exchange and credential workflow terms — most of those are review leads that point without rewriting). Its API-key detector recognizes 33 distinctive provider, webhook, and signed-URL patterns without guessing from entropy, including AWS long-term and temporary access-key IDs. Balanced handles everyday scans. Strict adds contextual personal information. Maximum adds every country pack. Code & secrets leaves prose PII off. See [Detector behavior and safety](docs/detectors.md) for the full list and known limits.
+2. Click **Scan locally**. CloakScan has 49 focused detectors covering common secrets, credentials, network details, ports, file paths, cloud identifiers, personal data, regional formats, and IT automation fingerprints (AD groups, directory attributes, Exchange and credential workflow terms — most of those are review leads that point without rewriting). Its API-key detector recognizes 33 distinctive provider, webhook, and signed-URL patterns without guessing from entropy, including AWS long-term and temporary access-key IDs. Balanced handles everyday scans. Strict adds contextual personal information. Maximum adds every country pack. Code & secrets leaves prose PII off. See [Detector behavior and safety](docs/detectors.md) for the full list and known limits.
 3. Use **Hide custom terms** for exact names, domains, hostnames, project names, or other values the built-in rules cannot know. These terms last for the current session only. You can give them their own placeholder label and format. For reusable terms, create a **Cloak List** under Settings > Profiles & Packs. Cloak Lists export/import as `.txt` (terms only) or `.json` (terms plus mappings and options), and support **mappings** — term → generic replacement pairs for cleaning code.
-4. Review **Possible names & terms to review**. These are guesses only. Nothing is hidden until you choose **Hide this session** or add the term to a reusable Cloak List.
+4. Review **Possible names & terms to review**. These are guesses only. Nothing is hidden until you choose **Hide this session** or add the term to a reusable Cloak List. Likely terms come with a suggested generic replacement, and you can select several and **Build Portfolio Cloak List** to open the editor pre-filled with ready-to-edit mappings. Well-known product phrases are tagged *common term* and sorted last.
 5. Review the findings. Each one shows its category, severity, a masked preview, and the replacement placeholder. Toggle off anything you want to keep. **Review leads** start unchecked — they point at IT-automation fingerprints worth a look without rewriting anything.
-6. Pick an output mode: **Safe-share** (bracket placeholders, the default) or **Portfolio-code** (mapped terms inside variable/function/property/command names become valid generic identifiers, so PowerShell headed for a public repo still reads as code). See [Output modes and Cloak List mappings](docs/output-modes.md).
-7. Copy the cleaned output or download it as a `.txt` file. Formatting is preserved, and repeated values reuse the same placeholder. If a placeholder landed somewhere that breaks code, a warning panel says so.
+6. Pick an output mode: **Safe-share** (bracket placeholders, the default) or **Portfolio-code** (mapped terms inside variable/function/property/command names become valid generic identifiers, so PowerShell headed for a public repo still reads as code). The mode is independent of the detection profile and also lives in Settings → General. Each mapping picks a replacement strategy: code identifiers only, genericize everywhere, placeholder, or review lead only. See [Output modes and Cloak List mappings](docs/output-modes.md).
+7. Check the **Sanitization readiness** summary: high-severity findings kept as-is, unreviewed review leads, suggestions you have not handled, and invalid-code warnings, in one place. It is guidance, not a guarantee.
+8. Copy the cleaned output or download it as a `.txt` file. Formatting is preserved, and repeated values reuse the same placeholder. If a placeholder landed somewhere that breaks code, a warning panel says so, links to the line, and offers the Portfolio-code switch when that is the likely fix.
 
 ## How it works
 
@@ -112,7 +113,7 @@ Release notes are kept in the [changelog](CHANGELOG.md).
 
 The **Settings** view (in-app navigation, no page reloads) controls detection without touching any code:
 
-- **General** - Choose Balanced or Strict detection and control the opt-in preference storage.
+- **General** - Choose the output mode (Safe-share or Portfolio-code, independent of the profile), pick Balanced or Strict detection, and control the opt-in preference storage.
 - **Profiles & Packs** - Build reusable profiles from country packs, Cloak Lists, custom rules, and a redaction format. The Profile Editor keeps changes in a draft until you save. You can also create a new Cloak List or Custom Pack without leaving that draft.
 - **Detection Rules** - Search the detector registry, review false-positive guidance, and enable or disable individual rules.
 - **Redaction Formats** - Use indexed labels (`[EMAIL_1]`), unnumbered labels (`[EMAIL]`), a uniform `[REDACTED]` value, or a safe template using `{TYPE}` and `{INDEX}`.
@@ -138,15 +139,14 @@ Run `npm run check`. Lint, unit tests, typecheck, and build should all pass. `np
 
 ## Project status
 
-Current release: **v1.3.0**
+Current release: **v1.4.0**
 
-- Windows and Linux x86_64 packages now ship together from the same release.
+- The Portfolio Review Workspace ties the cleanup flow together: mapping suggestions, bulk actions, a Build Portfolio Cloak List flow, and a sanitization readiness summary.
+- Cloak List mappings pick a replacement strategy: code identifiers only, genericize everywhere, placeholder, or review lead only. Lists exported by 1.3 keep their old behavior on import.
+- Windows and Linux x86_64 packages ship together from the same release.
 - Windows and AppImage builds can apply signed updates when the user asks. The `.deb` package checks for new versions but updates manually.
-- Debian packages now include a complete description and richer AppStream details for software managers that read them.
-- Desktop project links now open in the system browser through a two-origin allowlist.
-- AWS temporary access-key IDs are covered alongside long-term IDs.
-- Both Linux formats now carry the AppStream metainfo.
-- Forty-one focused rules include 33 distinctive provider, webhook, and signed-URL patterns.
+- Desktop project links open in the system browser through a two-origin allowlist.
+- Forty-nine focused rules include 33 distinctive provider, webhook, and signed-URL patterns.
 - The name-and-term review panel filters common PowerShell noise, puts likely multi-word terms first, and lets you dismiss a suggestion for the current session.
 - Balanced, Strict, Maximum, and Code & secrets give people useful starting points without hiding individual rule controls.
 - Session terms and Cloak Lists can use their own safe placeholder label and format.

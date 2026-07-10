@@ -150,6 +150,16 @@ text before sharing it.
   and paths keep bracket placeholders in both modes. See
   [output-modes.md](output-modes.md).
 
+## v1.4 coverage
+
+- **Script header metadata (review lead):** the value after `# Author:`,
+  `# Company:`, `# Team:`, `# Created by`, and similar comment-header labels, plus
+  `.AUTHOR` and `.COMPANYNAME` in comment-based help. Comment context only, so
+  ordinary code never matches.
+- **Mapping strategies:** each Cloak List mapping now picks what a match turns
+  into — code identifiers only, genericize everywhere, placeholder, or review
+  lead only. See [output-modes.md](output-modes.md) for the exact behavior table.
+
 ## Known boundaries
 
 - Regex protection is a careful heuristic, not a complete PowerShell parser.

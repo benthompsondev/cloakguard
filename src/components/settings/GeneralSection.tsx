@@ -5,12 +5,30 @@ import {
   enabledRuleIds,
   resolveRuleStates,
 } from '../../lib/profiles';
+import type { OutputMode } from '../../lib/sanitize';
 import { APP_VERSION } from '../../lib/version';
 import type { SettingsProps } from './SettingsView';
+
+const OUTPUT_MODES: { id: OutputMode; name: string; description: string }[] = [
+  {
+    id: 'safe-share',
+    name: 'Safe-share',
+    description:
+      'Everything becomes bracket placeholders like [EMAIL_1] — best for prompts, tickets, logs, and issues.',
+  },
+  {
+    id: 'portfolio-code',
+    name: 'Portfolio-code',
+    description:
+      'Cloak List mappings swap in valid generic identifiers so sanitized PowerShell still reads as code. Secrets, string values, and paths still become placeholders.',
+  },
+];
 
 export function GeneralSection({
   workspace,
   activeConfig,
+  outputMode,
+  onSetOutputMode,
   onSelectProfile,
   onSetRemember,
   onResetDefaults,
@@ -28,6 +46,31 @@ export function GeneralSection({
         </div>
       </div>
       <div className="settings-body">
+        <h3>Output mode</h3>
+        <div role="radiogroup" aria-label="Output mode" className="profile-list">
+          {OUTPUT_MODES.map((mode) => (
+            <label
+              key={mode.id}
+              className={`profile-option ${outputMode === mode.id ? 'is-active' : ''}`}
+            >
+              <input
+                type="radio"
+                name="output-mode"
+                checked={outputMode === mode.id}
+                onChange={() => onSetOutputMode(mode.id)}
+              />
+              <span>
+                <strong>{mode.name}</strong>
+                <span className="muted profile-desc">{mode.description}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+        <p className="muted">
+          The output mode is independent of the detection profile — it works the same with
+          Balanced, Strict, Maximum, or any custom profile, and switching it never rescans.
+        </p>
+
         <h3>Core detection mode</h3>
         <div role="radiogroup" aria-label="Detection profile" className="profile-list">
           {BUILT_IN_PROFILES.map((p) => (

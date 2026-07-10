@@ -21,6 +21,11 @@ const CATEGORY_FILTERS: { id: 'all' | Category; label: string }[] = [
   { id: 'infrastructure', label: 'Infrastructure' },
   { id: 'personal', label: 'Personal' },
   { id: 'paths', label: 'Paths' },
+  { id: 'organization', label: 'Organization' },
+  { id: 'code', label: 'Code identifiers' },
+  { id: 'directory', label: 'Directory / AD' },
+  { id: 'messaging', label: 'Messaging / Exchange' },
+  { id: 'workflow', label: 'Workflow' },
 ];
 
 const CONFIDENCE_SHORT: Record<string, string> = {};
@@ -48,6 +53,7 @@ export function RuleBrowser({
   const [filter, setFilter] = useState<'all' | Category>('all');
   const [enabledOnly, setEnabledOnly] = useState(false);
   const [strictOnly, setStrictOnly] = useState(false);
+  const [leadsOnly, setLeadsOnly] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const q = query.trim().toLowerCase();
@@ -56,6 +62,7 @@ export function RuleBrowser({
       (filter === 'all' || d.category === filter) &&
       (!enabledOnly || resolvedStates[d.id]) &&
       (!strictOnly || d.strictOnly) &&
+      (!leadsOnly || d.reviewLead) &&
       (q === '' || d.name.toLowerCase().includes(q) || d.label.toLowerCase().includes(q)),
   );
   const selected = detectors.find((d) => d.id === selectedId) ?? null;
@@ -91,6 +98,14 @@ export function RuleBrowser({
           onClick={() => setStrictOnly((v) => !v)}
         >
           Strict
+        </button>
+        <button
+          type="button"
+          className={`filter-chip filter-all ${leadsOnly ? 'is-active' : ''}`}
+          aria-pressed={leadsOnly}
+          onClick={() => setLeadsOnly((v) => !v)}
+        >
+          Review leads
         </button>
       </div>
       {visible.length === 0 && (

@@ -11,11 +11,13 @@ import {
 import { analyzePrivateTerms, createPrivateTermsDetector } from '../../lib/customTerms';
 import {
   CLOAK_ENTRY_CATEGORIES,
+  MAPPING_STRATEGIES,
   MATCH_MODES,
   MAX_MAPPINGS_PER_LIST,
   emptyMappingEntry,
   validateMappingEntry,
   type CloakMappingEntry,
+  type MappingStrategy,
 } from '../../lib/cloakMappings';
 import { decodeText } from '../../lib/decodeText';
 import { scanText } from '../../lib/scan';
@@ -38,6 +40,8 @@ interface CloakListEditorProps {
   remember: boolean;
   initialName?: string;
   initialTermsText?: string;
+  /** Pre-filled mapping rows (the Build Portfolio Cloak List flow). */
+  initialMappings?: CloakMappingEntry[];
   onSave: (pack: CustomPack) => void;
   onCancel: () => void;
 }
@@ -52,6 +56,7 @@ export function CloakListEditor({
   remember,
   initialName = '',
   initialTermsText = '',
+  initialMappings,
   onSave,
   onCancel,
 }: CloakListEditorProps) {
@@ -65,7 +70,12 @@ export function CloakListEditor({
           description: '',
           detectorIds: [],
           rules: [],
-          terms: emptyPackTerms(),
+          terms: {
+            ...emptyPackTerms(),
+            ...(initialMappings && initialMappings.length > 0
+              ? { mappings: initialMappings }
+              : {}),
+          },
           enabled: true,
         },
   );
@@ -273,11 +283,12 @@ export function CloakListEditor({
           </button>
         </div>
         <p className="muted">
-          A mapping cloaks a term like the list above, plus an optional generic replacement for
-          <strong> Portfolio-code</strong> mode: with code-safe on, a term found inside a
-          variable, function, property, or command name is swapped for the replacement (casing
-          adapted) instead of a bracket placeholder. Inside quoted strings and plain prose it
-          still becomes a placeholder.
+          A mapping cloaks a term like the list above, plus a strategy for what the match turns
+          into. <strong>Code identifiers only</strong> swaps the replacement into variable,
+          function, property, and command names in Portfolio-code mode (placeholder everywhere
+          else). <strong>Genericize everywhere</strong> also replaces it in prose and strings.
+          <strong> Placeholder</strong> always uses a bracket placeholder, and{' '}
+          <strong>Review lead only</strong> just flags matches without rewriting anything.
         </p>
         {mappings.length > 0 && (
           <ul className="mapping-rows" aria-label="Cloak List mappings">
@@ -345,14 +356,27 @@ export function CloakListEditor({
                       </option>
                     ))}
                   </select>
-                  <label className="terms-toggle-row mapping-codesafe" title="Allow the replacement inside code identifiers">
-                    <input
-                      type="checkbox"
-                      checked={m.codeSafe}
-                      onChange={(e) => updateMapping(m.id, { codeSafe: e.target.checked })}
-                    />
-                    code-safe
-                  </label>
+                  <select
+                    className="profile-select mapping-select mapping-strategy"
+                    value={m.strategy}
+                    aria-label="Mapping replacement strategy"
+                    title={
+                      MAPPING_STRATEGIES.find((s) => s.id === m.strategy)?.hint ?? ''
+                    }
+                    onChange={(e) => {
+                      const strategy = e.target.value as MappingStrategy;
+                      updateMapping(m.id, {
+                        strategy,
+                        codeSafe: strategy === 'code-only' || strategy === 'genericize',
+                      });
+                    }}
+                  >
+                    {MAPPING_STRATEGIES.map((s) => (
+                      <option key={s.id} value={s.id} title={s.hint}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
                   <button
                     type="button"
                     className="btn btn-mini"
