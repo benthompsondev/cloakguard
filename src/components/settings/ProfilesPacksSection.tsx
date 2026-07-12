@@ -500,6 +500,7 @@ export function ProfilesPacksSection(props: SettingsProps) {
             type="file"
             accept=".txt,text/plain"
             className="visually-hidden"
+            tabIndex={-1}
             aria-label="Import Cloak List from .txt"
             onChange={(event) => {
               const file = event.target.files?.[0];
@@ -520,6 +521,7 @@ export function ProfilesPacksSection(props: SettingsProps) {
             type="file"
             accept=".json,application/json"
             className="visually-hidden"
+            tabIndex={-1}
             aria-label="Import Cloak List from JSON"
             onChange={(event) => {
               const file = event.target.files?.[0];

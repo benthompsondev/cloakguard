@@ -104,6 +104,7 @@ export function SourcePanel({
             type="file"
             accept={IMPORT_ACCEPT}
             className="visually-hidden"
+            tabIndex={-1}
             aria-label="Import a text file"
             onChange={(e) => {
               const file = e.target.files?.[0];

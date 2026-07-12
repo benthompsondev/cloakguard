@@ -4,7 +4,6 @@ A local-first tool for cleaning sensitive details out of scripts, logs, prompts,
 
 [![CI](https://github.com/benthompsondev/cloakscan/actions/workflows/ci.yml/badge.svg)](https://github.com/benthompsondev/cloakscan/actions/workflows/ci.yml)
 [![Latest release](https://img.shields.io/github/v/release/benthompsondev/cloakscan)](https://github.com/benthompsondev/cloakscan/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/benthompsondev/cloakscan/total?label=downloads)](https://github.com/benthompsondev/cloakscan/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 **[▶ Try the live demo](https://benthompsondev.github.io/cloakscan/)** — in your browser, nothing uploaded ·
@@ -61,6 +60,8 @@ Honesty matters more than a feature list here:
 - Organization-specific terminology (product names, team names, codenames) needs a Cloak List — generic rules cannot know your internal vocabulary.
 - Portfolio-code trades some redaction for readability by design. It deserves the most careful human review of any output.
 - It is not an enterprise DLP replacement and does not try to be.
+
+Found something it missed? [Report a detector gap](https://github.com/benthompsondev/cloakscan/issues/new?template=bug.yml) with a small **fully synthetic** example — never a real script, credential, hostname, employer detail, medical information, or anything else internal.
 
 ⭐ Star it if it is useful. That makes the project easier for other people to find.
 

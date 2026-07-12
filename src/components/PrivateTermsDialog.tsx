@@ -39,9 +39,20 @@ export function PrivateTermsDialog({
   onClose,
 }: QuickCloakDialogProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
 
+  // Move focus into the dialog on open and hand it back to whatever opened
+  // it on close, so keyboard and screen-reader users never land on <body>.
   useEffect(() => {
-    if (open) textareaRef.current?.focus();
+    if (open) {
+      openerRef.current =
+        document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      textareaRef.current?.focus();
+      return () => {
+        openerRef.current?.focus();
+        openerRef.current = null;
+      };
+    }
   }, [open]);
 
   if (!open) return null;

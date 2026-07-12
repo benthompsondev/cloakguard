@@ -68,6 +68,7 @@ export function CloakListEditor({
   onCancel,
 }: CloakListEditorProps) {
   const importInput = useRef<HTMLInputElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
   const [draft, setDraft] = useState<CustomPack>(
     list
       ? JSON.parse(JSON.stringify(list))
@@ -94,9 +95,13 @@ export function CloakListEditor({
   );
 
   // The editor header (title, privacy status, Cancel/Save) must be visible
-  // immediately, wherever the packs page was scrolled to.
+  // immediately, wherever the packs page was scrolled to — and the heading
+  // takes focus so keyboard and screen-reader users land on the editor
+  // context instead of <body> (this editor often opens across a route
+  // change, e.g. Build Portfolio Cloak List from the Scan screen).
   useEffect(() => {
     window.scrollTo(0, 0);
+    headingRef.current?.focus();
   }, []);
 
   const nameError = draft.name.length > 0 ? validateName(draft.name) : null;
@@ -188,7 +193,9 @@ export function CloakListEditor({
     <section className="panel settings-panel" aria-label="Cloak List editor">
       <div className="panel-head">
         <div className="panel-title">
-          <h2>{list ? `Edit Cloak List: ${list.name}` : 'Create Cloak List'}</h2>
+          <h2 ref={headingRef} tabIndex={-1}>
+            {list ? `Edit Cloak List: ${list.name}` : 'Create Cloak List'}
+          </h2>
           <span className="muted">
             {remember
               ? draft.terms.saveTerms
@@ -266,6 +273,7 @@ export function CloakListEditor({
             type="file"
             accept=".txt,text/plain"
             className="visually-hidden"
+            tabIndex={-1}
             aria-label="Import terms from .txt"
             onChange={(event) => {
               const file = event.target.files?.[0];

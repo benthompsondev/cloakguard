@@ -93,7 +93,12 @@ export function ScanView({
   return (
     <>
       <div className="page-head">
-        <h1>Sanitize sensitive text before it leaves your machine.</h1>
+        {/* Focus target for programmatic navigation back to Scan (e.g. after
+            "Save, use this list & rescan"), so keyboard users don't land on
+            <body> after a route change. */}
+        <h1 id="scan-title" tabIndex={-1}>
+          Sanitize sensitive text before it leaves your machine.
+        </h1>
         <p className="muted">
           Everything runs locally on this device. Nothing is uploaded, nothing is saved.
         </p>

@@ -46,6 +46,15 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Plain markup only: the production CSP allows no inline styles. -->
+    <noscript>
+      <p>
+        CloakScan runs entirely in your browser and needs JavaScript enabled — scanning happens
+        on your device and nothing is uploaded. Enable JavaScript, or use the Windows/Linux
+        desktop app from
+        <a href="https://github.com/benthompsondev/cloakscan/releases/latest">GitHub Releases</a>.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

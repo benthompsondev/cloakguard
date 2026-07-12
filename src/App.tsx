@@ -479,6 +479,9 @@ export default function App() {
       setSession(scanned);
       setScanMeta({ startedAt, durationMs: performance.now() - t0 });
       window.location.hash = '#/';
+      // Land keyboard focus on the Scan heading once the view has rendered;
+      // the aria-live notice below announces the result itself.
+      window.setTimeout(() => document.getElementById('scan-title')?.focus(), 0);
       const count = scanned.findings.length;
       showNotice({
         kind: 'ok',
